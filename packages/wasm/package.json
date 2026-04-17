@@ -1,0 +1,50 @@
+{
+  "name": "@opendsr/seedfaker-wasm",
+  "version": "0.3.0-alpha.2",
+  "description": "Deterministic synthetic data generator for browsers — WASM build of seedfaker",
+  "license": "MIT",
+  "author": "Eduard Titov <editied@gmail.com>",
+  "type": "module",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js"
+    },
+    "./web": {
+      "types": "./index.d.ts",
+      "import": "./web.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "package.json",
+    "web.js",
+    "wrapper.js",
+    "web/",
+    "bundler/",
+    "LICENSE",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "keywords": [
+    "faker",
+    "fake-data",
+    "synthetic-data",
+    "mock-data",
+    "test-data",
+    "data-generator",
+    "deterministic",
+    "wasm",
+    "browser",
+    "locale"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/opendsr-std/seedfaker",
+    "directory": "packages/wasm"
+  }
+}

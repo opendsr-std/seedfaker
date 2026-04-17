@@ -1,0 +1,31 @@
+FROM rust:1.88-bookworm
+
+# Node.js 22 (bookworm apt has 18 which is EOL)
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+
+# System packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential pkg-config \
+        python3 python3-pip python3-venv python3-dev \
+        nodejs \
+        php-cli php-ffi \
+        ruby \
+        golang-go \
+        shellcheck \
+    && rm -rf /var/lib/apt/lists/*
+
+# Rust tools
+RUN rustup component add rustfmt clippy
+RUN cargo install cargo-deny --locked && mv /usr/local/cargo/bin/cargo-deny /usr/local/bin/
+RUN cargo install taplo-cli --locked && mv /usr/local/cargo/bin/taplo /usr/local/bin/
+
+# pnpm
+RUN npm install -g pnpm
+
+# Node tools (global, isolated in container)
+RUN npm install -g prettier eslint
+
+# Python tools (global, isolated in container)
+RUN pip3 install --break-system-packages ruff pyyaml
+
+WORKDIR /work

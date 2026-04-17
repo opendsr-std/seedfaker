@@ -1,0 +1,29 @@
+[INQUIRY-50345] Raed bin Omran Al Ghurair <raedalghurair@gmx.com>:
+Can you confirm the address on file? My current address is 589 Jumeirah Beach Road, Sharjah, Sharjah 00000.
+Phone: +971 59 117 5728. Please update if different from what you have.
+[INQUIRY-46218] Thuraya bin Wadima Al Muhairi <t.almuhairi.331@icloud.com>:
+Can you confirm the address on file? My current address is 6630 Airport Road, Fujairah, Fujairah 00000.
+Phone: +971 57 854 6069. Please update if different from what you have.
+[ESCALATION] Ticket: API-86132 | Priority: CRITICAL
+Customer: Maxim Bergeron
+Email: maximbergeron@outlook.com
+Phone: (770) 415-5293
+SSN: 07628237545
+Card on file: 6011 7784 4404 6168
+DOB: 1998-10-17
+Address: 44 Rue Saint-Denis, J8X 3W5 Gatineau
+Company: Saputo
+IP at time of incident: 176.211.44.137
+Agent notes: Customer requested full account deletion under GDPR Art. 17.
+All PII must be purged within 30 days. Legal has been notified.
+[INQUIRY-42997] Jenna Pulkkinen <jpulkkinen4875@phnet.fi>:
+Can you confirm the address on file? My current address is 9291 Museokatu, Jyvaskyla, Keski-Suomi 40100.
+Phone: +358 40 6466019. Please update if different from what you have.
+[COMPLAINT-98860] Severity: Major
+From: Tamer Simsek <tamerxxxw5@turktelekom.com.tr>
+
+I was charged $8880.99 on my card ending in 6958 (full number: 6011 8788 2571 3186).
+My SSN is 84120582107 — please use this for identity verification. Call me at +90 551 351 0579.
+Billing address: 178 Moda Caddesi, Denizli, Denizli 20000
+
+-- Customer since 2022-01-25

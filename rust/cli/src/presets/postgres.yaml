@@ -1,0 +1,50 @@
+columns:
+  action: enum:select=35,insert=15,update=10,delete=3,connect=10,disconnect=8,error=5,slow_query=4,deadlock=2,checkpoint=3,autovacuum=3,replication=2
+  ts: timestamp:asc:log
+  pid: integer:1000..32768
+  db: enum:customers=30,orders=25,analytics=15,auth=15,inventory=10,billing=5
+  dbuser: enum:app_readwrite=40,app_readonly=25,migration=5,admin=5,replicator=3,grafana_ro=10,backup=7,pgbouncer=5
+  client_ip: ip
+  email: email
+  duration: float:0..500
+  port: integer:5432..5440
+
+template: |
+  {{#if action == "select"}}
+  {{ts}} [{{pid}}] {{dbuser}}@{{db}} LOG:  duration: {{duration}} ms  statement: SELECT id, full_name, email, phone, created_at FROM users WHERE email = '{{email}}' LIMIT 1;
+  {{#elif action == "insert"}}
+  {{ts}} [{{pid}}] {{dbuser}}@{{db}} LOG:  duration: {{duration}} ms  statement: INSERT INTO audit_log (user_id, action, ip_addr, created_at) VALUES ('{{uuid}}', 'login', '{{client_ip}}', now());
+  {{#elif action == "update"}}
+  {{ts}} [{{pid}}] {{dbuser}}@{{db}} LOG:  duration: {{duration}} ms  statement: UPDATE users SET last_login = now(), login_count = login_count + 1 WHERE email = '{{email}}';
+  {{#elif action == "delete"}}
+  {{ts}} [{{pid}}] {{dbuser}}@{{db}} LOG:  duration: {{duration}} ms  statement: DELETE FROM sessions WHERE expires_at < now() AND user_id = '{{uuid}}';
+  {{#elif action == "connect"}}
+  {{ts}} [{{pid}}] LOG:  connection authorized: user={{dbuser}} database={{db}} host={{client_ip}} port={{port}}
+  {{#elif action == "disconnect"}}
+  {{ts}} [{{pid}}] {{dbuser}}@{{db}} LOG:  disconnection: session time: 0:{{integer:0..59}}:{{integer:0..59}}.{{integer:100..999}} user={{dbuser}} database={{db}} host={{client_ip}} port={{port}}
+  {{#elif action == "error"}}
+  {{ts}} [{{pid}}] {{dbuser}}@{{db}} ERROR:  duplicate key value violates unique constraint "users_email_key"
+  {{ts}} [{{pid}}] {{dbuser}}@{{db}} DETAIL:  Key (email)=({{email}}) already exists.
+  {{ts}} [{{pid}}] {{dbuser}}@{{db}} STATEMENT:  INSERT INTO users (email, full_name) VALUES ('{{email}}', '{{name}}');
+  {{#elif action == "slow_query"}}
+  {{ts}} [{{pid}}] {{dbuser}}@{{db}} LOG:  duration: {{float:5000..30000}} ms  statement: SELECT u.id, u.email, count(o.id) as order_count, sum(o.total) as lifetime_value FROM users u LEFT JOIN orders o ON o.user_id = u.id GROUP BY u.id, u.email HAVING count(o.id) > 10 ORDER BY lifetime_value DESC LIMIT 100;
+  {{#elif action == "deadlock"}}
+  {{ts}} [{{pid}}] {{dbuser}}@{{db}} ERROR:  deadlock detected
+  {{ts}} [{{pid}}] {{dbuser}}@{{db}} DETAIL:  Process {{pid}} waits for ShareLock on transaction {{integer:100000..999999}}; blocked by process {{integer:1000..32768}}.
+  {{ts}} [{{pid}}] {{dbuser}}@{{db}} HINT:  See server log for query details.
+  {{ts}} [{{pid}}] {{dbuser}}@{{db}} STATEMENT:  UPDATE inventory SET quantity = quantity - 1 WHERE sku = '{{alnum:short}}' AND quantity > 0;
+  {{#elif action == "checkpoint"}}
+  {{ts}} [{{pid}}] LOG:  checkpoint starting: time
+  {{ts}} [{{pid}}] LOG:  checkpoint complete: wrote {{integer:100..9999}} buffers ({{float:0..100}}%); {{integer:0..5}} WAL file(s) added, {{integer:0..3}} removed, {{integer:0..2}} recycled; write={{float:0..30}} s, sync={{float:0..5}} s, total={{float:0..60}} s; sync files={{integer:10..500}}, longest={{float:0..5}} s, average={{float:0..1}} s; distance={{integer:1000..99999}} kB, estimate={{integer:10000..999999}} kB
+  {{#elif action == "autovacuum"}}
+  {{ts}} [{{pid}}] LOG:  automatic vacuum of table "{{db}}.public.{{word}}": index scans: {{integer:0..3}}, pages: {{integer:0..999}} removed, {{integer:100..99999}} remain, {{integer:0..999}} skipped due to pins, {{integer:0..99}} skipped frozen
+  {{#elif action == "replication"}}
+  {{ts}} [{{pid}}] LOG:  standby "replica-{{integer:1..4}}" is now a synchronous standby with priority {{integer:1..4}}
+  {{else}}
+  {{ts}} [{{pid}}] LOG:  received fast shutdown request
+  {{/if}}
+
+options:
+  count: 500
+  since: "2025-03-28"
+  until: "2025-03-29"

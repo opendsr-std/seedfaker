@@ -1,0 +1,5 @@
+28/Mar/2025:00:00:05 +0000 worker-02 sshd[14450]: Failed password for jorina_chowdhury02 from 17.86.254.26 port 31365 ssh2
+28/Mar/2025:00:00:28 +0000 api-01 sshd[31985]: Failed password for prasert_nopparatj from 112.95.111.88 port 46638 ssh2
+28/Mar/2025:00:00:49 +0000 api-01 sshd[30159]: pam_unix(sshd:session): session opened for user fuentesxd(uid=6177) by (uid=0)
+28/Mar/2025:00:01:12 +0000 api-01 sshd[4313]: pam_unix(sshd:session): session closed for user myandrew79
+28/Mar/2025:00:01:39 +0000 bastion-01 sshd[9681]: Failed password for heleen_postmao1 from 34.51.201.184 port 52412 ssh2

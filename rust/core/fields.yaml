@@ -1,0 +1,1214 @@
+next_id: 216
+groups:
+  - daily
+  - core
+  - text
+  - time
+  - person
+  - contact
+  - location
+  - finance
+  - auth
+  - gov-id
+  - internet
+  - blockchain
+  - organization
+  - healthcare
+  - dev
+  - ops
+  - device
+fields:
+  - id: f00001
+    name: integer
+    description: Random whole number in configurable range
+    group: core
+    gen: integer
+    range: true
+    ordering: true
+  - id: f00002
+    name: float
+    description: Decimal number with 2-digit precision
+    group: core
+    gen: float
+    range: true
+    ordering: true
+  - id: f00003
+    name: boolean
+    description: true or false with equal probability
+    group: core
+    gen: boolean
+  - id: f00004
+    name: digit
+    description: Single decimal digit [0-9]
+    group: core
+    gen: digit
+  - id: f00005
+    name: bit
+    description: Binary value, 0 or 1
+    group: core
+    gen: bit
+    modifiers:
+      - sign
+  - id: f00006
+    name: trit
+    description: Ternary digit (-1, 0, or 1)
+    group: core
+    gen: trit
+  - id: f00007
+    name: enum
+    description: Random pick from values (enum:a,b,c) with weights (enum:a=3,b=1)
+    group: core
+    gen: enum_
+  - id: f00008
+    name: serial
+    description: Zero-based record counter (0, 1, 2, ...)
+    group: core
+    gen: serial
+  - id: f00009
+    name: letter
+    description: Single ASCII letter [a-zA-Z]
+    group: text
+    gen: letter
+  - id: f00011
+    name: trigram
+    description: Pronounceable three-letter syllable (baf, kel, zur)
+    group: text
+    gen: trigram
+  - id: f00012
+    name: digits
+    description: Numeric digit string (digits:4 = 0469, digits:6:100..500 = 000342)
+    group: text
+    gen: digits
+    range: true
+    ordering: true
+    length: true
+  - id: f00013
+    name: letters
+    description: Alphabetic string (letters:8 = kZmPqRtY)
+    group: text
+    gen: letters
+    length: true
+  - id: f00014
+    name: alnum
+    description: Alphanumeric string (alnum:6 = xK7m2B)
+    group: text
+    gen: alnum
+    length: true
+  - id: f00015
+    name: base64
+    description: Base64-encoded random bytes (base64:16 = aGVsbG8gd29y)
+    group: text
+    gen: base64
+    length: true
+  - id: f00016
+    name: hex
+    description: Hexadecimal string (hex:4 = 0f3a, hex:8 = 0f3a7b2e)
+    group: text
+    gen: hex
+    modifiers:
+      - byte
+    length: true
+  - id: f00017
+    name: word
+    description: English-like word from vocabulary pool
+    group: text
+    gen: word
+  - id: f00018
+    name: message
+    description: Multi-word natural language sentence
+    group: text
+    gen: message
+  - id: f00019
+    name: emoji
+    description: Single Unicode emoji character
+    group: daily
+    gen: emoji
+  - id: f00020
+    name: color
+    description: "Color value: named (maroon), hex (#ff8800), or RGB components (120, 40, 200)"
+    group: core
+    gen: color
+    modifiers:
+      - hex
+      - rgb
+      - rgba
+  - id: f00021
+    name: uuid
+    description: Version 4 UUID [xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx]
+    group: core
+    gen: uuid
+    modifiers:
+      - plain
+  - id: f00022
+    name: bz
+    description: Corporate buzzword or jargon phrase (synergy, leverage)
+    group: daily
+    gen: bz
+  - id: f00023
+    name: dice
+    description: Six-sided die roll result, 1 through 6
+    group: daily
+    gen: dice
+  - id: f00024
+    name: excuse
+    description: Humorous developer excuse for being late or missing a deadline
+    group: daily
+    gen: excuse
+  - id: f00025
+    name: mball
+    description: Magic 8-Ball fortune response (Yes definitely, Ask again later)
+    group: daily
+    gen: eight_ball
+  - id: f00026
+    name: timestamp
+    description: ISO 8601 datetime with timezone (2024-03-15T09:30:00Z)
+    group: time
+    gen: timestamp
+    modifiers:
+      - unix
+      - ms
+      - log
+    range: true
+    ordering: true
+  - id: f00027
+    name: date
+    description: Calendar date in locale-specific format (2024-03-15)
+    group: time
+    gen: date
+    modifiers:
+      - us
+      - eu
+    range: true
+    ordering: true
+  - id: f00028
+    name: name
+    description: Full person name with first and last components
+    group: person
+    gen: name
+  - id: f00029
+    name: first-name
+    description: Given name from locale-aware dictionary
+    group: person
+    gen: first_name
+  - id: f00030
+    name: last-name
+    description: Family name from locale-aware dictionary
+    group: person
+    gen: last_name
+  - id: f00031
+    name: middle-name
+    description: Middle name or patronymic from locale-aware dictionary
+    group: person
+    gen: middle_name
+  - id: f00032
+    name: birthdate
+    description: Date of birth with weighted age distribution
+    group: person
+    gen: birthdate
+    modifiers:
+      - us
+      - eu
+    range: true
+  - id: f00213
+    name: age
+    description: Age (18-100), weighted demographic distribution
+    group: person
+    gen: age
+    range: true
+    ordering: true
+  - id: f00033
+    name: gender
+    description: Gender label (male, female, non-binary)
+    group: person
+    gen: gender
+  - id: f00034
+    name: username
+    description: Clean platform handle [a-z0-9_]
+    group: person
+    gen: username
+    modifiers:
+      - xuniq
+  - id: f00035
+    name: login-name
+    description: System login identifier, typically firstname.lastname
+    group: person
+    gen: login_name
+    modifiers:
+      - xuniq
+  - id: f00036
+    name: social-handle
+    description: Social media display name with @ prefix (@cooluser99)
+    group: person
+    gen: social_handle
+    modifiers:
+      - xuniq
+  - id: f00212
+    name: nickname
+    description: Creative alias unrelated to real name (darkwolf42, swiftcoder)
+    group: person
+    gen: nickname
+    modifiers:
+      - xuniq
+  - id: f00037
+    name: biometric-id
+    description: Opaque biometric template reference [hex, 32 bytes]
+    group: person
+    gen: biometric_id
+  - id: f00038
+    name: student-id
+    description: University or school student identifier [alphanumeric]
+    group: person
+    gen: student_id
+  - id: f00039
+    name: email
+    description: Email with locale-aware name and domain
+    group: contact
+    gen: email
+    modifiers:
+      - xuniq
+  - id: f00040
+    name: phone
+    description: Phone number with country code and locale formatting
+    group: contact
+    gen: phone
+    modifiers:
+      - e164
+      - intl
+      - plain
+  - id: f00041
+    name: address
+    description: Full mailing address with street, city, state, and postal code
+    group: contact
+    gen: address
+  - id: f00042
+    name: street-address
+    description: Street line with number and street name (742 Evergreen Terrace)
+    group: contact
+    gen: street_address
+  - id: f00043
+    name: city
+    description: Real city name from weighted population data
+    group: contact
+    gen: city
+  - id: f00044
+    name: state
+    description: US state or equivalent administrative region name
+    group: contact
+    gen: state
+  - id: f00045
+    name: postal-code
+    description: ZIP or postal code matching locale format
+    group: contact
+    gen: postal_code
+  - id: f00046
+    name: country
+    description: Full country name from ISO 3166 list
+    group: contact
+    gen: country
+  - id: f00047
+    name: latitude
+    description: Locale-aware geographic latitude, 4 decimal places
+    group: location
+    gen: latitude
+  - id: f00048
+    name: longitude
+    description: Locale-aware geographic longitude, 4 decimal places
+    group: location
+    gen: longitude
+  - id: f00049
+    name: country-code
+    description: ISO 3166-1 alpha-2 country code (US, DE, JP)
+    group: location
+    gen: country_code
+    modifiers:
+      - alpha3
+      - numeric
+  - id: f00050
+    name: phone-code
+    description: International dialing prefix (+1, +44, +81)
+    group: location
+    gen: phone_code
+  - id: f00051
+    name: language-code
+    description: ISO 639-1 two-letter language code (en, fr, ja)
+    group: location
+    gen: language_code
+  - id: f00052
+    name: locale-code
+    description: IETF BCP 47 locale tag (en-US, pt-BR, zh-Hans)
+    group: location
+    gen: locale_code
+    modifiers:
+      - short
+      - underscore
+  - id: f00053
+    name: timezone
+    description: IANA timezone identifier (America/New_York, Europe/Berlin)
+    group: location
+    gen: timezone
+  - id: f00054
+    name: credit-card
+    description: Valid-checksum card number with BIN prefix [16 digits]
+    group: finance
+    gen: credit_card
+    modifiers:
+      - space
+      - dash
+      - plain
+  - id: f00055
+    name: cvv
+    description: Card verification value [3-4 digits]
+    group: finance
+    gen: cvv
+  - id: f00056
+    name: iban
+    description: International Bank Account Number with valid check digits
+    group: finance
+    gen: iban
+    modifiers:
+      - plain
+  - id: f00057
+    name: swift-bic
+    description: SWIFT/BIC bank identifier code [8 or 11 chars]
+    group: finance
+    gen: swift_bic
+  - id: f00058
+    name: routing-number
+    description: US ABA routing transit number [9 digits, valid checksum]
+    group: finance
+    gen: routing_number
+  - id: f00059
+    name: bank-account
+    description: Bank account number with locale-appropriate length
+    group: finance
+    gen: bank_account
+  - id: f00060
+    name: tax-id
+    description: US Employer Identification Number [NN-NNNNNNN]
+    group: finance
+    gen: tax_id
+  - id: f00061
+    name: amount
+    description: Monetary value with configurable currency and decimal format
+    group: finance
+    gen: amount
+    modifiers:
+      - dot
+      - comma
+      - plain
+      - usd
+      - eur
+      - gbp
+    range: true
+    ordering: true
+  - id: f00062
+    name: currency-code
+    description: ISO 4217 three-letter currency code (USD, EUR, GBP)
+    group: finance
+    gen: currency_code
+    modifiers:
+      - crypto
+  - id: f00063
+    name: currency-symbol
+    description: Unicode currency glyph ($, EUR, GBP, JPY)
+    group: finance
+    gen: currency_symbol
+  - id: f00064
+    name: password
+    description: Password with configurable length (password:12 for exact)
+    group: auth
+    gen: password
+    modifiers:
+      - pin
+      - memorable
+      - mixed
+      - strong
+    length: true
+  - id: f00065
+    name: jwt
+    description: JSON Web Token with valid header.payload.signature structure
+    group: auth
+    gen: jwt
+  - id: f00066
+    name: bearer-token
+    description: OAuth2 bearer token, opaque [base64url, 32+ bytes]
+    group: auth
+    gen: bearer_token
+  - id: f00067
+    name: api-key
+    description: Generic API key [alphanumeric, 32-48 chars]
+    group: auth
+    gen: api_key
+  - id: f00068
+    name: totp-secret
+    description: TOTP shared secret [base32, 16+ chars]
+    group: auth
+    gen: totp_secret
+  - id: f00069
+    name: oauth-client-secret
+    description: OAuth2 client secret [alphanumeric, 40 chars]
+    group: auth
+    gen: oauth_client_secret
+  - id: f00070
+    name: aws-access-key
+    description: AWS access key ID [AKIA...]
+    group: auth
+    gen: aws_access_key
+  - id: f00071
+    name: aws-secret-key
+    description: AWS secret access key [base64, 40 chars]
+    group: auth
+    gen: aws_secret_key
+  - id: f00072
+    name: stripe-key
+    description: Stripe API key with environment prefix [sk_live_..., sk_test_...]
+    group: auth
+    gen: stripe_key
+  - id: f00073
+    name: github-pat
+    description: GitHub personal access token [ghp_...]
+    group: auth
+    gen: github_pat
+  - id: f00074
+    name: gitlab-token
+    description: GitLab personal or project token [glpat-...]
+    group: auth
+    gen: gitlab_token
+  - id: f00075
+    name: openai-key
+    description: OpenAI API key [sk-...]
+    group: auth
+    gen: openai_key
+  - id: f00076
+    name: sendgrid-key
+    description: SendGrid API key [SG....]
+    group: auth
+    gen: sendgrid_key
+  - id: f00077
+    name: twilio-sid
+    description: Twilio Account SID [AC...]
+    group: auth
+    gen: twilio_sid
+  - id: f00078
+    name: twilio-token
+    description: Twilio auth token [hex, 32 chars]
+    group: auth
+    gen: twilio_token
+  - id: f00079
+    name: slack-bot-token
+    description: Slack bot OAuth token [xoxb-...]
+    group: auth
+    gen: slack_bot_token
+  - id: f00080
+    name: slack-user-token
+    description: Slack user OAuth token [xoxp-...]
+    group: auth
+    gen: slack_user_token
+  - id: f00081
+    name: datadog-key
+    description: Datadog API or application key [hex, 32 chars]
+    group: auth
+    gen: datadog_key
+  - id: f00082
+    name: sentry-dsn
+    description: Sentry Data Source Name URL with project ID
+    group: auth
+    gen: sentry_dsn
+  - id: f00083
+    name: vault-token
+    description: HashiCorp Vault access token [hvs....]
+    group: auth
+    gen: vault_token
+  - id: f00084
+    name: npm-token
+    description: npm registry auth token [npm_...]
+    group: auth
+    gen: npm_token
+  - id: f00085
+    name: vercel-token
+    description: Vercel deployment token [alphanumeric, 24 chars]
+    group: auth
+    gen: vercel_token
+  - id: f00086
+    name: supabase-key
+    description: Supabase anon or service-role JWT key
+    group: auth
+    gen: supabase_key
+  - id: f00087
+    name: telegram-token
+    description: Telegram Bot API token [NNNNNNNNNN:AAxx...]
+    group: auth
+    gen: telegram_token
+  - id: f00088
+    name: discord-webhook
+    description: Discord webhook URL with token path
+    group: auth
+    gen: discord_webhook
+  - id: f00089
+    name: gcp-key
+    description: Google Cloud Platform API key [AIza...]
+    group: auth
+    gen: gcp_key
+  - id: f00090
+    name: azure-key
+    description: Microsoft Azure subscription or service key [base64]
+    group: auth
+    gen: azure_key
+  - id: f00091
+    name: cloudflare-token
+    description: Cloudflare API token [alphanumeric, 40 chars]
+    group: auth
+    gen: cloudflare_token
+  - id: f00092
+    name: pagerduty-key
+    description: PagerDuty API key [alphanumeric, 20 chars]
+    group: auth
+    gen: pagerduty_key
+  - id: f00093
+    name: newrelic-key
+    description: New Relic API key [NRAK-...]
+    group: auth
+    gen: newrelic_key
+  - id: f00094
+    name: splunk-token
+    description: Splunk HEC auth token [UUID format]
+    group: auth
+    gen: splunk_token
+  - id: f00095
+    name: heroku-key
+    description: Heroku API key [UUID format]
+    group: auth
+    gen: heroku_key
+  - id: f00096
+    name: firebase-key
+    description: Firebase Web API key [AIza...]
+    group: auth
+    gen: firebase_key
+  - id: f00097
+    name: ssh-private-key
+    description: PEM-encoded SSH private key block (RSA or Ed25519)
+    group: auth
+    gen: ssh_private_key
+  - id: f00098
+    name: ssh-public-key
+    description: OpenSSH public key line (ssh-rsa ..., ssh-ed25519 ...)
+    group: auth
+    gen: ssh_public_key
+  - id: f00099
+    name: connection-string
+    description: Database connection URI with credentials (postgres://user:pass@...)
+    group: auth
+    gen: connection_string
+  - id: f00100
+    name: anthropic-key
+    description: Anthropic API key [sk-ant-...]
+    group: auth
+    gen: anthropic_key
+  - id: f00101
+    name: session-id
+    description: Opaque session identifier [base64url, 32+ bytes]
+    group: auth
+    gen: session_id
+  - id: f00102
+    name: passkey-id
+    description: WebAuthn passkey credential ID [base64url]
+    group: auth
+    gen: passkey_id
+  - id: f00103
+    name: facebook-token
+    description: Facebook/Meta Graph API access token [EAA...]
+    group: auth
+    gen: facebook_token
+  - id: f00104
+    name: google-token
+    description: Google OAuth2 access token [ya29....]
+    group: auth
+    gen: google_token
+  - id: f00105
+    name: apple-token
+    description: Apple Sign-In JWT identity token
+    group: auth
+    gen: apple_token
+  - id: f00106
+    name: refresh-token
+    description: OAuth2 refresh token [opaque, 64+ chars]
+    group: auth
+    gen: refresh_token
+  - id: f00107
+    name: csrf-token
+    description: Cross-site request forgery protection token [hex, 32 bytes]
+    group: auth
+    gen: csrf_token
+  - id: f00108
+    name: basic-auth
+    description: HTTP Basic auth header value [base64(user:pass)]
+    group: auth
+    gen: basic_auth
+  - id: f00109
+    name: ssn
+    description: US Social Security Number [NNN-NN-NNNN]
+    group: gov-id
+    gen: ssn
+    modifiers:
+      - plain
+  - id: f00110
+    name: passport
+    description: Passport number with country-appropriate format
+    group: gov-id
+    gen: passport
+    modifiers:
+      - international
+      - internal
+  - id: f00111
+    name: drivers-license
+    description: US driver's license number, state-format-aware
+    group: gov-id
+    gen: drivers_license
+  - id: f00112
+    name: national-id
+    description: Generic national identity number for configurable country
+    group: gov-id
+    gen: national_id
+  - id: f00113
+    name: cpf
+    description: Brazil Cadastro de Pessoa Fisica [NNN.NNN.NNN-NN]
+    group: gov-id
+    gen: cpf
+    modifiers:
+      - plain
+  - id: f00114
+    name: sin
+    description: Canada Social Insurance Number [NNN-NNN-NNN]
+    group: gov-id
+    gen: sin
+  - id: f00115
+    name: tfn
+    description: Australia Tax File Number [NNN NNN NNN]
+    group: gov-id
+    gen: tfn
+  - id: f00116
+    name: nino
+    description: UK National Insurance Number [AA NNNNNN A]
+    group: gov-id
+    gen: nino
+  - id: f00117
+    name: nhs-number
+    description: UK National Health Service number [NNN NNN NNNN]
+    group: gov-id
+    gen: nhs_number
+  - id: f00118
+    name: nir
+    description: France national ID registration number [13 digits + key]
+    group: gov-id
+    gen: nir
+  - id: f00119
+    name: codice-fiscale
+    description: Italy fiscal code [16 alphanumeric chars]
+    group: gov-id
+    gen: codice_fiscale
+  - id: f00120
+    name: dni
+    description: Spain Documento Nacional de Identidad [8 digits + letter]
+    group: gov-id
+    gen: dni
+  - id: f00121
+    name: nie
+    description: Spain foreigner identification number [X/Y/Z + 7 digits + letter]
+    group: gov-id
+    gen: nie
+  - id: f00122
+    name: bsn
+    description: Netherlands Burgerservicenummer [9 digits]
+    group: gov-id
+    gen: bsn
+  - id: f00123
+    name: personnummer
+    description: Sweden personal identity number [YYYYMMDD-NNNN]
+    group: gov-id
+    gen: personnummer
+  - id: f00124
+    name: steuer-id
+    description: Germany tax identification number [11 digits]
+    group: gov-id
+    gen: steuer_id
+  - id: f00125
+    name: cuil
+    description: Argentina labor identification code [NN-NNNNNNNN-N]
+    group: gov-id
+    gen: cuil
+  - id: f00126
+    name: jmbg
+    description: Former Yugoslavia unique master citizen number [13 digits]
+    group: gov-id
+    gen: jmbg
+  - id: f00127
+    name: tc-kimlik
+    description: Turkey national identity number [11 digits]
+    group: gov-id
+    gen: tc_kimlik
+  - id: f00128
+    name: pesel
+    description: Poland national identification number [11 digits]
+    group: gov-id
+    gen: pesel
+  - id: f00129
+    name: curp
+    description: Mexico population registry key [18 alphanumeric chars]
+    group: gov-id
+    gen: curp
+  - id: f00130
+    name: rut
+    description: Chile unique tax role number [NN.NNN.NNN-D]
+    group: gov-id
+    gen: rut
+  - id: f00131
+    name: inn
+    description: Russia taxpayer identification number [10 or 12 digits]
+    group: gov-id
+    gen: inn
+  - id: f00132
+    name: ipn
+    description: Ukraine individual tax number [10 digits]
+    group: gov-id
+    gen: ipn
+  - id: f00133
+    name: abn
+    description: Australia Business Number [11 digits]
+    group: gov-id
+    gen: abn
+  - id: f00134
+    name: cnpj
+    description: Brazil corporate taxpayer registry [NN.NNN.NNN/NNNN-NN]
+    group: gov-id
+    gen: cnpj
+    modifiers:
+      - plain
+  - id: f00135
+    name: oib
+    description: Croatia personal identification number [11 digits]
+    group: gov-id
+    gen: oib
+  - id: f00136
+    name: amka
+    description: Greece social security number [11 digits]
+    group: gov-id
+    gen: amka
+  - id: f00137
+    name: rodne-cislo
+    description: Czech/Slovakia birth number [NNNNNN/NNNN]
+    group: gov-id
+    gen: rodne_cislo
+  - id: f00138
+    name: szemelyi-szam
+    description: Hungary personal identification number [N-NNNNNN-A]
+    group: gov-id
+    gen: szemelyi_szam
+  - id: f00139
+    name: hetu
+    description: Finland personal identity code [DDMMYY-NNNC]
+    group: gov-id
+    gen: hetu
+  - id: f00140
+    name: cpr
+    description: Denmark civil registration number [DDMMYY-NNNN]
+    group: gov-id
+    gen: cpr
+  - id: f00141
+    name: fodselsnummer
+    description: Norway national identity number [11 digits]
+    group: gov-id
+    gen: fodselsnummer
+  - id: f00142
+    name: pps
+    description: Ireland Personal Public Service number [NNNNNNNAA]
+    group: gov-id
+    gen: pps
+  - id: f00143
+    name: emso
+    description: Slovenia unique master citizen number [13 digits]
+    group: gov-id
+    gen: emso
+  - id: f00144
+    name: egn
+    description: Bulgaria Unified Civil Number [10 digits]
+    group: gov-id
+    gen: egn
+  - id: f00145
+    name: idnp
+    description: Moldova personal identification number [13 digits]
+    group: gov-id
+    gen: idnp
+  - id: f00146
+    name: health-card
+    description: Provincial health insurance card number (Canada)
+    group: gov-id
+    gen: health_card
+  - id: f00147
+    name: cedula
+    description: Colombia/Ecuador/Venezuela national ID card number
+    group: gov-id
+    gen: cedula
+  - id: f00148
+    name: aadhaar
+    description: India unique identity number [NNNN NNNN NNNN]
+    group: gov-id
+    gen: aadhaar
+  - id: f00149
+    name: pan
+    description: India Permanent Account Number [AAAAA9999A]
+    group: gov-id
+    gen: pan
+  - id: f00150
+    name: cccd
+    description: Vietnam citizen identity card number [12 digits]
+    group: gov-id
+    gen: cccd
+  - id: f00151
+    name: shenfenzheng
+    description: China resident identity card number [18 digits]
+    group: gov-id
+    gen: shenfenzheng
+  - id: f00152
+    name: ip
+    description: IPv4 address in dotted-decimal notation (192.168.1.42)
+    group: internet
+    gen: ip
+  - id: f00153
+    name: ipv6
+    description: Full IPv6 address [8 colon-separated hextets]
+    group: internet
+    gen: ipv6
+  - id: f00154
+    name: mac
+    description: MAC address [AA:BB:CC:DD:EE:FF]
+    group: internet
+    gen: mac
+    modifiers:
+      - plain
+      - dot
+  - id: f00155
+    name: url
+    description: Well-formed URL with scheme, host, and path
+    group: internet
+    gen: url
+    modifiers:
+      - http
+      - https
+      - ftp
+      - ws
+      - wss
+      - ssh
+  - id: f00156
+    name: auth-url
+    description: URL with embedded credentials (scheme://user:pass@host/path)
+    group: internet
+    gen: auth_url
+  - id: f00157
+    name: internal-url
+    description: Private-network URL targeting RFC 1918 or localhost
+    group: internet
+    gen: internal_url
+  - id: f00158
+    name: dns-record
+    description: DNS resource record line (A, AAAA, CNAME, MX)
+    group: internet
+    gen: dns_record
+  - id: f00159
+    name: browser-cookie
+    description: HTTP Set-Cookie header value with name, value, and attributes
+    group: internet
+    gen: browser_cookie
+  - id: f00160
+    name: user-agent
+    description: Browser or bot User-Agent header string
+    group: internet
+    gen: user_agent
+  - id: f00161
+    name: mime-type
+    description: IANA media type (application/json, image/png)
+    group: internet
+    gen: mime_type
+  - id: f00162
+    name: http-method
+    description: HTTP request method (GET, POST, PUT, DELETE)
+    group: internet
+    gen: http_method
+  - id: f00163
+    name: http-status
+    description: HTTP response status code with reason (200 OK, 404 Not Found)
+    group: internet
+    gen: http_status
+  - id: f00214
+    name: port
+    description: TCP/UDP port number with weighted service distribution
+    group: internet
+    gen: port
+    modifiers:
+      - system
+      - registered
+      - dynamic
+      - unprivileged
+      - service
+  - id: f00215
+    name: latency
+    description: Response latency in milliseconds, log-normal distribution (1-30000)
+    group: internet
+    gen: latency
+    modifiers:
+      - fast
+      - slow
+      - seconds
+    ordering: true
+  - id: f00164
+    name: image-url
+    description: Placeholder image URL with configurable aspect ratio
+    group: internet
+    gen: image_url
+    modifiers:
+      - 1x1
+      - 4x3
+      - 3x2
+      - 16x9
+      - 21x9
+      - 9x16
+      - 3x4
+      - 2x3
+  - id: f00165
+    name: twitter-url
+    description: X/Twitter profile or post URL (https://x.com/...)
+    group: internet
+    gen: twitter_url
+  - id: f00166
+    name: linkedin-url
+    description: LinkedIn profile URL (https://linkedin.com/in/...)
+    group: internet
+    gen: linkedin_url
+  - id: f00167
+    name: facebook-url
+    description: Facebook profile URL (https://facebook.com/...)
+    group: internet
+    gen: facebook_url
+  - id: f00168
+    name: instagram-url
+    description: Instagram profile URL (https://instagram.com/...)
+    group: internet
+    gen: instagram_url
+  - id: f00169
+    name: github-url
+    description: GitHub user or repo URL (https://github.com/...)
+    group: internet
+    gen: github_url
+  - id: f00170
+    name: telegram-url
+    description: Telegram profile or invite URL (https://t.me/...)
+    group: internet
+    gen: telegram_url
+  - id: f00171
+    name: youtube-url
+    description: YouTube video or channel URL (https://youtube.com/...)
+    group: internet
+    gen: youtube_url
+  - id: f00172
+    name: webhook-url
+    description: Generic webhook endpoint URL with token path
+    group: internet
+    gen: webhook_url
+  - id: f00173
+    name: btc-address
+    description: Bitcoin address, P2PKH or Bech32 format (1..., bc1...)
+    group: blockchain
+    gen: btc_address
+  - id: f00174
+    name: eth-address
+    description: Ethereum address with EIP-55 checksum [0x + 40 hex chars]
+    group: blockchain
+    gen: eth_address
+  - id: f00175
+    name: sol-address
+    description: Solana base58-encoded public key [32-44 chars]
+    group: blockchain
+    gen: sol_address
+  - id: f00176
+    name: tx-hash
+    description: Blockchain transaction hash [hex, 64 chars]
+    group: blockchain
+    gen: tx_hash
+    modifiers:
+      - btc
+  - id: f00177
+    name: pgp-fingerprint
+    description: PGP key fingerprint [40 hex chars, space-grouped]
+    group: blockchain
+    gen: pgp_fingerprint
+  - id: f00178
+    name: company-name
+    description: Business name with optional suffix (Inc, LLC, GmbH)
+    group: organization
+    gen: company_name
+  - id: f00179
+    name: ein
+    description: US Employer Identification Number [NN-NNNNNNN]
+    group: organization
+    gen: ein
+  - id: f00180
+    name: vat-number
+    description: EU Value Added Tax identification number with country prefix
+    group: organization
+    gen: vat_number
+  - id: f00181
+    name: duns
+    description: Dun & Bradstreet business identifier [9 digits]
+    group: organization
+    gen: duns
+  - id: f00182
+    name: lei
+    description: Legal Entity Identifier [20 alphanumeric chars]
+    group: organization
+    gen: lei
+  - id: f00183
+    name: job-title
+    description: Professional role title (Senior Engineer, Product Manager)
+    group: organization
+    gen: job_title
+  - id: f00184
+    name: ldap-dn
+    description: LDAP distinguished name (cn=John,ou=Users,dc=example,dc=com)
+    group: organization
+    gen: ldap_dn
+  - id: f00185
+    name: employee-id
+    description: Internal employee identifier [alphanumeric, prefixed]
+    group: organization
+    gen: employee_id
+  - id: f00186
+    name: court-case
+    description: US federal court case number (1:24-cv-01234)
+    group: organization
+    gen: court_case
+  - id: f00187
+    name: mrn
+    description: Medical Record Number, facility-scoped [alphanumeric]
+    group: healthcare
+    gen: mrn
+  - id: f00188
+    name: npi
+    description: US National Provider Identifier [10 digits, Luhn-valid]
+    group: healthcare
+    gen: npi
+  - id: f00189
+    name: insurance-id
+    description: Health insurance member or policy ID [alphanumeric]
+    group: healthcare
+    gen: insurance_id
+  - id: f00190
+    name: medicare-id
+    description: US Medicare Beneficiary Identifier [11 alphanumeric chars]
+    group: healthcare
+    gen: medicare_id
+  - id: f00191
+    name: icd-10
+    description: ICD-10 diagnosis code (A00.0, J06.9, M54.5)
+    group: healthcare
+    gen: icd_10
+  - id: f00192
+    name: cpt-code
+    description: CPT medical procedure code [5 digits]
+    group: healthcare
+    gen: cpt_code
+  - id: f00193
+    name: ndc
+    description: US National Drug Code [NNNNN-NNNN-NN]
+    group: healthcare
+    gen: ndc
+  - id: f00194
+    name: rx-number
+    description: Pharmacy prescription number [7-12 digits]
+    group: healthcare
+    gen: rx_number
+  - id: f00195
+    name: project-code
+    description: Short project identifier with prefix (PRJ-0042, ACME-117)
+    group: dev
+    gen: project_code
+  - id: f00196
+    name: jira-id
+    description: Jira issue key [PROJECT-NNNN]
+    group: dev
+    gen: jira_id
+  - id: f00197
+    name: github-issue
+    description: GitHub issue reference (owner/repo#1234)
+    group: dev
+    gen: github_issue
+  - id: f00198
+    name: commit-hash
+    description: Git commit SHA-1 hash [hex, 40 chars]
+    group: dev
+    gen: commit_hash
+  - id: f00199
+    name: semver
+    description: Semantic version string (1.4.2, 0.12.0-beta.3)
+    group: dev
+    gen: semver
+  - id: f00200
+    name: docker-image
+    description: Docker image reference with registry, name, and tag
+    group: ops
+    gen: docker_image
+  - id: f00201
+    name: slack-channel
+    description: "Slack channel name with # prefix (#engineering, #alerts)"
+    group: ops
+    gen: slack_channel
+  - id: f00202
+    name: sentry-issue
+    description: Sentry issue identifier [PROJECT-HASH]
+    group: ops
+    gen: sentry_issue
+  - id: f00203
+    name: pagerduty-incident
+    description: PagerDuty incident ID [alphanumeric, 7+ chars]
+    group: ops
+    gen: pagerduty_incident
+  - id: f00204
+    name: file-path
+    description: Unix-style absolute file path (/var/log/app/server.log)
+    group: ops
+    gen: file_path
+  - id: f00205
+    name: s3-path
+    description: AWS S3 object URI (s3://bucket-name/key/path)
+    group: ops
+    gen: s3_path
+  - id: f00206
+    name: env-var
+    description: Environment variable assignment (DATABASE_URL=postgres://...)
+    group: ops
+    gen: env_var
+    modifiers:
+      - multi
+  - id: f00207
+    name: vin
+    description: Vehicle Identification Number [17 alphanumeric chars]
+    group: device
+    gen: vin
+  - id: f00208
+    name: license-plate
+    description: Vehicle registration plate with locale-appropriate format
+    group: device
+    gen: license_plate
+  - id: f00209
+    name: imei
+    description: Mobile device IMEI [15 digits, Luhn-valid]
+    group: device
+    gen: imei
+  - id: f00210
+    name: imsi
+    description: Mobile subscriber identity [15 digits, MCC+MNC prefix]
+    group: device
+    gen: imsi
+  - id: f00211
+    name: device-id
+    description: Opaque hardware or app-instance identifier [UUID or hex]
+    group: device
+    gen: device_id

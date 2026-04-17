@@ -1,0 +1,24 @@
+[package]
+name = "seedfaker-napi"
+version = "0.3.0-alpha.2"
+edition = "2021"
+rust-version.workspace = true
+authors = ["Eduard Titov <editied@gmail.com>"]
+description = "NAPI-RS bindings for seedfaker-core"
+license = "MIT"
+readme = "../../README.md"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+seedfaker-core = { path = "../core", version = "0.3.0-alpha.2" }
+napi = { version = "3", features = ["napi6"] }
+napi-derive = "3"
+
+[build-dependencies]
+napi-build = "2"
+
+[lints]
+workspace = true

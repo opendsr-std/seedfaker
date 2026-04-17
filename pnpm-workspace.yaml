@@ -1,0 +1,4 @@
+packages:
+  - packages/npm
+  - packages/npm-cli
+  - packages/wasm

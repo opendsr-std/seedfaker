@@ -1,0 +1,33 @@
+{
+  "name": "opendsr/seedfaker",
+  "description": "Deterministic synthetic data generator — 200+ fields, 68 locales",
+  "type": "library",
+  "license": "MIT",
+  "version": "0.3.0-alpha.2",
+  "require": {
+    "php": ">=8.1",
+    "ext-ffi": "*"
+  },
+  "keywords": [
+    "faker",
+    "fake-data",
+    "synthetic-data",
+    "mock-data",
+    "test-data",
+    "data-generator",
+    "deterministic",
+    "pii",
+    "fixtures",
+    "locale"
+  ],
+  "autoload": {
+    "psr-4": {
+      "Seedfaker\\": "src/"
+    }
+  },
+  "homepage": "https://github.com/opendsr-std/seedfaker",
+  "support": {
+    "issues": "https://github.com/opendsr-std/seedfaker/issues",
+    "source": "https://github.com/opendsr-std/seedfaker"
+  }
+}

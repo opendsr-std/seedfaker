@@ -1,0 +1,212 @@
+columns:
+  type: enum:reply=20,forward=12,internal=10,cc_thread=10,auto_reply=8,delivery_fail=5,calendar=8,escalation=5,onboarding=4,security=6,newsletter=6,invoice=6
+  from_name: name
+  from_email: email
+  to_name: name
+  to_email: email
+  cc_name: name
+  cc_email: email
+  mgr_name: name
+  mgr_email: email
+  subject: message
+  body: message
+  date: timestamp
+  ticket: jira-id
+  phone: phone
+  company: company-name
+  dept: enum:Engineering,Product,Sales,Marketing,HR,Finance,Legal,Support,DevOps,Security
+  domain: enum:acme.com,globex.net,initech.io,umbrella.co,waystar.dev
+
+template: |
+  {{#if type == "reply"}}
+  From: {{from_name}} <{{from_email}}>
+  To: {{to_name}} <{{to_email}}>
+  Date: {{date}}
+  Subject: Re: {{ticket}} — {{subject}}
+  Content-Type: text/plain; charset=UTF-8
+
+  Hi {{to_name}},
+
+  {{body}}
+
+  Best regards,
+  {{from_name}}
+  {{#elif type == "forward"}}
+  From: {{from_name}} <{{from_email}}>
+  To: {{mgr_name}} <{{mgr_email}}>
+  Date: {{date}}
+  Subject: Fwd: {{subject}}
+  Content-Type: text/plain; charset=UTF-8
+
+  FYI — forwarding this from {{to_name}}.
+
+  ---------- Forwarded message ----------
+  From: {{to_name}} <{{to_email}}>
+  Date: {{date}}
+  Subject: {{subject}}
+
+  {{body}}
+  {{#elif type == "internal"}}
+  From: {{from_name}} <{{login-name}}@{{domain}}>
+  To: {{dept}} <{{login-name}}@{{domain}}>
+  Date: {{date}}
+  Subject: [Internal] {{subject}}
+  X-Internal: true
+  Content-Type: text/plain; charset=UTF-8
+
+  Team,
+
+  {{body}}
+
+  — {{from_name}}, {{dept}}
+  {{#elif type == "cc_thread"}}
+  From: {{from_name}} <{{from_email}}>
+  To: {{to_name}} <{{to_email}}>
+  Cc: {{cc_name}} <{{cc_email}}>, {{mgr_name}} <{{mgr_email}}>
+  Date: {{date}}
+  Subject: Re: Re: {{ticket}} — {{subject}}
+  Content-Type: text/plain; charset=UTF-8
+  References: <{{uuid}}@mail.{{domain}}>
+
+  +{{cc_name}} for visibility.
+
+  {{body}}
+
+  On {{date}}, {{to_name}} wrote:
+  > {{message}}
+  {{#elif type == "auto_reply"}}
+  From: {{from_name}} <{{from_email}}>
+  To: {{to_name}} <{{to_email}}>
+  Date: {{date}}
+  Subject: Out of Office: Re: {{subject}}
+  X-Auto-Response-Suppress: All
+  Auto-Submitted: auto-replied
+  Content-Type: text/plain; charset=UTF-8
+
+  I am currently out of the office with limited access to email. I will return on {{date}}.
+
+  For urgent matters, please contact {{cc_name}} <{{cc_email}}> or call {{phone}}.
+
+  Best,
+  {{from_name}}
+  {{#elif type == "delivery_fail"}}
+  From: Mail Delivery System <MAILER-DAEMON@{{domain}}>
+  To: {{from_name}} <{{from_email}}>
+  Date: {{date}}
+  Subject: Undelivered Mail Returned to Sender
+  Content-Type: multipart/report; report-type=delivery-status
+
+  This is the mail system at host mx.{{domain}}.
+
+  Your message to {{to_email}} could not be delivered.
+  The recipient's mailbox is full or the address does not exist.
+
+  --- Original message ---
+  From: {{from_name}} <{{from_email}}>
+  To: {{to_email}}
+  Subject: {{subject}}
+  Date: {{date}}
+  {{#elif type == "calendar"}}
+  From: {{from_name}} <{{from_email}}>
+  To: {{to_name}} <{{to_email}}>
+  Cc: {{cc_name}} <{{cc_email}}>
+  Date: {{date}}
+  Subject: Invitation: {{subject}} @ {{date}}
+  Content-Type: text/calendar; method=REQUEST; charset=UTF-8
+
+  BEGIN:VCALENDAR
+  METHOD:REQUEST
+  BEGIN:VEVENT
+  DTSTART:{{date}}T14:00:00Z
+  DTEND:{{date}}T15:00:00Z
+  SUMMARY:{{subject}}
+  ORGANIZER;CN={{from_name}}:mailto:{{from_email}}
+  ATTENDEE;CN={{to_name}}:mailto:{{to_email}}
+  ATTENDEE;CN={{cc_name}}:mailto:{{cc_email}}
+  UID:{{uuid}}
+  END:VEVENT
+  END:VCALENDAR
+  {{#elif type == "escalation"}}
+  From: {{from_name}} <{{from_email}}>
+  To: {{mgr_name}} <{{mgr_email}}>
+  Cc: {{to_name}} <{{to_email}}>
+  Date: {{date}}
+  Subject: [URGENT] Escalation: {{ticket}} — {{subject}}
+  X-Priority: 1
+  Content-Type: text/plain; charset=UTF-8
+
+  Hi {{mgr_name}},
+
+  Escalating {{ticket}} — no response from {{to_name}} since {{date}}. Customer impact: {{body}}
+
+  Please advise on next steps.
+
+  {{from_name}}
+  {{dept}} | {{phone}}
+  {{#elif type == "onboarding"}}
+  From: HR Team <hr@{{domain}}>
+  To: {{to_name}} <{{to_email}}>
+  Cc: {{mgr_name}} <{{mgr_email}}>
+  Date: {{date}}
+  Subject: Welcome to {{company}}!
+  Content-Type: text/html; charset=UTF-8
+
+  <p>Hi {{to_name}},</p>
+  <p>Welcome to <b>{{company}}</b>! Your employee ID is {{employee-id}} and you've been assigned to {{dept}}.</p>
+  <p>Your manager {{mgr_name}} ({{mgr_email}}) will reach out to schedule your first week.</p>
+  <p>IT credentials will be sent separately. If you have questions, call {{phone}}.</p>
+  <p>— HR Team</p>
+  {{#elif type == "security"}}
+  From: Security <no-reply@{{domain}}>
+  To: {{to_name}} <{{to_email}}>
+  Date: {{date}}
+  Subject: [Security Alert] Unusual sign-in from {{ip}}
+  X-Priority: 2
+  Content-Type: text/plain; charset=UTF-8
+
+  We detected a sign-in to your account from an unrecognized device.
+
+  IP: {{ip}}
+  Location: {{city}}, {{country}}
+  Browser: {{user-agent}}
+  Time: {{date}}
+
+  If this was you, no action is needed. Otherwise, reset your password immediately.
+
+  — {{company}} Security Team
+  {{#elif type == "newsletter"}}
+  From: {{company}} <news@{{domain}}>
+  To: {{to_name}} <{{to_email}}>
+  Date: {{date}}
+  Subject: {{company}} Weekly — {{subject}}
+  List-Unsubscribe: <https://{{domain}}/unsubscribe/{{uuid}}>
+  Content-Type: text/html; charset=UTF-8
+
+  <h2>{{company}} Weekly Update</h2>
+  <p>{{body}}</p>
+  <p><a href="https://{{domain}}/post/{{hex}}">Read more</a></p>
+  <hr>
+  <small>You received this because you subscribed at {{domain}}. <a href="https://{{domain}}/unsubscribe/{{uuid}}">Unsubscribe</a></small>
+  {{else}}
+  From: {{company}} Billing <billing@{{domain}}>
+  To: {{to_name}} <{{to_email}}>
+  Date: {{date}}
+  Subject: Invoice #{{employee-id}} — {{amount:usd}}
+  Content-Type: text/plain; charset=UTF-8
+
+  Dear {{to_name}},
+
+  Please find attached invoice #{{employee-id}} for {{amount:usd}}.
+  Payment is due by {{date}}.
+
+  Wire to: {{iban}}
+  Reference: {{ticket}}
+
+  Thank you,
+  {{company}} Finance
+  {{/if}}
+
+options:
+  count: 500
+  since: "2025-01-01"
+  until: "2025-03-29"

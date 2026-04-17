@@ -1,0 +1,5 @@
+28/Mar/2025:00:00:05 +0000 api-01 sshd[26545]: Failed password for invalid user jorina_chowdhury02 from 17.86.254.26 port 51215 ssh2
+{"ts":"2025-07-18T06:39:53Z","level":"warn","service":"gcr.io/data/gateway:v4.26.2","user":"Khaled Hamdi El-Menshawy","email":"alblooshi.331@outlook.com","ssn":"17363563817","card":"6011 3751 3988 8572","ip":"112.95.111.88","trace":"e18f85fcba514abe80a19e4301b46d1b","msg":"Quis commodo magna exercitation dolore laboris"}
+28/Mar/2025:00:00:49 +0000 bastion-01 sshd[28359]: Failed password for invalid user fuentesxd from 156.211.44.137 port 15114 ssh2
+28/Mar/2025:00:01:12 +0000 api-01 sshd[11810]: Failed password for invalid user myandrew79 from 173.62.120.190 port 53385 53385 ssh2
+34.51.201.184 - heleen_postmao1 [28/Mar/2025:00:01:39 +0000] "HEAD https://portal.corp.net/v3/auth/token HTTP/1.1" 503 304023 "https://gateway.cloud.dev/v3/users" "curl/8.4.0" 11.47

@@ -1,0 +1,8 @@
+28/Mar/2025:00:00:05 +0000 [14450] app_readonly@orders LOG:  duration: 201.15 ms  statement: SELECT id, full_name, email, phone, created_at FROM users WHERE email = 'fridrich49@hotmail.com' LIMIT 1;
+28/Mar/2025:00:00:28 +0000 [31985] app_readwrite@auth ERROR:  deadlock detected
+28/Mar/2025:00:00:28 +0000 [31985] app_readwrite@auth DETAIL:  Process 31985 waits for ShareLock on transaction 462186; blocked by process 19621.
+28/Mar/2025:00:00:28 +0000 [31985] app_readwrite@auth HINT:  See server log for query details.
+28/Mar/2025:00:00:28 +0000 [31985] app_readwrite@auth STATEMENT:  UPDATE inventory SET quantity = quantity - 1 WHERE sku = '1ew0B3Ei9fW7x' AND quantity > 0;
+28/Mar/2025:00:00:49 +0000 [30159] pgbouncer@analytics LOG:  duration: 84.95 ms  statement: SELECT id, full_name, email, phone, created_at FROM users WHERE email = 'zhivkokj@netbg.com' LIMIT 1;
+28/Mar/2025:00:01:12 +0000 [4313] grafana_ro@orders LOG:  duration: 458.09 ms  statement: UPDATE users SET last_login = now(), login_count = login_count + 1 WHERE email = 'viktor.treier4875@kuutona.ee';
+28/Mar/2025:00:01:39 +0000 [9681] grafana_ro@customers LOG:  duration: 270.96 ms  statement: UPDATE users SET last_login = now(), login_count = login_count + 1 WHERE email = 'blanka.franekx9@yahoo.com';

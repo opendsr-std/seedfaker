@@ -1,0 +1,2 @@
+# SC2086: word splitting — intentional in benchmark scripts for field lists
+# Disabled per-line with # shellcheck disable=SC2086

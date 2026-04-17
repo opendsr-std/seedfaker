@@ -1,0 +1,43 @@
+{
+  "name": "@opendsr/seedfaker-cli",
+  "version": "0.3.0-alpha.2",
+  "description": "CLI for seedfaker — deterministic synthetic data generator",
+  "license": "MIT",
+  "author": "Eduard Titov <editied@gmail.com>",
+  "homepage": "https://github.com/opendsr-std/seedfaker",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/opendsr-std/seedfaker",
+    "directory": "packages/npm-cli"
+  },
+  "bin": {
+    "seedfaker": "bin/seedfaker.js"
+  },
+  "files": [
+    "bin/",
+    "LICENSE",
+    "README.md"
+  ],
+  "optionalDependencies": {
+    "@opendsr/seedfaker-darwin-arm64": "0.3.0-alpha.2",
+    "@opendsr/seedfaker-darwin-x64": "0.3.0-alpha.2",
+    "@opendsr/seedfaker-linux-x64": "0.3.0-alpha.2",
+    "@opendsr/seedfaker-linux-arm64": "0.3.0-alpha.2",
+    "@opendsr/seedfaker-win32-x64": "0.3.0-alpha.2"
+  },
+  "keywords": [
+    "faker",
+    "fake-data",
+    "synthetic-data",
+    "mock-data",
+    "test-data",
+    "data-generator",
+    "deterministic",
+    "pii",
+    "fixtures",
+    "locale"
+  ],
+  "engines": {
+    "node": ">=22"
+  }
+}

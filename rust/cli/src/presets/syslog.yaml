@@ -1,0 +1,47 @@
+columns:
+  type: enum:http_request=20,auth_event=12,db_query=10,cache_op=8,queue_event=8,grpc_call=6,cron_job=5,rate_limit=5,health_check=4,deploy=4,config_change=3,secret_access=5,audit_trail=5,webhook=5
+  ts: timestamp:asc
+  host: enum:api-01=15,api-02=15,worker-01=12,worker-02=12,web-01=10,web-02=10,cron-01=8,gateway-01=8,auth-01=5,db-proxy-01=5
+  svc: enum:api-gateway=20,user-service=18,order-service=15,payment-service=12,notification-service=10,auth-service=10,search-service=8,analytics-service=7
+  name: name
+  email: email
+  phone: phone
+  ip: ip
+  uid: uuid:plain
+  trace: uuid:plain
+
+template: |
+  {{#if type == "http_request"}}
+  ts={{ts}} level=info host={{host}} service={{svc}} trace_id={{trace}} msg="request completed" method={{http-method}} path={{url}} status={{http-status}} latency_ms={{latency}} ip={{ip}} user_id={{uid}} user_agent="{{user-agent}}"
+  {{#elif type == "auth_event"}}
+  ts={{ts}} level={{enum:info=70,warn=20,error=10}} host={{host}} service=auth-service trace_id={{trace}} msg="{{enum:login_success=40,login_failed=25,token_refreshed=15,password_reset=10,mfa_challenge=5,account_locked=5}}" user_email={{email}} user_name="{{name}}" ip={{ip}} user_agent="{{user-agent}}" session_id={{session-id}} country={{country-code}}
+  {{#elif type == "db_query"}}
+  ts={{ts}} level={{enum:info=80,warn=15,error=5}} host={{host}} service={{svc}} trace_id={{trace}} msg="query executed" db={{enum:postgres=50,mysql=30,redis=20}} duration_ms={{latency}} query="SELECT id, email, phone FROM users WHERE email='{{email}}'" rows_affected={{integer:0..1000}} user_id={{uid}}
+  {{#elif type == "cache_op"}}
+  ts={{ts}} level=debug host={{host}} service={{svc}} trace_id={{trace}} msg="cache {{enum:hit=60,miss=30,evict=10}}" backend=redis key="user:{{uid}}:profile" ttl_s={{integer:60..86400}} latency_ms={{integer:0..50}}
+  {{#elif type == "queue_event"}}
+  ts={{ts}} level=info host={{host}} service={{svc}} trace_id={{trace}} msg="{{enum:message_published=40,message_consumed=40,message_dlq=10,message_retry=10}}" queue={{enum:user-events=25,order-events=25,payment-events=20,notification-events=15,audit-events=15}} message_id={{uuid:plain}} user_id={{uid}} payload_bytes={{integer:100..65536}}
+  {{#elif type == "grpc_call"}}
+  ts={{ts}} level={{enum:info=85,error=15}} host={{host}} service={{svc}} trace_id={{trace}} span_id={{hex:short}} msg="grpc call" method=/{{svc}}.{{enum:UserService,OrderService,PaymentService}}/{{enum:GetUser,CreateOrder,ProcessPayment,VerifyIdentity}} status={{enum:OK=80,INTERNAL=8,NOT_FOUND=5,UNAVAILABLE=4,DEADLINE_EXCEEDED=3}} latency_ms={{latency}} user_id={{uid}}
+  {{#elif type == "cron_job"}}
+  ts={{ts}} level={{enum:info=85,warn=10,error=5}} host={{host}} service=cron-scheduler msg="job {{enum:completed=75,failed=15,skipped=10}}" job={{enum:cleanup_sessions=20,send_reminders=20,sync_analytics=15,expire_tokens=15,generate_reports=15,vacuum_db=15}} duration_s={{integer:1..300}} records_processed={{integer:0..100000}}
+  {{#elif type == "rate_limit"}}
+  ts={{ts}} level=warn host={{host}} service=api-gateway trace_id={{trace}} msg="rate limit exceeded" ip={{ip}} user_id={{uid}} user_email={{email}} endpoint={{url}} limit=100 window_s=60 current={{integer:101..500}}
+  {{#elif type == "health_check"}}
+  ts={{ts}} level={{enum:info=90,warn=8,error=2}} host={{host}} service={{svc}} msg="health check" status={{enum:healthy=85,degraded=10,unhealthy=5}} uptime_s={{integer:1..8640000}} memory_mb={{integer:128..4096}} goroutines={{integer:10..5000}} db_latency_ms={{integer:1..200}} redis_latency_ms={{integer:0..50}}
+  {{#elif type == "deploy"}}
+  ts={{ts}} level=info host={{host}} service={{svc}} msg="deployment {{enum:started=30,completed=50,rolled_back=20}}" version=v{{integer:1..9}}.{{integer:0..99}}.{{integer:0..999}} commit={{hex:short}} deployer={{email}} previous=v{{integer:1..9}}.{{integer:0..99}}.{{integer:0..999}} replicas={{integer:2..10}}
+  {{#elif type == "config_change"}}
+  ts={{ts}} level=warn host={{host}} service={{svc}} msg="configuration updated" key={{enum:db.max_connections=20,cache.ttl_seconds=20,rate_limit.rpm=15,feature.new_checkout=15,auth.mfa_required=15,smtp.relay_host=15}} old_value="{{alnum:short}}" new_value="{{alnum:short}}" changed_by={{email}} reason="{{message}}"
+  {{#elif type == "secret_access"}}
+  ts={{ts}} level=info host={{host}} service=vault-proxy msg="secret accessed" path=secret/{{enum:prod=40,staging=30,dev=30}}/{{enum:db-credentials=25,api-keys=25,tls-certs=20,smtp-password=15,signing-key=15}} accessor={{email}} ip={{ip}} lease_ttl_s={{integer:300..86400}} version={{integer:1..20}}
+  {{#elif type == "audit_trail"}}
+  ts={{ts}} level=info host={{host}} service={{svc}} trace_id={{trace}} msg="audit event" action={{enum:user.created=15,user.updated=20,user.deleted=5,user.exported=10,record.viewed=20,record.modified=15,permission.granted=8,permission.revoked=7}} actor={{email}} actor_ip={{ip}} target_user={{email}} target_id={{uid}} fields_accessed="{{enum:email=20,phone=20,ssn=15,address=15,name=15,card=15}}"
+  {{else}}
+  ts={{ts}} level=info host={{host}} service={{svc}} trace_id={{trace}} msg="webhook delivered" endpoint={{url}} method=POST status={{integer:200..202}} latency_ms={{latency}} payload_type={{enum:user.updated=25,order.created=25,payment.completed=20,subscription.canceled=15,invoice.sent=15}} user_id={{uid}} user_email={{email}}
+  {{/if}}
+
+options:
+  count: 500
+  since: "2025-03-28"
+  until: "2025-03-29"

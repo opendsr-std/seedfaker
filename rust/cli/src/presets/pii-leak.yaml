@@ -1,0 +1,88 @@
+columns:
+  type: enum:support=20,complaint=15,escalation=10,inquiry=10,chat=15,slack=10,crm_note=10,api_log=10
+  name: name
+  email: email
+  phone: phone
+  ssn: ssn
+  card: credit-card:space
+  ip: ip
+  dob: birthdate:1950..2005
+  addr: address
+  company: company-name
+
+template: |
+  {{#if type == "support"}}
+  [TICKET-{{integer:10000..99999}}] Priority: {{enum:Low=40,Medium=35,High=20,Urgent=5}}
+  Customer: {{name}} ({{email}})
+  Phone: {{phone}} | DOB: {{dob}}
+  Account: {{uuid:plain}}
+  Issue: Unable to login to account. Customer verified identity with last 4 of SSN ({{digits:4}}) and DOB.
+  Resolution: Password reset link sent to {{email}}. Advised customer to update recovery phone from {{phone}}.
+  {{#elif type == "complaint"}}
+  [COMPLAINT-{{integer:10000..99999}}] Severity: {{enum:Minor=30,Major=50,Critical=20}}
+  From: {{name}} <{{email}}>
+
+  I was charged ${{integer:10..9999}}.99 on my card ending in {{digits:4}} (full number: {{card}}).
+  My SSN is {{ssn}} — please use this for identity verification. Call me at {{phone}}.
+  Billing address: {{addr}}
+
+  -- Customer since {{date:2015..2024}}
+  {{#elif type == "escalation"}}
+  [ESCALATION] Ticket: {{jira-id}} | Priority: CRITICAL
+  Customer: {{name}}
+  Email: {{email}}
+  Phone: {{phone}}
+  SSN: {{ssn}}
+  Card on file: {{card}}
+  DOB: {{dob}}
+  Address: {{addr}}
+  Company: {{company}}
+  IP at time of incident: {{ip}}
+  Agent notes: Customer requested full account deletion under GDPR Art. 17.
+  All PII must be purged within 30 days. Legal has been notified.
+  {{#elif type == "chat"}}
+  [{{integer:9..17}}:{{integer:10..59}}] {{name}}: hi, i need help with my account {{email}}
+  [{{integer:9..17}}:{{integer:10..59}}] Agent: Sure, I can help. Can you verify your identity?
+  [{{integer:9..17}}:{{integer:10..59}}] {{name}}: my card is {{card}} and my SSN is {{ssn}}
+  [{{integer:9..17}}:{{integer:10..59}}] Agent: Thank you. I see the account. Let me verify your DOB.
+  [{{integer:9..17}}:{{integer:10..59}}] {{name}}: {{dob}}. my phone number is {{phone}}
+  [{{integer:9..17}}:{{integer:10..59}}] Agent: Verified. I've updated the email from {{email}} to the new one you requested.
+  [{{integer:9..17}}:{{integer:10..59}}] {{name}}: great, the address on file should be {{addr}}
+  [{{integer:9..17}}:{{integer:10..59}}] Agent: Updated. Is there anything else?
+  {{#elif type == "slack"}}
+  #incident-{{integer:100..999}} | {{timestamp}}
+  @{{username}}: Hey team, customer {{name}} ({{email}}) is reporting unauthorized access from {{ip}}.
+  @{{username}}: I see their SSN {{ssn}} in the old verification log. That shouldn't be there.
+  @{{username}}: Card {{card}} was used for the disputed charge. Forwarding to fraud team.
+  @{{username}}: DOB {{dob}}, phone {{phone}}. Adding to the incident report.
+  @{{username}}: JIRA ticket created: {{jira-id}}
+  {{#elif type == "crm_note"}}
+  --- CRM Note | {{timestamp}} | Agent: {{username}} ---
+  Contact: {{name}} <{{email}}>
+  Phone: {{phone}} | Mobile: {{phone}}
+  Address: {{addr}}
+  SSN: {{ssn}} | DOB: {{dob}}
+  Company: {{company}} ({{ein}})
+  Notes: Customer called re: billing dispute on card {{card}}.
+  Refund of ${{integer:10..999}}.00 processed. Customer verified via SSN + DOB.
+  Follow-up scheduled for {{date:2025..2026}}.
+  {{#elif type == "api_log"}}
+  {{timestamp}} [WARN] PII detected in request body
+  POST /api/v1/users/verify HTTP/1.1
+  Host: api.{{company}}.com
+  X-Request-ID: {{uuid:plain}}
+  X-Forwarded-For: {{ip}}
+  Content-Type: application/json
+
+  {"full_name":"{{name}}","email":"{{email}}","ssn":"{{ssn}}","phone":"{{phone}}","dob":"{{dob}}","address":"{{addr}}","card_number":"{{credit-card}}"}
+  {{else}}
+  [INQUIRY-{{integer:10000..99999}}] {{name}} <{{email}}>:
+  Can you confirm the address on file? My current address is {{addr}}.
+  Phone: {{phone}}. Please update if different from what you have.
+  {{/if}}
+
+options:
+  count: 500
+  ctx: strict
+  since: "2024"
+  until: "2025"

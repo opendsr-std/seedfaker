@@ -1,0 +1,72 @@
+[workspace]
+members = ["core", "cli", "pyo3", "napi", "ffi", "wasm"]
+resolver = "2"
+
+[workspace.package]
+rust-version = "1.88"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true
+
+[workspace.lints.rust]
+unsafe_code = "deny"
+unused_imports = "deny"
+unused_variables = "deny"
+unused_mut = "deny"
+dead_code = "deny"
+unreachable_code = "deny"
+unused_must_use = "deny"
+elided_lifetimes_in_paths = "deny"
+trivial_numeric_casts = "deny"
+
+[workspace.lints.clippy]
+# Baseline: all + pedantic
+all = { level = "deny", priority = -1 }
+pedantic = { level = "deny", priority = -1 }
+
+# Security — hard deny
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+
+# Code quality
+redundant_closure_for_method_calls = "deny"
+semicolon_if_nothing_returned = "deny"
+inconsistent_struct_constructor = "deny"
+manual_string_new = "deny"
+needless_for_each = "deny"
+implicit_clone = "deny"
+cloned_instead_of_copied = "deny"
+flat_map_option = "deny"
+unnested_or_patterns = "deny"
+redundant_else = "deny"
+match_wildcard_for_single_variants = "deny"
+needless_continue = "deny"
+map_unwrap_or = "deny"
+verbose_file_reads = "deny"
+inefficient_to_string = "deny"
+macro_use_imports = "deny"
+
+# Allow — justified exceptions
+missing_errors_doc = "allow"        # internal APIs, not public library docs
+missing_panics_doc = "allow"        # no panics allowed (enforced by deny)
+must_use_candidate = "allow"        # data-gen functions: callers always use results
+return_self_not_must_use = "allow"  # builder pattern
+module_name_repetitions = "allow"   # field::Field, opts::RecordOpts — domain clarity
+too_many_lines = "allow"            # generation functions are naturally long
+cast_possible_truncation = "allow"  # controlled truncation in data-gen (u64→u32 for RNG)
+cast_sign_loss = "allow"            # controlled sign in RNG (i64↔u64)
+cast_precision_loss = "allow"       # float conversions in Zipf distribution
+cast_possible_wrap = "allow"        # controlled u64→i64 in RNG range (proven safe by bounds)
+items_after_statements = "allow"    # local helpers after setup
+wildcard_imports = "allow"          # re-exports in mod.rs
+struct_excessive_bools = "allow"    # field modifier flags (generated from YAML)
+fn_params_excessive_bools = "allow" # binding constructors mirror struct bools
+many_single_char_names = "allow"    # math: s, n, x in Zipf/RNG
+similar_names = "allow"             # lo/hi, s/n in algorithms
+needless_pass_by_value = "allow"    # binding boundary: String from FFI/PyO3
+ref_option = "allow"                # Option<&str> in public API
+struct_field_names = "allow"        # domain names match field names
+indexing_slicing = "allow"          # hot loop with pre-validated bounds

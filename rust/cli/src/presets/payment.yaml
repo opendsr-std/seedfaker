@@ -1,0 +1,37 @@
+columns:
+  status: enum:succeeded=60,failed=12,refunded=8,disputed=4,requires_action=6,processing=5,canceled=5
+  ts: timestamp:asc
+  name: name
+  email: email
+  amount: amount:plain
+  currency: enum:usd=50,eur=20,gbp=15,jpy=5,cad=5,aud=5
+  city: city
+  state: state
+  postal: postal-code
+  country: country-code
+  merchant: company-name
+  card_brand: enum:visa=45,mastercard=30,amex=15,discover=10
+  risk: enum:normal=80,elevated=12,highest=5,rule_review=3
+
+template: |
+  {{#if status == "succeeded"}}
+  {"id":"pi_{{hex:long}}","object":"payment_intent","status":"succeeded","amount":{{amount}},"currency":"{{currency}}","customer":{"id":"cus_{{alnum:short}}","name":"{{name}}","email":"{{email}}"},"payment_method":{"type":"card","card":{"brand":"{{card_brand}}","last4":"{{digits:4}}","exp_month":{{integer:1..12}},"exp_year":{{integer:2025..2030}}}},"billing_details":{"city":"{{city}}","state":"{{state}}","postal_code":"{{postal}}","country":"{{country}}"},"merchant":"{{merchant}}","risk":{"level":"{{risk}}","score":{{integer:0..99}}},"created":"{{ts}}","livemode":true}
+  {{#elif status == "failed"}}
+  {"id":"pi_{{hex:long}}","object":"payment_intent","status":"failed","amount":{{amount}},"currency":"{{currency}}","customer":{"id":"cus_{{alnum:short}}","name":"{{name}}","email":"{{email}}"},"payment_method":{"type":"card","card":{"brand":"{{card_brand}}","last4":"{{digits:4}}"}},"last_payment_error":{"code":"{{enum:card_declined=50,insufficient_funds=25,expired_card=10,incorrect_cvc=10,processing_error=5}}","message":"Your card was declined.","decline_code":"{{enum:generic_decline=40,insufficient_funds=25,lost_card=10,stolen_card=10,do_not_honor=15}}"},"created":"{{ts}}","livemode":true}
+  {{#elif status == "refunded"}}
+  {"id":"pi_{{hex:long}}","object":"payment_intent","status":"succeeded","amount":{{amount}},"currency":"{{currency}}","customer":{"id":"cus_{{alnum:short}}","name":"{{name}}","email":"{{email}}"},"refunds":{"data":[{"id":"re_{{hex:long}}","amount":{{amount}},"status":"succeeded","reason":"{{enum:requested_by_customer=60,duplicate=20,fraudulent=20}}","created":"{{ts}}"}]},"merchant":"{{merchant}}","created":"{{ts}}","livemode":true}
+  {{#elif status == "disputed"}}
+  {"id":"pi_{{hex:long}}","object":"payment_intent","status":"succeeded","amount":{{amount}},"currency":"{{currency}}","customer":{"id":"cus_{{alnum:short}}","name":"{{name}}","email":"{{email}}"},"dispute":{"id":"dp_{{hex:long}}","amount":{{amount}},"reason":"{{enum:fraudulent=40,product_not_received=25,unrecognized=15,duplicate=10,subscription_canceled=10}}","status":"{{enum:needs_response=50,under_review=30,won=10,lost=10}}","created":"{{ts}}"},"merchant":"{{merchant}}","created":"{{ts}}","livemode":true}
+  {{#elif status == "requires_action"}}
+  {"id":"pi_{{hex:long}}","object":"payment_intent","status":"requires_action","amount":{{amount}},"currency":"{{currency}}","customer":{"id":"cus_{{alnum:short}}","name":"{{name}}","email":"{{email}}"},"next_action":{"type":"use_stripe_sdk","use_stripe_sdk":{"type":"three_d_secure_redirect","stripe_js":"https://hooks.stripe.com/3d_secure_2/{{hex:long}}"}},"payment_method":{"type":"card","card":{"brand":"{{card_brand}}","last4":"{{digits:4}}"}},"created":"{{ts}}","livemode":true}
+  {{#elif status == "processing"}}
+  {"id":"pi_{{hex:long}}","object":"payment_intent","status":"processing","amount":{{amount}},"currency":"{{currency}}","customer":{"id":"cus_{{alnum:short}}","name":"{{name}}","email":"{{email}}"},"payment_method":{"type":"card","card":{"brand":"{{card_brand}}","last4":"{{digits:4}}"}},"created":"{{ts}}","livemode":true}
+  {{else}}
+  {"id":"pi_{{hex:long}}","object":"payment_intent","status":"canceled","amount":{{amount}},"currency":"{{currency}}","customer":{"id":"cus_{{alnum:short}}","name":"{{name}}","email":"{{email}}"},"cancellation_reason":"{{enum:requested_by_customer=50,abandoned=30,duplicate=20}}","created":"{{ts}}","livemode":true}
+  {{/if}}
+
+options:
+  count: 500
+  ctx: strict
+  since: "2025-03-01"
+  until: "2025-03-29"

@@ -1,0 +1,19 @@
+[package]
+name = "seedfaker-ffi"
+version = "0.3.0-alpha.2"
+edition = "2021"
+rust-version.workspace = true
+authors = ["Eduard Titov <editied@gmail.com>"]
+description = "C-ABI shared library for seedfaker — use from PHP, Ruby, Go, C#, or any FFI-capable language"
+license = "MIT"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+seedfaker-core = { path = "../core", version = "0.3.0-alpha.2" }
+serde_json = "1"
+
+[lints]
+workspace = true

@@ -1,0 +1,13 @@
+rust/target/
+rust/data/
+.tmp/
+.git/
+.github/
+.support/
+.idea/
+benchmarks/.venv/
+examples/dataset/clean/
+examples/dataset/corrupted/
+packages/pip/build/
+packages/npm/node_modules/
+benchmarks/node/node_modules/

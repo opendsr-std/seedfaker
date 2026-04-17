@@ -1,0 +1,37 @@
+columns:
+  ip: ip
+  user: username
+  ts: timestamp:asc:log
+  method: http-method
+  status: enum:200=55,201=5,204=3,301=4,302=4,304=6,400=3,401=4,403=3,404=7,405=1,408=1,429=1,500=1,502=1,503=1
+  bytes: integer:0..524288
+  agent: user-agent
+  path: url
+  ref: url
+  req_time: float:0..5
+
+template: |
+  {{#if status == "401"}}
+  {{ip}} - - [{{ts}}] "{{method}} {{path}} HTTP/1.1" 401 {{bytes}} "-" "{{agent}}" {{req_time}}
+  {{#elif status == "403"}}
+  {{ip}} - - [{{ts}}] "{{method}} {{path}} HTTP/1.1" 403 {{bytes}} "-" "{{agent}}" {{req_time}}
+  {{#elif status == "404"}}
+  {{ip}} - - [{{ts}}] "{{method}} {{path}} HTTP/1.1" 404 0 "{{ref}}" "{{agent}}" {{req_time}}
+  {{#elif status == "429"}}
+  {{ip}} - {{user}} [{{ts}}] "{{method}} {{path}} HTTP/1.1" 429 0 "-" "{{agent}}" 0.000
+  {{#elif status == "500"}}
+  {{ip}} - {{user}} [{{ts}}] "{{method}} {{path}} HTTP/1.1" 500 {{bytes}} "{{ref}}" "{{agent}}" {{req_time}}
+  {{#elif status == "502"}}
+  {{ip}} - - [{{ts}}] "{{method}} {{path}} HTTP/1.1" 502 166 "-" "{{agent}}" 30.001
+  {{#elif status == "503"}}
+  {{ip}} - - [{{ts}}] "{{method}} {{path}} HTTP/1.1" 503 190 "-" "{{agent}}" 0.000
+  {{#elif status == "408"}}
+  {{ip}} - - [{{ts}}] "{{method}} {{path}} HTTP/1.1" 408 0 "-" "{{agent}}" 60.000
+  {{else}}
+  {{ip}} - {{user}} [{{ts}}] "{{method}} {{path}} HTTP/1.1" {{status}} {{bytes}} "{{ref}}" "{{agent}}" {{req_time}}
+  {{/if}}
+
+options:
+  count: 500
+  since: "2025-03-28"
+  until: "2025-03-29"

@@ -1,0 +1,80 @@
+System.Net.Http.HttpRequestException: Connection refused (identity-svc.internal:443)
+ ---> System.Net.Sockets.SocketException (111): Connection refused
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at Acme.Services.IdentityService.VerifyAsync(VerifyRequest request) in /app/Services/IdentityService.cs:line 106
+   at Acme.Controllers.UserController.Register(RegisterDto dto) in /app/Controllers/UserController.cs:line 85
+UserId=b3af3cf2-59cf-4e16-a30c-0b821e7ab955 Email=raedalghurair@gmx.com Name=Raed bin Omran Al Ghurair Phone=+971 59 117 5728
+Error: ECONNREFUSED 10.103.150.146:8166
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+    at Object.verify (/app/src/services/identity.js:109:11)
+    at async UserController.register (/app/src/controllers/user.js:123:22)
+    at async /app/node_modules/express/lib/router/layer.js:95:5
+{
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '10.217.7.229',
+  port: 3427,
+  user_id: '084e5da6-980a-4f27-8fba-979ff019ec10',
+  user_email: 't.almuhairi.331@icloud.com',
+  user_name: 'Thuraya bin Wadima Al Muhairi',
+  user_phone: '+971 57 854 6069',
+  user_ip: '112.95.111.88'
+}
+Error: ECONNREFUSED 10.209.220.56:6280
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+    at Object.verify (/app/src/services/identity.js:143:11)
+    at async UserController.register (/app/src/controllers/user.js:124:22)
+    at async /app/node_modules/express/lib/router/layer.js:95:5
+{
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '10.175.170.137',
+  port: 3593,
+  user_id: '1d7384f6-a4d1-4710-856b-1985386aa129',
+  user_email: 'maximbergeron@outlook.com',
+  user_name: 'Maxim Bergeron',
+  user_phone: '(770) 415-5293',
+  user_ip: '176.211.44.137'
+}
+Traceback (most recent call last):
+  File "/app/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/app/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/app/accounts/views.py", line 142, in verify_identity
+    result = identity_service.verify(
+        ssn="160760A522U",
+        full_name="Jenna Pulkkinen",
+        date_of_birth="2025-09-08",
+        address="9291 Museokatu, Jyvaskyla, Keski-Suomi 40100",
+        phone="+358 40 6466019",
+        email="jpulkkinen4875@phnet.fi",
+    )
+  File "/app/services/identity.py", line 81, in verify
+    resp = self.client.post("/v2/verify", json=payload, timeout=10)
+  File "/app/venv/lib/python3.12/site-packages/httpx/_client.py", line 1574, in post
+    return self.request("POST", url, content=content, json=json)
+httpx.ConnectTimeout: timed out
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/app/accounts/views.py", line 253, in verify_identity
+    raise ServiceUnavailableError(f"Identity check failed for user_id=ee17d6e9-c9a2-4838-af28-cb38825e476a, email=jpulkkinen4875@phnet.fi")
+app.exceptions.ServiceUnavailableError: Identity check failed for user_id=ee17d6e9-c9a2-4838-af28-cb38825e476a, email=jpulkkinen4875@phnet.fi
+Error: ECONNREFUSED 10.252.161.226:6791
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+    at Object.verify (/app/src/services/identity.js:198:11)
+    at async UserController.register (/app/src/controllers/user.js:100:22)
+    at async /app/node_modules/express/lib/router/layer.js:95:5
+{
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '10.213.198.19',
+  port: 8237,
+  user_id: 'ab093738-bc8d-4162-8640-c94b6fa69ebb',
+  user_email: 'tamerxxxw5@turktelekom.com.tr',
+  user_name: 'Tamer Simsek',
+  user_phone: '+90 551 351 0579',
+  user_ip: '34.51.201.184'
+}

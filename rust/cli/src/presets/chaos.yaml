@@ -1,0 +1,42 @@
+columns:
+  type: enum:nginx=20,auth=15,json=15,csv=10,postgres=10,email=5,java_err=10,k8s=10,garbage=5
+  ts: timestamp:asc:log
+  ip: ip
+  name: name
+  email: email
+  phone: phone
+  ssn: ssn
+  card: credit-card
+  user: username
+
+template: |
+  {{#if type == "nginx"}}
+  {{ip}} - {{user}} [{{ts}}] "{{http-method}} {{url}} HTTP/1.1" {{http-status}} {{integer:0..524288}} "{{url}}" "{{user-agent}}" {{float:0..30}}
+  {{#elif type == "auth"}}
+  {{ts}} {{enum:web-01,api-01,db-01,bastion-01}} sshd[{{integer:1000..32768}}]: Failed password for invalid user {{user}} from {{ip}} port {{integer:1024..65535}} ssh2
+  {{#elif type == "json"}}
+  {"ts":"{{timestamp}}","level":"{{enum:error=40,warn=30,critical=20,alert=10}}","service":"{{docker-image}}","user":"{{name}}","email":"{{email}}","ssn":"{{ssn}}","card":"{{card}}","ip":"{{ip}}","trace":"{{uuid:plain}}","msg":"{{message}}"}
+  {{#elif type == "csv"}}
+  {{name}},{{email}},{{phone}},{{ssn}},{{card}},{{address}},{{birthdate}},{{enum:active=70,inactive=20,suspended=10}}
+  {{#elif type == "postgres"}}
+  {{ts}} [{{integer:1000..32768}}] app@{{enum:customers,orders,analytics}} LOG:  duration: {{float:0..30000}} ms  statement: SELECT * FROM users WHERE email = '{{email}}' AND ssn = '{{ssn}}';
+  {{#elif type == "email"}}
+  From: {{name}} <{{email}}>
+  Subject: Re: Account {{jira-id}}
+  SSN: {{ssn}} | Card: {{card}} | Phone: {{phone}}
+  Please update my address to {{address}}.
+  {{#elif type == "java_err"}}
+  {{timestamp}} ERROR --- [pool-{{integer:1..20}}-thread-{{integer:1..50}}] com.acme.service.PaymentService : NullPointerException processing payment
+  	at com.acme.service.PaymentService.charge(PaymentService.java:{{integer:30..300}})
+  	user_email={{email}} user_ip={{ip}} card_last4={{digits:4}} amount={{amount:usd}}
+  {{#elif type == "k8s"}}
+  {{timestamp}} {{enum:stderr=60,stdout=40}} F {{enum:api-prod,worker-prod,cron-prod}} {{docker-image}}[{{integer:1..99}}]: {{enum:OOMKilled=20,CrashLoopBackOff=30,Error=30,Completed=20}} pod/{{word}}-{{hex:short}} container={{word}} exitCode={{enum:0=30,1=40,137=20,143=10}}
+  {{else}}
+  %%%CORRUPT%%% {{ts}} {{name}} {{hex:short}} {{email}} \x00\xff{{phone}} RAW={{base64}} SSN={{ssn}}
+  {{/if}}
+
+options:
+  count: 500
+  corrupt: low
+  since: "2025-03-28"
+  until: "2025-03-29"

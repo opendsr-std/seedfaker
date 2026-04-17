@@ -1,0 +1,96 @@
+══════════════════════════════════════════════
+PRESCRIPTION / Rx
+══════════════════════════════════════════════
+Date: 2024-10-22
+Rx #: RX-1151661
+
+Patient: Mark Bishop | DOB: 1994-10-04 | Phone: +1-337-348-7955
+Address: 307 5th Avenue, Philadelphia, PA 19101
+Allergies: NKDA
+
+Prescriber: Dr. McGee (NPI: 5512200703)
+DEA: eqzpSU3Vd6kh
+Phone: +1-337-348-7955
+
+MEDICATION: NDC 20572-611-19
+Drug: azithromycin 250mg
+Sig: Take 1 tablet by mouth daily
+Qty: 74 | Refills: 4
+DAW: 0
+
+Dispense as written
+Signature: Dr. McGee _______________
+INFORMED CONSENT
+
+I, Paul Burgess (DOB: 1996-08-12, MRN: MRN-5903043), hereby consent to the following procedure:
+
+Procedure: biopsy
+Provider: Dr. Cross (NPI: 8478080595)
+Facility: Ameriprise Financial Hospital
+Date: 2024-12-23
+
+I understand the risks, benefits, and alternatives. My questions have been answered.
+
+Patient Signature: Paul Burgess _______________
+Date: 2025-08-10
+Witness: Nevaeh Kavanagh, RN
+Emergency Contact: Aubrey Munoz — +1-839-676-4971
+══════════════════════════════════════════════
+PRESCRIPTION / Rx
+══════════════════════════════════════════════
+Date: 2025-11-07
+Rx #: RX-5920294
+
+Patient: Benjamin Fuller | DOB: 2001-03-16 | Phone: (413) 581-2845
+Address: 8202 Sunrise Blvd, Austin, TX 78701
+Allergies: sulfa
+
+Prescriber: Dr. Burton (NPI: 7665063299)
+DEA: pW11HjAF2dj
+Phone: (413) 581-2845
+
+MEDICATION: NDC 39433-898-68
+Drug: azithromycin 250mg
+Sig: Take 1 tablet by mouth daily
+Qty: 52 | Refills: 4
+DAW: 0
+
+May substitute
+Signature: Dr. Burton _______________
+INFORMED CONSENT
+
+I, Jasper Richards (DOB: 2001-06-26, MRN: MRN-3468674), hereby consent to the following procedure:
+
+Procedure: CT with contrast
+Provider: Dr. Hudson (NPI: 8642827726)
+Facility: Dell Technologies Hospital
+Date: 2024-05-24
+
+I understand the risks, benefits, and alternatives. My questions have been answered.
+
+Patient Signature: Jasper Richards _______________
+Date: 2024-09-01
+Witness: Grace Berry, MA
+Emergency Contact: Holden Burgess — +1-722-599-6933
+══════════════════════════════════════════════
+PRESCRIPTION / Rx
+══════════════════════════════════════════════
+Date: 2025-08-25
+Rx #: RX-6686590
+
+Patient: Joseph Rodriguez | DOB: 1969-09-05 | Phone: (441) 605-2348
+Address: 8930 Elm Blvd, Mesa, AZ 85201
+Allergies: iodine
+
+Prescriber: Dr. Schwartz (NPI: 5870834000)
+DEA: NT5gJqp3vyzV
+Phone: (441) 605-2348
+
+MEDICATION: NDC 22019-462-44
+Drug: fluoxetine 20mg
+Sig: Apply topically twice daily
+Qty: 69 | Refills: 1
+DAW: 0
+
+May substitute
+Signature: Dr. Schwartz _______________

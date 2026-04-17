@@ -1,0 +1,26 @@
+[package]
+name = "seedfaker-core"
+version = "0.3.0-alpha.2"
+edition = "2021"
+rust-version.workspace = true
+authors = ["Eduard Titov <editied@gmail.com>"]
+description = "Core library for seedfaker — deterministic synthetic generator for realistic, correlated, and noisy test records"
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/opendsr-std/seedfaker"
+repository = "https://github.com/opendsr-std/seedfaker"
+keywords = [
+  "faker",
+  "synthetic-data",
+  "test-data",
+  "deterministic",
+  "data-generation",
+]
+categories = ["development-tools::testing"]
+
+[dependencies]
+getrandom = "0.4"
+itoa = "1"
+
+[lints]
+workspace = true

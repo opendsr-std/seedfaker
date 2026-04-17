@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "description": "seedfaker benchmark dependencies",
+  "dependencies": {
+    "@faker-js/faker": "^9",
+    "@ngneat/falso": "^7",
+    "chance": "^1",
+    "json-schema-faker": "^0.5"
+  }
+}

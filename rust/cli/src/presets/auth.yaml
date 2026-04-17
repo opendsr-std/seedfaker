@@ -1,0 +1,41 @@
+columns:
+  action: enum:accepted=25,failed=30,invalid_user=15,session_opened=10,session_closed=10,sudo=3,sudo_fail=2,disconnect=3,break_in=2
+  ts: timestamp:asc:log
+  host: enum:web-01=15,web-02=15,api-01=12,api-02=12,db-01=8,db-02=8,bastion-01=10,worker-01=10,worker-02=10
+  user: username
+  ip: ip
+  port: integer:1024..65535
+  pid: integer:1000..32768
+  uid: integer:1000..9999
+
+template: |
+  {{#if action == "accepted"}}
+  {{ts}} {{host}} sshd[{{pid}}]: Accepted publickey for {{user}} from {{ip}} port {{port}} ssh2: RSA SHA256:{{base64:short}}
+  {{#elif action == "failed"}}
+  {{ts}} {{host}} sshd[{{pid}}]: Failed password for {{user}} from {{ip}} port {{port}} ssh2
+  {{#elif action == "invalid_user"}}
+  {{ts}} {{host}} sshd[{{pid}}]: Failed password for invalid user {{user}} from {{ip}} port {{port}} ssh2
+  {{#elif action == "session_opened"}}
+  {{ts}} {{host}} sshd[{{pid}}]: pam_unix(sshd:session): session opened for user {{user}}(uid={{uid}}) by (uid=0)
+  {{#elif action == "session_closed"}}
+  {{ts}} {{host}} sshd[{{pid}}]: pam_unix(sshd:session): session closed for user {{user}}
+  {{#elif action == "sudo"}}
+  {{ts}} {{host}} sudo:   {{user}} : TTY=pts/{{integer:0..7}} ; PWD=/home/{{user}} ; USER=root ; COMMAND={{file-path}}
+  {{#elif action == "sudo_fail"}}
+  {{ts}} {{host}} sudo:   {{user}} : 3 incorrect password attempts ; TTY=pts/{{integer:0..7}} ; PWD=/home/{{user}} ; USER=root ; COMMAND={{file-path}}
+  {{#elif action == "disconnect"}}
+  {{ts}} {{host}} sshd[{{pid}}]: Received disconnect from {{ip}} port {{port}}:11: disconnected by user
+  {{ts}} {{host}} sshd[{{pid}}]: Disconnected from user {{user}} {{ip}} port {{port}}
+  {{#elif action == "break_in"}}
+  {{ts}} {{host}} sshd[{{pid}}]: reverse mapping checking getaddrinfo for {{dns-record}} [{{ip}}] failed - POSSIBLE BREAK-IN ATTEMPT!
+  {{ts}} {{host}} sshd[{{pid}}]: Failed password for root from {{ip}} port {{port}} ssh2
+  {{ts}} {{host}} sshd[{{pid}}]: Failed password for root from {{ip}} port {{port}} ssh2
+  {{ts}} {{host}} sshd[{{pid}}]: Connection closed by authenticating user root {{ip}} port {{port}} [preauth]
+  {{else}}
+  {{ts}} {{host}} sshd[{{pid}}]: Connection from {{ip}} port {{port}} on 0.0.0.0 port 22
+  {{/if}}
+
+options:
+  count: 500
+  since: "2025-03-28"
+  until: "2025-03-29"

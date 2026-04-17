@@ -1,0 +1,97 @@
+columns:
+  lang: enum:java=35,python=25,nodejs=20,go=15,dotnet=5
+  ts: timestamp:asc
+  name: name
+  email: email
+  ssn: ssn
+  phone: phone
+  ip: ip
+  uid: uuid
+  addr: address
+
+template: |
+  {{#if lang == "java"}}
+  {{ts}} ERROR 1 --- [nio-8080-exec-{{integer:1..200}}] c.a.service.UserService : Failed to process request for user {{uid}}
+
+  org.springframework.web.client.ResourceAccessException: I/O error on POST request for "https://identity-svc.internal/api/v2/verify": Connection timed out
+  	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:785)
+  	at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:711)
+  	at com.acme.service.IdentityService.verify(IdentityService.java:{{integer:30..300}})
+  	at com.acme.service.UserService.processRegistration(UserService.java:{{integer:50..500}})
+  	at com.acme.controller.UserController.register(UserController.java:{{integer:20..150}})
+  	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+  	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:897)
+  	at javax.servlet.http.HttpServlet.service(HttpServlet.java:764)
+  	... 42 more
+  Caused by: java.net.SocketTimeoutException: Connect timed out
+  	at java.base/sun.nio.ch.NioSocketImpl.timedFinishConnect(NioSocketImpl.java:546)
+  	... 58 more
+  Context: user_email={{email}}, user_name={{name}}, ip={{ip}}, ssn={{ssn}}
+  {{#elif lang == "python"}}
+  Traceback (most recent call last):
+    File "/app/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+      response = get_response(request)
+    File "/app/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+      response = wrapped_callback(request, *callback_args, **callback_kwargs)
+    File "/app/accounts/views.py", line {{integer:50..300}}, in verify_identity
+      result = identity_service.verify(
+          ssn="{{ssn}}",
+          full_name="{{name}}",
+          date_of_birth="{{birthdate}}",
+          address="{{addr}}",
+          phone="{{phone}}",
+          email="{{email}}",
+      )
+    File "/app/services/identity.py", line {{integer:20..200}}, in verify
+      resp = self.client.post("/v2/verify", json=payload, timeout=10)
+    File "/app/venv/lib/python3.12/site-packages/httpx/_client.py", line 1574, in post
+      return self.request("POST", url, content=content, json=json)
+  httpx.ConnectTimeout: timed out
+
+  During handling of the above exception, another exception occurred:
+
+  Traceback (most recent call last):
+    File "/app/accounts/views.py", line {{integer:50..300}}, in verify_identity
+      raise ServiceUnavailableError(f"Identity check failed for user_id={{uid}}, email={{email}}")
+  app.exceptions.ServiceUnavailableError: Identity check failed for user_id={{uid}}, email={{email}}
+  {{#elif lang == "nodejs"}}
+  Error: ECONNREFUSED 10.{{integer:0..255}}.{{integer:0..255}}.{{integer:1..254}}:{{integer:3000..9000}}
+      at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+      at Object.verify (/app/src/services/identity.js:{{integer:20..200}}:11)
+      at async UserController.register (/app/src/controllers/user.js:{{integer:30..150}}:22)
+      at async /app/node_modules/express/lib/router/layer.js:95:5
+  {
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '10.{{integer:0..255}}.{{integer:0..255}}.{{integer:1..254}}',
+    port: {{integer:3000..9000}},
+    user_id: '{{uid}}',
+    user_email: '{{email}}',
+    user_name: '{{name}}',
+    user_phone: '{{phone}}',
+    user_ip: '{{ip}}'
+  }
+  {{#elif lang == "go"}}
+  {{ts}} [ERROR] {{file-path}}:{{integer:20..500}}: failed to verify identity
+  	github.com/acme/user-service/internal/handler.(*UserHandler).Register
+  		/app/internal/handler/user.go:{{integer:30..200}}
+  	github.com/acme/user-service/internal/service.(*IdentityService).Verify
+  		/app/internal/service/identity.go:{{integer:20..150}}
+  	net/http.(*Transport).roundTrip
+  		/usr/local/go/src/net/http/transport.go:{{integer:500..600}}
+  	--- context deadline exceeded ---
+  	user_id={{uid}} email={{email}} name={{name}} ip={{ip}} ssn={{ssn}}
+  {{else}}
+  System.Net.Http.HttpRequestException: Connection refused (identity-svc.internal:443)
+   ---> System.Net.Sockets.SocketException (111): Connection refused
+     at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+     at Acme.Services.IdentityService.VerifyAsync(VerifyRequest request) in /app/Services/IdentityService.cs:line {{integer:30..200}}
+     at Acme.Controllers.UserController.Register(RegisterDto dto) in /app/Controllers/UserController.cs:line {{integer:20..100}}
+  UserId={{uid}} Email={{email}} Name={{name}} Phone={{phone}}
+  {{/if}}
+
+options:
+  count: 500
+  ctx: strict
+  since: "2025-03-22"
+  until: "2025-03-29"

@@ -1,0 +1,10 @@
+node_modules/
+rust/target/
+.tmp/
+benchmarks/node/
+benchmarks/results/
+docs/field-reference.md
+packages/npm/platforms/
+examples/presets/
+examples/context/
+*.tsv

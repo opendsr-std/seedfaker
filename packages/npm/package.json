@@ -1,0 +1,53 @@
+{
+  "name": "@opendsr/seedfaker",
+  "version": "0.3.0-alpha.2",
+  "description": "Deterministic synthetic data generator — 200+ fields, 68 locales, native Rust binding",
+  "license": "MIT",
+  "author": "Eduard Titov <editied@gmail.com>",
+  "homepage": "https://github.com/opendsr-std/seedfaker",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/opendsr-std/seedfaker",
+    "directory": "packages/npm"
+  },
+  "keywords": [
+    "faker",
+    "fake-data",
+    "synthetic-data",
+    "mock-data",
+    "test-data",
+    "data-generator",
+    "deterministic",
+    "pii",
+    "fixtures",
+    "locale"
+  ],
+  "main": "index.js",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.mjs",
+      "require": "./index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "index.mjs",
+    "index.d.ts",
+    "package.json",
+    "LICENSE",
+    "README.md"
+  ],
+  "optionalDependencies": {
+    "@opendsr/seedfaker-darwin-arm64": "0.3.0-alpha.2",
+    "@opendsr/seedfaker-darwin-x64": "0.3.0-alpha.2",
+    "@opendsr/seedfaker-linux-x64": "0.3.0-alpha.2",
+    "@opendsr/seedfaker-linux-arm64": "0.3.0-alpha.2",
+    "@opendsr/seedfaker-win32-x64": "0.3.0-alpha.2"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

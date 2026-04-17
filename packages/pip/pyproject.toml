@@ -1,0 +1,97 @@
+[build-system]
+requires = ["maturin>=1.7"]
+build-backend = "maturin"
+
+[project]
+name = "seedfaker"
+version = "0.3.0a2"
+description = "Deterministic synthetic data generator for realistic, correlated, and noisy test records across 68 locales. Rust CLI + Python + Node.js + Go + PHP + Ruby + MCP."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.9"
+authors = [{ name = "Eduard Titov", email = "editied@gmail.com" }]
+keywords = [
+  "faker",
+  "fake-data",
+  "synthetic-data",
+  "mock-data",
+  "test-data",
+  "data-generator",
+  "deterministic",
+  "pii",
+  "fixtures",
+  "locale",
+  "mimesis",
+  "realistic-data",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Topic :: Software Development :: Testing",
+  "Topic :: Software Development :: Testing :: Traffic Generation",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Rust",
+]
+
+[project.urls]
+Homepage = "https://github.com/opendsr-std/seedfaker"
+Repository = "https://github.com/opendsr-std/seedfaker"
+Documentation = "https://github.com/opendsr-std/seedfaker/blob/main/docs/field-reference.md"
+
+[tool.maturin]
+manifest-path = "../../rust/pyo3/Cargo.toml"
+python-source = "."
+module-name = "seedfaker._seedfaker"
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+select = [
+  "E",
+  "F",
+  "W",    # pycodestyle + pyflakes
+  "I",    # isort
+  "N",    # pep8-naming
+  "UP",   # pyupgrade
+  "B",    # bugbear
+  "A",    # builtins shadowing
+  "SIM",  # simplify
+  "TCH",  # type-checking imports
+  "S",    # bandit (security)
+  "C4",   # comprehensions
+  "PIE",  # misc lints
+  "RET",  # return statements
+  "RSE",  # raise statements
+  "FLY",  # static join to f-string
+  "PERF", # performance
+  "FURB", # refurb
+  "T20",  # no print (except in scripts)
+  "ERA",  # no commented-out code
+  "ISC",  # implicit string concat
+  "ICN",  # import conventions
+  "PLC",  # pylint convention
+  "PLE",  # pylint errors
+  "PLW",  # pylint warnings
+  "PLR",  # pylint refactor
+  "RUF",  # ruff-specific rules
+  "DTZ",  # datetime timezone
+  "PTH",  # pathlib
+  "TRY",  # tryceratops (exception handling)
+  "FBT",  # boolean trap
+  "ARG",  # unused arguments
+  "PT",   # pytest style
+  "Q",    # quotes
+]
+ignore = [
+  "S603",   # subprocess — intentional in CLI wrapper
+  "S607",   # subprocess — intentional in CLI wrapper
+  "S101",   # assert — used in tests
+  "T201",   # print() — intentional in CLI examples and scripts
+  "ISC001", # conflicts with ruff format
+]
+
+[tool.ruff.format]
+quote-style = "double"

@@ -1,0 +1,62 @@
+# IDE artifacts
+.idea/
+.vscode
+.ruff_cache/
+
+# Build targets
+/target/
+/build/
+/node_modules/
+package-lock.json
+/data/
+.dev-image
+
+# Benchmarks
+benchmarks/.venv/
+benchmarks/node/node_modules/
+benchmarks/node/package-lock.json
+
+# Rust build artifacts
+rust/target/
+
+# Python build artifacts
+packages/pip/build/
+packages/pip/dist/
+packages/pip/*.egg-info/
+packages/pip/seedfaker.egg-info/
+packages/pip/seedfaker/__pycache__/
+**/__pycache__/
+*.pyc
+
+# Native extensions (build artifacts)
+packages/pip/_seedfaker.so
+packages/pip/seedfaker/_seedfaker.so
+packages/npm/seedfaker_napi.node
+*.so
+*.dylib
+*.dll
+*.node
+*.d
+
+# FFI prebuilt libs (only .gitkeep is tracked)
+packages/go/bin/**/libseedfaker_ffi.*
+packages/php/bin/
+packages/ruby/bin/
+
+# Benchmark temp files
+benchmarks/.determinism_tmp/
+benchmarks/.bench_tmp/
+benchmarks/.payments_5gb_out/
+
+# Do not commit instructions from contributors
+.claude
+.codex
+
+# Support scripts
+.support
+.tmp
+
+# Tmp file
+benchmarks/RESULTS.md.tmp
+
+.DS_Store

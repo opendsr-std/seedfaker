@@ -1,0 +1,285 @@
+emoji	🇬🇧
+bz	We need to transform LLM-driven embeddings
+dice	6
+excuse	It worked in last Friday
+mball	If you believe hard enough. YOLO
+integer	517
+float	3785.99
+boolean	false
+digit	4
+bit	0
+bit:sign	-1
+trit	1
+enum	
+serial	0
+color	deep pink
+color:hex	#021db8
+color:rgb	34, 17, 145
+color:rgba	145, 208, 76, 0.54
+uuid	187ef9b0-02e7-42c0-b814-47708ebef3cf
+uuid:plain	21ba1b25492b48f7935a8d5b35d573d2
+letter	c
+trigram	nfs
+digits	46138852
+letters	epfohwkcvkmicx
+alnum	LFqxcshxj8Fx
+base64	ynKaU_q5iv7wb8v4N_NQ
+hex	d9ae0ff046c
+hex:byte	43
+word	enim
+message	Adipiscing amet dolor nostrud lorem
+timestamp	1996-06-15T08:59:11Z
+timestamp:unix	321348350
+timestamp:ms	1331324176673
+timestamp:log	21/Jan/2022:09:44:39 +0000
+date	1972-07-17
+date:us	01/22/1920
+date:eu	04.03.1901
+name	Akiko Sanders
+first-name	Megan
+last-name	Bennett
+middle-name	Rosie
+birthdate	2002-10-17
+birthdate:us	09/03/1994
+birthdate:eu	18.05.2013
+age	19
+gender	Female
+username	silviadunn02
+username:xuniq	j_ross_02_g2y4p
+login-name	darnellvip3924
+login-name:xuniq	queenaarav3924.o8d6v
+social-handle	@nisha_hardy5284
+social-handle:xuniq	@islafuentes5284_gqb9h
+nickname	signaln9
+nickname:xuniq	dagger2008_v77n8
+biometric-id	BIO-FACE-DT8YXKGEF7BHL0FO
+student-id	280726636
+email	minjun.anderson1116@slack.com
+email:xuniq	zacharydean.eoiyi@uw.edu
+phone	568-214-1588
+phone:e164	+19075046416
+phone:intl	+1 869 874 595 6
+phone:plain	9065921697
+address	971 Ash St, Detroit, MI 48201
+street-address	1231 Pleasant St
+city	Kansas City
+state	MD
+postal-code	63100
+country	United States
+latitude	30.2400
+longitude	-102.5200
+country-code	US
+country-code:alpha3	USA
+country-code:numeric	840
+phone-code	+1
+language-code	en
+locale-code	en-US
+locale-code:short	en
+locale-code:underscore	en_US
+timezone	Asia/Shanghai
+credit-card	4536 2597 1053 4238
+credit-card:space	6011 9771 7525 3668
+credit-card:dash	6011-5497-0639-7338
+credit-card:plain	5521937121062154
+cvv	272
+iban	DE36 2534 4466 4443 9141 78
+iban:plain	ES1592976867754338925188
+swift-bic	JRAWUSUA
+routing-number	423651657
+bank-account	0115736765437
+tax-id	16-0685390
+amount	$311.95
+amount:dot	46.55
+amount:comma	494,50
+amount:plain	75.23
+amount:usd	$3,069.08
+amount:eur	€8.658,31
+amount:gbp	£8.60
+currency-code	USD
+currency-code:crypto	MATIC
+currency-symbol	$
+password	wB@&*6JuZ=!T52_Tq&Y7b
+password:pin	8850
+password:memorable	falcon-purple-diamond
+password:mixed	lXd74I2Bw5
+password:strong	UQBz.g-#JWSn5r$g#4r
+jwt	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3MjM4MDUiLCJlbWFpbCI6Impvc2VwaGluZXdlYXZlckBtYWMuY29tIiwiaWF0IjoxNzAyMDYzNjIwLCJleHAiOjE3MTUxMzY4MjR9.e9koIzwgWeCW50nyTodarhTDa8RWEc1lCJl9cVyS9QQ
+bearer-token	Bearer F3p9MYr6Zks8/JFRe6l0Vl~tRgM-M92mhSp_MABrdos
+api-key	key-5bo5h9VY3B9ysCRhvFg2sL2Q3zG7oy1Y
+totp-secret	UJH7XJHIIFBEFEKLEFEEHPGH6IVARKCK
+oauth-client-secret	cos_UZDDJgtbOJPDvsswqtVYlHaTn9nj7GRxf6Wxdfd5t4H39Ino
+aws-access-key	AKIAQDY7BDFVFP51PPZK
+aws-secret-key	0O+Na8jucP4fVDHtfShoKrHm6HDQkZ6e5sVe+qWH
+stripe-key	sk_live_rFTkISez6tf661mnjQxCKKJk2sCHCKyk
+github-pat	gho_mWR5mMi1UlMuu25KV5TiinkpVooHolFCGKiY
+gitlab-token	glpat-QrCpWfIiREw11nw5SZoy
+openai-key	sk-proj-rru89djR6p5R1RqI2vueRKfExW8OvHjwK9sePhXUwDsk4l45
+sendgrid-key	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
+twilio-sid	AC98a586c5eb69dffdb253c0732f92c237
+twilio-token	6bfcd877b5c09b39bf974a0853b45cdd
+slack-bot-token	xoxb-332702886299-808710392168-4T4q6Z7ulKvhKwfevAZLPLaI
+slack-user-token	xoxp-458007695763-074353925218-951569440953-57598447b18f98e83b2b93feb85fe712
+datadog-key	486f11754993b9500f04b5fb7720d263
+sentry-dsn	https://259e4e805e99644930eed1cc2e2c7a2a@o225347.ingest.sentry.io/0910824
+vault-token	hvs.54LjoSbkpukljpQN2Y3VUFGe
+npm-token	npm_5kgH3beKz2MAmxrJRzuuzkfy1WjNBzyeqtks
+vercel-token	vc_test_59mydDsQfta4ZS750ZzGGJaYv5LGQxwy
+supabase-key	eyJBEphQMyMvNyRpGqrMuRzpskHXE5miVrHYrGPZ1A3dEy4lIkktw3g2NQot8BMHwTySvSXrn9qYGrOWYw8Wm5QIk639kl4T65ZhGcr8MPktLdmAtjtx3Ddykxn
+telegram-token	206478981:g4krw0TV21EXr6cvji1IHK4Kpxbloz5MBGU
+discord-webhook	https://discord.com/api/webhooks/049616608249060106/8Zi8FaPBUWn0HzzVOsXBton496zGhaP8UNpb04SN8AI6iTirp2lyPMOjplOjGq4K6LMt
+gcp-key	AIzaCwDsf3b9XXrpzCwDsQsX2cz6xPvKgrG5DSm
+azure-key	3piZpjnaQ87nadn5f2GDtHLi/kT47oYd8ioQ0g0YthNC
+cloudflare-token	jinJO265nlVfh035GqZXovdZY0F3nE9fQxFVkpV6
+pagerduty-key	u+yc1XrOiotommwHxIA4Oz
+newrelic-key	NRAK-jRivdswPDNwG3mGdYpc3VItyjaSDq5NY
+splunk-token	5c50de45-a71b-4b83-817f-5423c713c42a
+heroku-key	36b3776b-265d-4459-99c9-ae66bf81d044
+firebase-key	AIzaGlYD987h7GySDIwRcZtK3A5Lhhxp2PCEaoh
+ssh-private-key	-----BEGIN OPENSSH PRIVATE KEY-----
+ssh-public-key	ssh-ed25519 AAAAC3NzaC1lZDI1NTE5eNpbEY3h6R48tou22cNUzuHtBB6C+0qjWP3onOquRVNWXk2l3OqLXfEvgDF+cPO5Vvwx user@host
+connection-string	postgresql://vikram:gjYrMON8ceHDHX@db-64.internal.nytimes.com:5432/main
+anthropic-key	sk-ant-api03-QAjV5HEeQ3wLOesB9spI27psOcAKmMOgb7WqRHL1qPb4cXroUOzjyjcawyFkTQ8nwQTzbRP8P5kBPjLDnv7qALH7y0EuoOH
+session-id	sess_531c5042210c45fec0c6cef267a20e96
+passkey-id	vCBwoPb-Di7cHP9wPkusm_PRqBs0GHUdCoLvymcXgat
+facebook-token	EAAGm0PX4ZCpsOBSdi9dNoHWYYE2RjkzpQ5Sv4a94GmodgXFCxAp321tW00xfbfzn6w9jVtBuZjjz8lXWEHwBdHjcEsA7
+google-token	ya29.a0MfojhXS7p4dnZczPMX2HlmjhHmPvydWBfYm4Stwd28deiGLK0GXJCHbPYh45SoA7PGU1KLs4GtSq4Ea3TflHL0uX9NCBlowKHfEL
+apple-token	eyJraWQiOiJXNkdqIiwiYWxnIjoiRVMyNTYifQ.eyJpc3MiOiJodHRwczovL2FwcGxlaWQuYXBwbGUuY29tIiwic3ViIjoiMmFpZ3Z0UTlpWEFLRVozVFl3cWkifQ.F-_opT5G6OBZZM7V6i0vNXcbimOiEUgQmSlpY5xPnd9
+refresh-token	rt_JjAvsEuIotNcSO7e57LGJtKaLTmD1C2rBOu2rNYnarBeQpfp
+csrf-token	3d578e57a242c40832fe0db661148512
+basic-auth	Basic aXNsYTpXVGo2RjViVzh6bVg
+ssn	630-69-6579
+ssn:plain	455259511
+passport	377419695
+passport:international	MD2151992
+passport:internal	5424 273877
+drivers-license	WA-O3654830
+national-id	722-49-7306
+cpf	789.475.768-27
+cpf:plain	30639301510
+sin	392-124-379
+tfn	812 249 355
+nino	KK 17 19 53 D
+nhs-number	176 754 6426
+nir	1 38 75 55 257 336
+codice-fiscale	CFGNYJ16D63I212S
+dni	66938364S
+nie	Y5752508S
+bsn	858532964
+personnummer	860619-6841
+steuer-id	73541813664
+cuil	23-31137439-9
+jmbg	0410984309894
+tc-kimlik	79961517268
+pesel	51040879293
+curp	MNHR751217MDKXIC9B
+rut	22.045.590-0
+inn	728497911736
+ipn	0039355248
+abn	62 784 928 509
+cnpj	68.273.815/0947-30
+cnpj:plain	43667774105216
+oib	74759307404
+amka	28117852484
+rodne-cislo	551218/8298
+szemelyi-szam	31-490585-8
+hetu	010589-8090
+cpr	130282-5545
+fodselsnummer	15019318047
+pps	4144914CL
+emso	2005995697682
+egn	6503116123
+idnp	8361487720267
+health-card	5283-649-962
+cedula	39037952
+aadhaar	2199 3476 3060
+pan	ISJUC8964K
+cccd	272124414145
+shenfenzheng	498049197402022262
+ip	27.23.187.37
+ipv6	ebf2:58ce:22fc:5eea:9cab:019e:a1a4:b6be
+mac	63-28-64-4a-fa-6d
+mac:plain	1df547f7fa69
+mac:dot	a522.a1ab.c4da
+url	https://gateway.cloud.dev/v1/events
+url:http	http://service.prod.net/v2/auth/token
+url:https	https://data.platform.dev/v3/events
+url:ftp	ftp://api.example.com/incoming/9obBK5Z8.tar.gz
+url:ws	ws://auth.identity.io/v3/upload
+url:wss	wss://cdn.assets.io/v1/products
+url:ssh	ssh://deploy@gateway.cloud.dev:1877
+auth-url	https://kelly:r3TGmIuRElan@inbox.com/admin
+internal-url	https://gitlab.corp.internal/merge_requests/api-1477
+dns-record	auth.prod.internal A 10.98.21.102
+browser-cookie	session=13ed0ec6780675cb0438f18171c82f4e; _ga=GA1.2.940687611.1701107835; csrftoken=450121733753ad37
+user-agent	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/122.0.0.0 Safari/537.36
+mime-type	image/png
+http-method	GET
+http-status	403
+port	58448
+port:system	995
+port:registered	32566
+port:dynamic	55208
+port:unprivileged	20762
+port:service	995
+latency	144
+latency:fast	14
+latency:slow	12666
+latency:seconds	0.503
+image-url	https://picsum.photos/seed/43/1920/1080
+image-url:1x1	https://picsum.photos/seed/839/512/512
+image-url:4x3	https://picsum.photos/seed/369/800/600
+image-url:3x2	https://picsum.photos/seed/420/900/600
+image-url:16x9	https://picsum.photos/seed/205/1280/720
+image-url:21x9	https://picsum.photos/seed/794/1260/540
+image-url:9x16	https://picsum.photos/seed/327/720/1280
+image-url:3x4	https://picsum.photos/seed/420/600/800
+image-url:2x3	https://picsum.photos/seed/267/600/900
+twitter-url	https://x.com/dwayne_singhh
+linkedin-url	https://linkedin.com/in/yuki-rowe-c92600
+facebook-url	https://facebook.com/r.bowman.98
+instagram-url	https://instagram.com/serenity7841
+github-url	https://github.com/atlasdev576
+telegram-url	https://t.me/rd6389
+youtube-url	https://youtube.com/@reid-spencer
+webhook-url	https://hooks.slack.com/services/TFMUJC3JR/NIXZEIERK/GSW9ZKTW0ZysVWbkhVlEYatF
+btc-address	39GGfYuFzUBY8yg2B24TMZKFuwxo4XkS11
+eth-address	0x92df1bb74fdfa729cc7bca7f01332fe26b5c1a25
+sol-address	8VWYht6Dg821WPxecSEDAy43asCDWU8WzkyP9kx
+tx-hash	0x6c2a467d6f3e91130b806f3d95f89e0d61c64cf4407cc0b1002cba7df945c6da
+tx-hash:btc	33af850c5e5704ec39a2166a7cc3dea662535fb2772dc802ea328deca76cb32e
+pgp-fingerprint	89AB 3D1D 368A FEB1 BBD6 0F59 8E39 9392 E7B8 E809
+company-name	Publix
+ein	82-8676598
+vat-number	GB438 5641 73
+duns	58-220-0368
+lei	CWOWE1XSOAJMPN9SN9Z2
+job-title	Product Manager
+ldap-dn	CN=Carol Bailey,OU=HR,DC=corp,DC=com
+employee-id	T-6639789
+court-case	Case No. 2025-CR-04923 (CDCA)
+mrn	MR58825469
+npi	9557031429
+insurance-id	CIGNA-985300207
+medicare-id	G629MZ63CUG
+icd-10	G23.3
+cpt-code	32346
+ndc	26982-326-49
+rx-number	RX-2422691
+project-code	PRJ-YANK-4111
+jira-id	ENG-33374
+github-issue	#7514
+commit-hash	d6ae871690d60c991c49713bb6bcbe4651dce41b
+semver	9.15.81
+docker-image	ghcr.io/infra/auth:v4.28.4
+slack-channel	#engineering
+sentry-issue	API-1D3F
+pagerduty-incident	P3447576
+file-path	D:\Data\C8sqLu\backup.pdf
+s3-path	s3://logs/prod/2025-06-20/dump.parquet
+env-var	DATABASE_URL=postgres://nyek6w:WZMRg38ghS1AyC@db-86.internal:5432/production
+env-var:multi	GITHUB_TOKEN=ghp_1vjwK87VZlLZYrQfxNdZPTrfrzHzgUFbu6ep
+vin	1PZXKUPTXZZHV1WB2
+license-plate	MBP-5418
+imei	306384020715052
+imsi	208094629130372
+device-id	0114D212-3886-A8B3-5107-C12380842F6E

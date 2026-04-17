@@ -1,0 +1,24 @@
+columns:
+  id: serial
+  name: name
+  email: email
+  phone: phone:e164
+  address: address
+  city: city
+  state: state
+  postal: postal-code
+  country: country-code
+  birthdate: birthdate:1960..2005
+  ssn: ssn
+  created: timestamp:asc
+  status: enum:active=75,inactive=15,suspended=5,deleted=3,pending=2
+  role: enum:user=85,admin=5,moderator=5,support=5
+  login_count: integer:0..2000
+  mfa: enum:true=40,false=60
+
+options:
+  ctx: strict
+  count: 500
+  format: csv
+  since: "2022"
+  until: "2025"

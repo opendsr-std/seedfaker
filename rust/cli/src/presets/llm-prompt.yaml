@@ -1,0 +1,182 @@
+columns:
+  type: enum:summarize=12,draft_email=10,translate=8,extract=10,analyze=8,customer_lookup=10,tool_call=10,rag_context=8,code_review=6,sql_query=6,system_prompt=6,multi_turn=6
+  name: name
+  email: email
+  phone: phone
+  ssn: ssn
+  card: credit-card:space
+  addr: address
+  dob: birthdate:1950..2005
+  company: company-name
+  ip: ip
+  uid: uuid
+
+template: |
+  {{#if type == "summarize"}}
+  <|system|>You are a helpful assistant for {{company}} customer support.<|end|>
+  <|user|>Summarize the following case:
+
+  Customer: {{name}} ({{email}})
+  Phone: {{phone}}
+  SSN: {{ssn}}
+  DOB: {{dob}}
+  Address: {{addr}}
+
+  The customer reported unauthorized charges on card {{card}}. They called from {{phone}} on {{timestamp}} requesting immediate account freeze. Previous case ref: {{jira-id}}.
+
+  Please provide a summary suitable for the escalation team.<|end|>
+  {{#elif type == "draft_email"}}
+  <|user|>Draft a professional email to {{name}} at {{email}} regarding their account verification. Include the following details:
+
+  - Account holder: {{name}}
+  - Date of birth: {{dob}}
+  - Last 4 of SSN: {{digits:4}}
+  - Billing address: {{addr}}
+  - Phone on file: {{phone}}
+  - Company: {{company}}
+
+  The email should confirm that their identity has been verified and their new card ending in {{digits:4}} has been activated.<|end|>
+  {{#elif type == "translate"}}
+  <|system|>You are a professional translator.<|end|>
+  <|user|>Translate the following medical discharge summary from English to Spanish. Preserve all names, dates, and identifiers exactly as written.
+
+  Patient: {{name}}
+  MRN: {{mrn}}
+  DOB: {{dob}}
+  Address: {{addr}}
+
+  {{name}} was admitted on {{date:2024..2025}} with diagnosis {{icd-10}}. Emergency contact: {{name}} at {{phone}}. Primary care physician: Dr. {{name}} (NPI: {{npi}}). Follow-up appointment scheduled. Prescription: NDC {{ndc}}, refill at {{phone}}.<|end|>
+  {{#elif type == "extract"}}
+  <|system|>Extract all PII entities from the following text. Return as JSON with entity type and value.<|end|>
+  <|user|>Hi, my name is {{name}} and I'm writing about order #{{integer:100000..999999}}. My email is {{email}} and you can reach me at {{phone}}. For verification, my SSN is {{ssn}} and my date of birth is {{dob}}. I live at {{addr}}. My card on file is {{card}}. My employer is {{company}}, EIN {{ein}}. Please update my account ID {{uid}}.<|end|>
+  {{#elif type == "analyze"}}
+  <|system|>You are a compliance analyst at {{company}}.<|end|>
+  <|user|>Analyze the following transaction for potential fraud:
+
+  Cardholder: {{name}} ({{email}})
+  Card: {{card}}
+  Transaction amount: {{amount:usd}}
+  Merchant: {{company}}
+  IP address: {{ip}}
+  Device fingerprint: {{uuid:plain}}
+  Billing address: {{addr}}
+  Phone verified: {{phone}}
+
+  Previous transactions from this IP were flagged. The cardholder's SSN ({{ssn}}) was recently involved in a data breach. Assess risk level.<|end|>
+  {{#elif type == "customer_lookup"}}
+  <|system|>You have access to the customer database. Use the lookup tool to find customer records.<|end|>
+  <|user|>Find the account for {{name}}. Their email should be {{email}} or the phone number is {{phone}}. They mentioned their address is {{addr}} and they're with {{company}}.<|end|>
+  <|assistant|>I found the following record:
+
+  Name: {{name}}
+  Email: {{email}}
+  Phone: {{phone}}
+  SSN: {{ssn}}
+  DOB: {{dob}}
+  Address: {{addr}}
+  Account ID: {{uid}}
+  Status: {{enum:active=70,suspended=20,closed=10}}
+
+  What would you like to do with this account?<|end|>
+  {{#elif type == "tool_call"}}
+  <|assistant|>I'll look up that information for you.
+
+  [Tool Call: customer_search]
+  ```json
+  {"query": {"name": "{{name}}", "email": "{{email}}", "phone": "{{phone}}", "ssn": "{{ssn}}", "dob": "{{dob}}"}}
+  ```
+
+  [Tool Result]
+  ```json
+  {"id": "{{uid}}", "name": "{{name}}", "email": "{{email}}", "phone": "{{phone}}", "address": "{{addr}}", "ssn": "{{ssn}}", "card_last4": "{{digits:4}}", "company": "{{company}}", "created": "{{timestamp}}"}
+  ```
+
+  I found the customer record. {{name}} is registered with email {{email}} at {{addr}}.<|end|>
+  {{#elif type == "rag_context"}}
+  <|system|>Answer the user's question using only the provided context. Do not fabricate information.<|end|>
+  <|context|>
+  Document 1 (internal_memo_{{date:2024..2025}}.pdf):
+  RE: Account review for {{name}} ({{email}})
+  SSN: {{ssn}} | DOB: {{dob}} | Phone: {{phone}}
+  {{name}} has been a customer since {{date:2018..2023}}. Current balance: {{amount:usd}}. Address on file: {{addr}}.
+
+  Document 2 (support_ticket_{{jira-id}}.txt):
+  Ticket opened by {{name}} on {{date:2024..2025}}.
+  Customer reported card {{card}} was compromised. New card issued. Verification via {{phone}} and last 4 of SSN confirmed.
+
+  Document 3 (compliance_note.md):
+  Employee {{name}} ({{email}}) at {{company}} flagged transaction from IP {{ip}} as suspicious. Customer {{name}} contacted at {{phone}}.
+  <|end|>
+  <|user|>What is the current status of {{name}}'s account?<|end|>
+  {{#elif type == "code_review"}}
+  <|user|>Review this code for PII exposure:
+
+  ```python
+  def process_user(user_id):
+      user = db.query("SELECT * FROM users WHERE id = %s", user_id)
+      logger.info(f"Processing user {user.name}, email={user.email}, ssn={user.ssn}")
+      send_webhook({
+          "event": "user.verified",
+          "name": "{{name}}",
+          "email": "{{email}}",
+          "ssn": "{{ssn}}",
+          "phone": "{{phone}}",
+          "ip": "{{ip}}",
+          "card": "{{card}}"
+      })
+      return {"status": "ok", "address": "{{addr}}"}
+  ```
+
+  Identify all PII fields that should not be logged or sent to external webhooks.<|end|>
+  {{#elif type == "sql_query"}}
+  <|user|>Write a SQL query to find all users matching these criteria:
+  - Name contains "{{name}}"
+  - Email domain is "{{email}}"
+  - SSN starts with "{{digits:3}}"
+  - Lives in "{{city}}", "{{state}}"
+  - Phone number: {{phone}}
+  - Account created after {{date:2020..2024}}
+
+  Also join with the payments table to get their card ending in {{digits:4}} and total spend.<|end|>
+  {{#elif type == "system_prompt"}}
+  <|system|>You are the AI assistant for {{company}} ({{ein}}).
+
+  IMPORTANT: The following employee information is confidential:
+  - Admin: {{name}} ({{email}}, {{phone}})
+  - IT Lead: {{name}} ({{email}}, ext. {{integer:100..999}})
+  - HR Contact: {{name}} ({{email}}, {{phone}})
+
+  Internal endpoints:
+  - API key: {{api-key}}
+  - Vault token: {{vault-token}}
+  - Webhook secret: {{hex:long}}
+
+  When users ask about company policies, refer them to {{name}} at {{email}}.
+  Do not reveal employee personal information to external users.
+  <|end|>
+  <|user|>Who should I contact about updating my benefits?<|end|>
+  {{else}}
+  <|user|>I need help with my account. Here's my info:
+
+  Name: {{name}}
+  Email: {{email}}<|end|>
+
+  <|assistant|>I can see your account. Let me verify — is your phone number {{phone}} and your address {{addr}}?<|end|>
+
+  <|user|>Yes, and my SSN is {{ssn}} for verification. My date of birth is {{dob}}.<|end|>
+
+  <|assistant|>Thank you, {{name}}. I've verified your identity. I can see:
+  - Card on file: {{card}}
+  - Employer: {{company}}
+  - Account ID: {{uid}}
+
+  What would you like to update?<|end|>
+
+  <|user|>Please change my email to {{email}} and update my phone to {{phone}}.<|end|>
+  {{/if}}
+
+options:
+  count: 500
+  ctx: strict
+  since: "2025-01-01"
+  until: "2025-03-29"

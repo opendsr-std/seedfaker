@@ -1,0 +1,37 @@
+{
+  "name": "@opendsr/seedfaker-darwin-x64",
+  "version": "0.3.0-alpha.2",
+  "description": "seedfaker platform binary (darwin-x64)",
+  "license": "MIT",
+  "author": "Eduard Titov <editied@gmail.com>",
+  "homepage": "https://github.com/opendsr-std/seedfaker",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/opendsr-std/seedfaker"
+  },
+  "os": [
+    "darwin"
+  ],
+  "cpu": [
+    "x64"
+  ],
+  "files": [
+    "bin/",
+    "seedfaker_napi.node"
+  ],
+  "bin": {
+    "_seedfaker_bin": "bin/seedfaker"
+  },
+  "keywords": [
+    "faker",
+    "fake-data",
+    "synthetic-data",
+    "mock-data",
+    "test-data",
+    "data-generator",
+    "deterministic",
+    "pii",
+    "fixtures",
+    "locale"
+  ]
+}

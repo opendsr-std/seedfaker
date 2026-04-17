@@ -1,0 +1,64 @@
+name: Benchmark
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  bench:
+    name: Performance
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            rust/target
+          key: bench-${{ hashFiles('rust/Cargo.lock') }}
+          restore-keys: bench-
+
+      - name: Build
+        run: cargo build --manifest-path rust/Cargo.toml --release -p seedfaker
+
+      - name: CLI tiers
+        run: bash benchmarks/fast.sh
+
+      - name: Per-field
+        run: bash benchmarks/fields.sh
+
+      - name: Regression gate
+        run: |
+          set -euo pipefail
+          T3=$(grep "| 3 |" benchmarks/results/fast.md | grep -oE '[0-9]+\.[0-9]+s' | head -1 | tr -d 's')
+          T10=$(grep "| 10 |" benchmarks/results/fast.md | grep -oE '[0-9]+\.[0-9]+s' | head -1 | tr -d 's')
+          T20=$(grep "| 20 |" benchmarks/results/fast.md | grep -oE '[0-9]+\.[0-9]+s' | head -1 | tr -d 's')
+          echo "3f=${T3}s  10f=${T10}s  20f=${T20}s"
+          FAIL=0
+          for pair in "3f:$T3:0.250" "10f:$T10:0.600" "20f:$T20:1.200"; do
+            label=${pair%%:*}; rest=${pair#*:}; actual=${rest%%:*}; limit=${rest#*:}
+            if awk "BEGIN{exit(!($actual > $limit))}"; then
+              echo "::error::${label}: ${actual}s > ${limit}s"; FAIL=1
+            else
+              echo "  ${label}: ${actual}s (limit ${limit}s)"
+            fi
+          done
+          exit $FAIL
+
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add benchmarks/results/fast.md benchmarks/results/fields.md
+          git diff --staged --quiet || {
+            git commit -m "bench: update results [skip ci]"
+            git push
+          }

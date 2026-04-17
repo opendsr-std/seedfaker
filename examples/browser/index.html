@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>seedfaker browser demo</title></head>
+<body>
+<pre id="out">Loading WASM...</pre>
+<script type="module">
+import init, { SeedFaker } from "../../packages/wasm/web/seedfaker_wasm.js";
+await init();
+
+const f = new SeedFaker({ seed: "demo", locale: "en", until: 2025 });
+const out = [];
+
+out.push("=== Single fields ===");
+out.push("name:  " + f.field("name"));
+out.push("email: " + f.field("email"));
+out.push("phone: " + f.field("phone:e164"));
+
+out.push("\n=== Records (ctx=strict, n=5) ===");
+const rows = f.records(["name", "email", "phone:e164"], 5, "strict", null);
+for (const r of rows) out.push(JSON.stringify(r));
+
+out.push("\n=== Fingerprint ===");
+out.push(SeedFaker.fingerprint());
+
+document.getElementById("out").textContent = out.join("\n");
+</script>
+</body>
+</html>

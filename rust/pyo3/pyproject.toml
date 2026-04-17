@@ -1,0 +1,18 @@
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "seedfaker-native"
+version = "0.3.0a2"
+description = "Native PyO3 extension for seedfaker"
+requires-python = ">=3.9"
+license = "MIT"
+authors = [
+    { name = "Eduard Titov", email = "editied@gmail.com" },
+]
+
+[tool.maturin]
+features = []
+manifest-path = "Cargo.toml"
+module-name = "_seedfaker"

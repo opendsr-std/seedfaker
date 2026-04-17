@@ -1,0 +1,6 @@
+id,name,email,phone,address,city,state,postal,country,birthdate,ssn,created,status,role,login_count,mfa
+0,Raed bin Omran Al Ghurair,raedalghurair@gmx.com,"+971573882121","7113 Al Wasl Road, Sharjah, Sharjah 00000",Sharjah,Sharjah,00000,AE,1980-01-16,58358118319,2022-01-01T00:00:29Z,inactive,support,812,false
+1,Thuraya bin Wadima Al Muhairi,t.almuhairi.331@icloud.com,"+971512545770","1235 Corniche Road, Fujairah, Fujairah 00000",Fujairah,Fujairah,00096,AE,2002-07-01,29173635638,2022-01-01T00:02:21Z,active,admin,751,false
+2,Maxim Bergeron,maximbergeron@outlook.com,"+19175416812","130 Chemin Sainte-Foy, J8X 3W5 Gatineau",Gatineau,Québec,J8X 3W5,CA,1999-10-17,07628237545,2022-01-01T00:04:16Z,active,user,1391,false
+3,Jenna Pulkkinen,jpulkkinen4875@phnet.fi,"+358407024809","810 Mikonkatu, Jyvaskyla, Keski-Suomi 40100",Jyvaskyla,Keski-Suomi,40170,FI,1998-09-08,160760A522U,2022-01-01T00:06:39Z,active,user,1154,true
+4,Tamer Simsek,tamerxxxw5@turktelekom.com.tr,"+905395309529","5595 Fenerbahce Caddesi, Denizli, Denizli 20000",Denizli,Denizli,20067,TR,1982-10-09,84120582107,2022-01-01T00:08:34Z,active,user,470,false

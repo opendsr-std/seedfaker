@@ -1,0 +1,21 @@
+[package]
+name = "seedfaker-python"
+version = "0.3.0-alpha.2"
+edition = "2021"
+rust-version.workspace = true
+authors = ["Eduard Titov <editied@gmail.com>"]
+description = "PyO3 bindings for seedfaker-core"
+license = "MIT"
+readme = "../../README.md"
+publish = false
+
+[lib]
+name = "_seedfaker"
+crate-type = ["cdylib"]
+
+[dependencies]
+seedfaker-core = { path = "../core", version = "0.3.0-alpha.2" }
+pyo3 = { version = "0.28", features = ["extension-module", "abi3-py38"] }
+
+[lints]
+workspace = true

@@ -1,0 +1,33 @@
+columns:
+  level: enum:info=60,warn=20,error=12,fatal=3,debug=5
+  ts: timestamp:asc
+  svc: enum:api-gateway=25,user-service=20,order-service=20,payment-service=15,notification-service=10,auth-service=10
+  trace: uuid:plain
+  span: hex:8
+  msg: message
+  ip: ip
+  uid: uuid
+  email: email
+  path: url
+  method: http-method
+  status: http-status
+  latency: latency
+  req_id: uuid:plain
+
+template: |
+  {{#if level == "fatal"}}
+  {"timestamp":"{{ts}}","level":"FATAL","service":"{{svc}}","trace_id":"{{trace}}","request_id":"{{req_id}}","msg":"{{msg}}","http":{"method":"{{method}}","path":"{{path}}","status":503,"latency_ms":{{latency}}},"user":{"id":"{{uid}}","email":"{{email}}","ip":"{{ip}}"},"error":{"type":"PanicError","msg":"goroutine stack overflow","stack":"goroutine 1 [running]:\nruntime.throw({0x{{hex:8}}, 0x{{integer:1..99}}})\n\truntime/panic.go:1077"}}
+  {{#elif level == "error"}}
+  {"timestamp":"{{ts}}","level":"ERROR","service":"{{svc}}","trace_id":"{{trace}}","span_id":"{{span}}","request_id":"{{req_id}}","msg":"{{msg}}","http":{"method":"{{method}}","path":"{{path}}","status":{{status}},"latency_ms":{{latency}}},"user":{"id":"{{uid}}","email":"{{email}}","ip":"{{ip}}"},"error":{"type":"InternalError","msg":"{{msg}}","stack":"at {{file-path}}:{{integer:1..999}}"}}
+  {{#elif level == "warn"}}
+  {"timestamp":"{{ts}}","level":"WARN","service":"{{svc}}","trace_id":"{{trace}}","request_id":"{{req_id}}","msg":"{{msg}}","http":{"method":"{{method}}","path":"{{path}}","status":{{status}},"latency_ms":{{latency}}},"user":{"id":"{{uid}}","ip":"{{ip}}"}}
+  {{#elif level == "debug"}}
+  {"timestamp":"{{ts}}","level":"DEBUG","service":"{{svc}}","trace_id":"{{trace}}","span_id":"{{span}}","msg":"cache miss for key user:{{uid}}","cache":{"backend":"redis","ttl_s":300,"operation":"GET"}}
+  {{else}}
+  {"timestamp":"{{ts}}","level":"INFO","service":"{{svc}}","trace_id":"{{trace}}","msg":"request completed","http":{"method":"{{method}}","path":"{{path}}","status":{{status}},"latency_ms":{{latency}}}}
+  {{/if}}
+
+options:
+  count: 500
+  since: "2025-03-28"
+  until: "2025-03-29"

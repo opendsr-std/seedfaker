@@ -1,0 +1,56 @@
+MIT License
+
+Copyright (c) 2026 Eduard Titov and seedfaker contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+ADDITIONAL NOTICE — SYNTHETIC DATA AND LIABILITY
+
+This software generates synthetic data that mimics the format and
+appearance of real-world data. The generated output is artificial and
+does not represent real, validated, or authoritative data.
+
+The output may resemble sensitive or structured data, including but not
+limited to credentials, identifiers, financial data, government-issued
+identifiers, network values, or cryptographic-looking values. Such
+output is provided solely as synthetic data and does not guarantee
+uniqueness, correctness, validity, compliance with any standard, or
+cryptographic security.
+
+The output may be deterministic or predictable (including through the
+use of seeds).
+
+Generated data MUST NOT be relied upon as secure, unique,
+standard-compliant, or fit for authentication, authorization, financial,
+cryptographic, or identity-related use.
+
+The software does not guarantee that generated data is unique or free
+from similarity to real-world data. Any similarity or correspondence to
+real persons, accounts, credentials, identifiers, or other data is
+purely coincidental.
+
+The user is solely responsible for any use of the software and generated
+data, including use in production systems and any resulting data leaks,
+security incidents, financial loss, or regulatory consequences.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTIES OF ANY KIND.
+
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM OR RELATED TO THE USE
+OR MISUSE OF THE SOFTWARE OR GENERATED DATA.

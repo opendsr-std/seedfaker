@@ -1,0 +1,249 @@
+name: CI
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  PIP_CACHE_DIR: ~/.cache/pip
+
+jobs:
+  build:
+    name: Lint, build, test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: dtolnay/rust-toolchain@1.88
+        with:
+          components: rustfmt, clippy
+
+      # Cargo registry (not target — too large for cache, incremental build is fast enough)
+      - uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+          key: cargo-ci-${{ runner.os }}-${{ hashFiles('rust/Cargo.lock') }}
+          restore-keys: |
+            cargo-ci-${{ runner.os }}-
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: pnpm/action-setup@v4
+
+      # pnpm global store
+      - name: Get pnpm store path
+        id: pnpm-store
+        shell: bash
+        run: echo "path=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v5
+        with:
+          path: ${{ steps.pnpm-store.outputs.path }}
+          key: pnpm-ci-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            pnpm-ci-${{ runner.os }}-
+
+      # pip cache (ruff, taplo)
+      - uses: actions/cache@v5
+        with:
+          path: ${{ env.PIP_CACHE_DIR }}
+          key: pip-ci-${{ runner.os }}-ruff-taplo
+          restore-keys: |
+            pip-ci-${{ runner.os }}-
+
+      - name: Install linters
+        run: |
+          pnpm add -g eslint@9 prettier
+          pip install --quiet ruff taplo
+
+      - name: Lint (non-Rust)
+        run: |
+          pnpm exec eslint packages/npm/index.js
+          ruff check packages/pip/seedfaker/ tools/*.py examples/python/*.py
+          pnpm exec prettier --check \
+            packages/npm/index.js packages/npm/index.d.ts \
+            packages/npm-cli/bin/seedfaker.js \
+            '**/*.json' '**/*.yml' '**/*.yaml' '*.md' 'docs/**/*.md'
+          taplo lint rust/Cargo.toml rust/*/Cargo.toml packages/pip/pyproject.toml
+          shellcheck -S error benchmarks/*.sh .github/scripts/*.sh tools/*.sh examples/*.sh
+
+      - uses: ./.github/actions/rust-lint
+
+      - uses: taiki-e/install-action@cargo-deny
+      - name: Cargo deny
+        run: cd rust && cargo deny check
+
+      - name: pnpm audit
+        run: pnpm audit
+
+      - name: Build (release, all crates)
+        run: cargo build --manifest-path rust/Cargo.toml --release --workspace
+
+      - name: Copy bindings
+        run: |
+          cp rust/target/release/libseedfaker_napi.so packages/npm/seedfaker_napi.node
+          cp rust/target/release/lib_seedfaker.so packages/pip/seedfaker/_seedfaker.abi3.so
+          ls -la packages/npm/seedfaker_napi.node packages/pip/seedfaker/_seedfaker.abi3.so
+
+      - name: Rust tests
+        run: cargo test --manifest-path rust/Cargo.toml --workspace
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: |
+            rust/target/release/seedfaker
+            rust/target/release/libseedfaker_ffi.so
+            packages/npm/seedfaker_napi.node
+            packages/pip/seedfaker/_seedfaker.abi3.so
+          retention-days: 1
+
+  integration:
+    name: Integration
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+          cache: false
+
+      # apt cache for PHP
+      - uses: actions/cache@v5
+        id: apt-cache
+        with:
+          path: /var/cache/apt/archives
+          key: apt-ci-php-${{ runner.os }}
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: build
+
+      - name: Prepare artifacts
+        run: |
+          chmod +x rust/target/release/seedfaker
+          ls -la rust/target/release/seedfaker
+          ls -la rust/target/release/libseedfaker_ffi.so
+          ls -la packages/npm/seedfaker_napi.node
+          ls -la packages/pip/seedfaker/_seedfaker.abi3.so
+
+      - name: Install PHP
+        run: sudo apt-get update && sudo apt-get install -y php-cli php-ffi
+
+      - name: npm
+        run: |
+          node -e "
+            const {SeedFaker}=require('./packages/npm');
+            const f=new SeedFaker({seed:'ci-pkg'});
+            const v=f.field('name');
+            if(!v) throw new Error('empty name');
+            if(SeedFaker.fields().length<200) throw new Error('fields');
+            if(!SeedFaker.fingerprint().startsWith('sf0-')) throw new Error('fingerprint');
+            if(f.records(['name','email'],{n:3,ctx:'strict'}).length!==3) throw new Error('records');
+            console.log('npm ok: '+v);
+          "
+
+      - name: pip
+        run: |
+          PYTHONPATH=packages/pip python3 -c "
+          from seedfaker import SeedFaker
+          f=SeedFaker(seed='ci-pkg')
+          v=f.field('name'); assert v
+          assert len(SeedFaker.fields())>=200
+          assert SeedFaker.fingerprint().startswith('sf0-')
+          assert len(f.records(['name','email'],n=3,ctx='strict'))==3
+          print('pip ok: '+v)
+          "
+
+      - name: MCP
+        run: |
+          SF=rust/target/release/seedfaker
+          RESP=$(printf '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}\n' | $SF mcp)
+          echo "$RESP" | grep -q '"protocolVersion"' || { echo "::error::initialize"; exit 1; }
+          RESP=$(printf '{"jsonrpc":"2.0","id":2,"method":"tools/list"}\n' | $SF mcp)
+          for tool in field run_preset fingerprint list_fields; do
+            echo "$RESP" | grep -q "\"$tool\"" || { echo "::error::missing $tool"; exit 1; }
+          done
+          echo "MCP ok"
+
+      - name: Cross-determinism
+        run: |
+          SF=rust/target/release/seedfaker
+          FIELDS="name email phone city birthdate credit-card ssn passport ip uuid"
+          CLI_HASH=$($SF $FIELDS --seed xpkg --locale en -n 20 --until 2025 --no-header -q 2>/dev/null | sha256sum | cut -d' ' -f1)
+          NODE_HASH=$(node -e "
+            const{SeedFaker}=require('./packages/npm');
+            const f=new SeedFaker({seed:'xpkg',locale:'en',until:2025});
+            const fields='$FIELDS'.split(' ');
+            f.records(fields,{n:20}).forEach(r=>console.log(fields.map(k=>r[k]||r[k.replace(/-/g,'_')]).join('\t')));
+          " | sha256sum | cut -d' ' -f1)
+          PY_HASH=$(PYTHONPATH=packages/pip python3 -c "
+          from seedfaker import SeedFaker
+          f=SeedFaker(seed='xpkg',locale='en',until=2025)
+          fields='$FIELDS'.split()
+          for r in f.records(fields,n=20):
+              print('\t'.join(r.get(k,r.get(k.replace('-','_'),'')) for k in fields))
+          " | sha256sum | cut -d' ' -f1)
+          if [ "$CLI_HASH" = "$NODE_HASH" ] && [ "$CLI_HASH" = "$PY_HASH" ]; then
+            echo "Cross ok: CLI=npm=pip (sha256=$(printf '%.16s' $CLI_HASH)...)"
+          else
+            echo "::error::Determinism: CLI=$CLI_HASH npm=$NODE_HASH pip=$PY_HASH"
+            exit 1
+          fi
+
+      - name: Examples
+        run: |
+          SEEDFAKER="$(pwd)/rust/target/release/seedfaker" /bin/bash examples/run-all.sh --no-docker
+          PYTHONPATH=packages/pip python3 examples/python/basic.py > /dev/null
+          mkdir -p node_modules/@opendsr && ln -sfn $(pwd)/packages/npm node_modules/@opendsr/seedfaker
+          node examples/nodejs/basic.cjs > /dev/null
+          php examples/php/basic.php > /dev/null
+          RUBYLIB=$(pwd)/packages/ruby/lib ruby examples/ruby/basic.rb > /dev/null
+          cd examples/go && CGO_LDFLAGS="-L../../rust/target/release -lseedfaker_ffi" LD_LIBRARY_PATH="../../rust/target/release" go run main.go > /dev/null
+          echo "Examples ok"
+
+      - name: Verify
+        run: |
+          bash tools/verify-docs.sh
+
+          EXPECTED=$(cat FINGERPRINT)
+          ACTUAL=$(rust/target/release/seedfaker --version | grep -oE 'sf0-[a-f0-9]+')
+          [ "$ACTUAL" = "$EXPECTED" ] || { echo "::error::fingerprint $ACTUAL != $EXPECTED"; exit 1; }
+
+          CORE=$(grep '^version' rust/core/Cargo.toml | head -1 | sed 's/.*"\(.*\)"/\1/')
+          FAIL=0
+          for crate in cli napi ffi; do
+            V=$(grep '^version' rust/$crate/Cargo.toml | head -1 | sed 's/.*"\(.*\)"/\1/')
+            [ "$V" = "$CORE" ] || { echo "::error::$crate ($V) != core ($CORE)"; FAIL=1; }
+          done
+          NPM=$(node -p "require('./packages/npm/package.json').version")
+          [ "$NPM" = "$CORE" ] || { echo "::error::npm ($NPM) != core ($CORE)"; FAIL=1; }
+          PIP=$(grep '^version' packages/pip/pyproject.toml | sed 's/.*"\(.*\)"/\1/')
+          EXPECTED_PIP=$(echo "$CORE" | sed 's/-alpha\.\([0-9]*\)/a\1/' | sed 's/-beta\.\([0-9]*\)/b\1/' | sed 's/-rc\.\([0-9]*\)/rc\1/')
+          [ "$PIP" = "$EXPECTED_PIP" ] || [ "$PIP" = "$CORE" ] || { echo "::error::pip ($PIP) != ($EXPECTED_PIP)"; FAIL=1; }
+          bash .github/scripts/fields-check.sh
+          for f in README.md CONTRIBUTING.md DEVELOPMENT.md LICENSE FINGERPRINT docs/field-reference.md include/seedfaker.h; do
+            [ -f "$f" ] || { echo "::error::Missing: $f"; FAIL=1; }
+          done
+          exit $FAIL

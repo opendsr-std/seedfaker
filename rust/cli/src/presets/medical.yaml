@@ -1,0 +1,270 @@
+columns:
+  type: enum:progress_note=15,discharge=12,lab_result=12,prescription=10,referral=8,radiology=8,insurance_claim=8,consent=6,emergency=6,mental_health=5,nursing=5,pathology=5
+  name: name
+  email: email
+  phone: phone
+  ssn: ssn
+  dob: birthdate:1940..2010
+  addr: address
+  company: company-name
+  doc: last-name
+
+template: |
+  {{#if type == "progress_note"}}
+  ══════════════════════════════════════════════
+  PROGRESS NOTE
+  ══════════════════════════════════════════════
+  Date: {{date:2024..2025}}
+  Patient: {{name}}
+  MRN: {{mrn}}
+  DOB: {{dob}} | Sex: {{enum:M=48,F=48,X=4}} | Age: {{age:18..95}}
+  Provider: Dr. {{doc}}, {{enum:MD=70,DO=20,NP=10}} (NPI: {{npi}})
+  Facility: {{company}} Medical Center
+
+  CHIEF COMPLAINT: {{enum:chest pain=10,headache=12,back pain=15,shortness of breath=8,abdominal pain=10,fatigue=10,cough=8,joint pain=8,dizziness=7,rash=5,follow-up=7}}
+
+  VITALS: BP {{integer:90..180}}/{{integer:60..110}}, HR {{integer:55..120}}, Temp {{float:96..103}}°F, SpO2 {{integer:88..100}}%, RR {{integer:12..28}}, BMI {{float:18..45}}
+
+  HPI: {{name}} is a {{age:18..95}}-year-old {{enum:male=48,female=48,non-binary=4}} presenting with {{message}}. Patient reports symptoms began {{integer:1..14}} days ago. PMH significant for {{enum:hypertension=20,diabetes mellitus type 2=15,asthma=10,GERD=10,depression=10,hypothyroidism=8,osteoarthritis=8,hyperlipidemia=8,COPD=5,heart failure=3,none=3}}.
+
+  MEDICATIONS: {{enum:lisinopril 10mg=12,metformin 500mg=10,atorvastatin 20mg=10,omeprazole 20mg=8,amlodipine 5mg=8,levothyroxine 50mcg=7,albuterol PRN=7,sertraline 50mg=7,acetaminophen 500mg=6,metoprolol 25mg=6,gabapentin 300mg=5,none=14}} daily
+
+  ASSESSMENT: {{icd-10}} — {{message}}
+
+  PLAN:
+  1. {{enum:Continue current medications=20,Adjust dosage=15,Order labs=15,Refer to specialist=12,Start new medication=12,Schedule follow-up=10,Imaging ordered=8,Physical therapy=8}}
+  2. Follow-up in {{integer:1..12}} weeks
+  3. Patient counseled on {{enum:diet=20,exercise=20,medication compliance=20,smoking cessation=10,stress management=10,fall prevention=10,wound care=10}}
+
+  Electronically signed by Dr. {{doc}} (NPI: {{npi}}) on {{date:2024..2025}}
+  {{#elif type == "discharge"}}
+  ══════════════════════════════════════════════
+  DISCHARGE SUMMARY
+  ══════════════════════════════════════════════
+  Patient: {{name}} | MRN: {{mrn}} | DOB: {{dob}}
+  SSN: {{ssn}}
+  Address: {{addr}}
+  Phone: {{phone}} | Email: {{email}}
+  Emergency Contact: {{first-name}} {{last-name}} — {{phone}}
+  Insurance: {{company}} (Group #{{digits:8}}, Member #{{digits:10}})
+
+  Admission: {{date:2024..2025}} | Discharge: {{date:2024..2025}}
+  Attending: Dr. {{doc}} (NPI: {{npi}})
+  Facility: {{company}} Hospital
+
+  ADMITTING DIAGNOSIS: {{icd-10}}
+  DISCHARGE DIAGNOSIS: {{icd-10}}, {{icd-10}}
+
+  HOSPITAL COURSE:
+  {{name}} was admitted for {{message}}. During hospitalization, patient underwent {{enum:CT scan=15,MRI=10,echocardiogram=10,endoscopy=8,cardiac catheterization=5,surgical intervention=8,IV antibiotics=12,blood transfusion=5,physical therapy=10,dialysis=3,observation=14}}.
+
+  DISCHARGE MEDICATIONS:
+  1. {{ndc}} — {{enum:lisinopril=10,metformin=10,atorvastatin=10,omeprazole=8,amlodipine=8,gabapentin=7,sertraline=7,prednisone=5,warfarin=5,insulin=5,oxycodone=3,amoxicillin=7,ciprofloxacin=5,furosemide=5,clopidogrel=5}} — take as directed
+  2. {{ndc}} — {{enum:acetaminophen 500mg PRN=30,ibuprofen 400mg PRN=20,ondansetron 4mg PRN=15,diphenhydramine 25mg PRN=15,docusate 100mg daily=20}}
+
+  FOLLOW-UP:
+  - PCP: Dr. {{doc}} ({{phone}}) in {{integer:3..14}} days
+  - Specialist: Dr. {{doc}} (NPI: {{npi}}) in {{integer:2..8}} weeks
+  - Lab work: {{enum:CBC=20,CMP=20,HbA1c=15,TSH=10,lipid panel=15,PT/INR=10,urinalysis=10}} before next visit
+
+  Patient educated on discharge instructions. Signed by {{first-name}} {{last-name}}, {{enum:RN=60,MD=30,PA=10}}.
+  {{#elif type == "lab_result"}}
+  ══════════════════════════════════════════════
+  LABORATORY REPORT
+  ══════════════════════════════════════════════
+  Patient: {{name}} | MRN: {{mrn}} | DOB: {{dob}}
+  Ordering Provider: Dr. {{doc}} (NPI: {{npi}})
+  Collected: {{date:2024..2025}} {{integer:6..18}}:{{integer:10..59}} | Received: {{date:2024..2025}} {{integer:6..18}}:{{integer:10..59}}
+  Accession #: {{alnum:short}}
+
+  TEST RESULTS:
+  ┌──────────────────────┬──────────┬────────────────┬────────┐
+  │ Test                 │ Result   │ Reference      │ Flag   │
+  ├──────────────────────┼──────────┼────────────────┼────────┤
+  │ Glucose              │ {{integer:60..300}} mg/dL│ 70-100         │ {{enum:=60,H=25,L=15}}      │
+  │ Hemoglobin A1c       │ {{float:4..14}}%  │ < 5.7%         │ {{enum:=50,H=50}}      │
+  │ WBC                  │ {{float:2..20}} K/uL│ 4.5-11.0       │ {{enum:=60,H=20,L=20}}      │
+  │ Creatinine           │ {{float:0..5}} mg/dL│ 0.7-1.3        │ {{enum:=65,H=35}}      │
+  │ TSH                  │ {{float:0..10}} mIU/L│ 0.4-4.0        │ {{enum:=55,H=25,L=20}}      │
+  │ Total Cholesterol    │ {{integer:100..350}} mg/dL│ < 200          │ {{enum:=50,H=50}}      │
+  └──────────────────────┴──────────┴────────────────┴────────┘
+
+  Comments: {{message}}
+  Pathologist: Dr. {{doc}}, {{enum:MD=80,PhD=20}} | Phone: {{phone}}
+  {{#elif type == "prescription"}}
+  ══════════════════════════════════════════════
+  PRESCRIPTION / Rx
+  ══════════════════════════════════════════════
+  Date: {{date:2024..2025}}
+  Rx #: {{rx-number}}
+
+  Patient: {{name}} | DOB: {{dob}} | Phone: {{phone}}
+  Address: {{addr}}
+  Allergies: {{enum:NKDA=50,penicillin=15,sulfa=10,codeine=8,aspirin=7,latex=5,iodine=5}}
+
+  Prescriber: Dr. {{doc}} (NPI: {{npi}})
+  DEA: {{alnum:short}}
+  Phone: {{phone}}
+
+  MEDICATION: NDC {{ndc}}
+  Drug: {{enum:amoxicillin 500mg=12,lisinopril 10mg=10,atorvastatin 20mg=10,metformin 500mg=10,omeprazole 20mg=8,sertraline 50mg=7,gabapentin 300mg=7,prednisone 10mg=6,azithromycin 250mg=6,hydrocodone-acetaminophen 5-325mg=4,alprazolam 0.5mg=3,adderall 20mg=3,sumatriptan 50mg=3,fluoxetine 20mg=4,ciprofloxacin 500mg=4,tramadol 50mg=3}}
+  Sig: {{enum:Take 1 tablet by mouth daily=30,Take 1 tablet by mouth twice daily=25,Take 1 capsule by mouth every 8 hours=15,Take 2 tablets by mouth at bedtime=10,Apply topically twice daily=5,Inject subcutaneously once weekly=5,Take as needed for pain=10}}
+  Qty: {{integer:14..90}} | Refills: {{integer:0..5}}
+  DAW: {{enum:0=70,1=30}}
+
+  {{enum:May substitute=70,Dispense as written=30}}
+  Signature: Dr. {{doc}} _______________
+  {{#elif type == "referral"}}
+  REFERRAL
+  Date: {{date:2024..2025}}
+
+  FROM: Dr. {{doc}} (NPI: {{npi}}) — {{enum:Internal Medicine=25,Family Practice=25,Pediatrics=15,OB/GYN=10,Emergency Medicine=10,Urgent Care=15}}
+  Phone: {{phone}} | Fax: {{phone}}
+
+  TO: Dr. {{doc}} (NPI: {{npi}}) — {{enum:Cardiology=15,Orthopedics=12,Neurology=10,Gastroenterology=10,Dermatology=10,Oncology=8,Pulmonology=8,Endocrinology=7,Rheumatology=5,Urology=5,Psychiatry=5,ENT=5}}
+
+  PATIENT: {{name}} | DOB: {{dob}} | MRN: {{mrn}}
+  Phone: {{phone}} | Email: {{email}}
+  Insurance: {{company}} | Member #{{digits:10}}
+  SSN: {{ssn}}
+
+  REASON FOR REFERRAL: {{icd-10}} — {{message}}
+  URGENCY: {{enum:Routine=60,Urgent=30,STAT=10}}
+
+  Please evaluate and treat. Records attached.
+  {{#elif type == "radiology"}}
+  RADIOLOGY REPORT
+  Patient: {{name}} | MRN: {{mrn}} | DOB: {{dob}}
+  Exam: {{enum:Chest X-ray PA/Lateral=20,CT Abdomen/Pelvis with contrast=15,MRI Brain without contrast=12,CT Head without contrast=10,Ultrasound Abdomen=10,MRI Lumbar Spine=8,CT Chest with contrast=8,Mammogram Bilateral=7,X-ray Lumbar Spine=5,MRI Knee=5}}
+  Date: {{date:2024..2025}}
+  Ordering Provider: Dr. {{doc}} (NPI: {{npi}})
+  Indication: {{icd-10}}
+
+  FINDINGS:
+  {{message}}. {{enum:No acute findings=30,Mild degenerative changes=15,Small pleural effusion=8,Hepatomegaly=5,Renal cyst=8,Disc herniation at L4-L5=7,Pulmonary nodule 4mm=5,Cardiomegaly=5,Normal=12,Fracture identified=5}}.
+
+  IMPRESSION:
+  1. {{enum:No acute cardiopulmonary disease=20,Degenerative disc disease=10,Cholelithiasis=8,Hepatic steatosis=8,Normal study=15,Recommend follow-up in 6 months=10,Findings consistent with clinical history=12,Recommend CT for further evaluation=7,Unchanged from prior=10}}
+
+  Dictated by: Dr. {{doc}}, {{enum:MD=80,DO=20}} (NPI: {{npi}})
+  {{#elif type == "insurance_claim"}}
+  INSURANCE CLAIM — CMS-1500
+  Patient: {{name}} | DOB: {{dob}} | Sex: {{enum:M=48,F=48,X=4}}
+  SSN: {{ssn}} | Phone: {{phone}}
+  Address: {{addr}}
+
+  Insured: {{first-name}} {{last-name}} | Policy #{{digits:10}} | Group #{{digits:8}}
+  Payer: {{company}} | Payer ID: {{digits:5}}
+
+  Provider: Dr. {{doc}} (NPI: {{npi}})
+  Facility: {{company}} Medical Group
+  Tax ID: {{ein}}
+  Address: {{addr}}
+
+  Service Date: {{date:2024..2025}}
+  ICD-10: {{icd-10}}, {{icd-10}}
+  CPT: {{cpt-code}} — {{amount:usd}}
+  CPT: {{cpt-code}} — {{amount:usd}}
+
+  Total Charges: {{amount:usd}}
+  Prior Authorization: {{enum:Not required=60,Approved=30,Pending=10}} #{{alnum:short}}
+  {{#elif type == "consent"}}
+  INFORMED CONSENT
+
+  I, {{name}} (DOB: {{dob}}, MRN: {{mrn}}), hereby consent to the following procedure:
+
+  Procedure: {{enum:colonoscopy=15,cardiac catheterization=10,knee arthroscopy=10,lumbar epidural injection=10,endoscopy=10,biopsy=10,MRI with contrast=10,CT with contrast=10,blood transfusion=8,surgical repair=7}}
+  Provider: Dr. {{doc}} (NPI: {{npi}})
+  Facility: {{company}} Hospital
+  Date: {{date:2024..2025}}
+
+  I understand the risks, benefits, and alternatives. My questions have been answered.
+
+  Patient Signature: {{name}} _______________
+  Date: {{date:2024..2025}}
+  Witness: {{first-name}} {{last-name}}, {{enum:RN=60,MA=25,LPN=15}}
+  Emergency Contact: {{first-name}} {{last-name}} — {{phone}}
+  {{#elif type == "emergency"}}
+  ══════════════════════════════════════════════
+  EMERGENCY DEPARTMENT NOTE
+  ══════════════════════════════════════════════
+  Arrival: {{date:2024..2025}} {{integer:0..23}}:{{integer:10..59}} via {{enum:ambulance=30,walk-in=50,transfer=15,police=5}}
+  Triage: {{enum:ESI-1 Resuscitation=5,ESI-2 Emergent=15,ESI-3 Urgent=40,ESI-4 Less Urgent=30,ESI-5 Non-Urgent=10}}
+
+  Patient: {{name}} | MRN: {{mrn}} | DOB: {{dob}} | Age: {{age:1..95}}
+  SSN: {{ssn}} | Phone: {{phone}}
+  Address: {{addr}}
+  Emergency Contact: {{first-name}} {{last-name}} — {{phone}} ({{enum:spouse=30,parent=25,sibling=15,child=15,friend=10,other=5}})
+
+  CHIEF COMPLAINT: {{enum:chest pain=12,fall=10,motor vehicle accident=8,abdominal pain=10,difficulty breathing=8,laceration=8,headache=7,allergic reaction=5,overdose=4,assault=3,seizure=5,fever=8,back pain=7,syncope=5}}
+  VITALS: BP {{integer:80..220}}/{{integer:40..130}}, HR {{integer:40..180}}, Temp {{float:95..105}}°F, SpO2 {{integer:70..100}}%, RR {{integer:8..40}}, GCS {{integer:3..15}}
+  ALLERGIES: {{enum:NKDA=50,penicillin=15,sulfa=10,morphine=8,NSAIDs=7,contrast dye=5,latex=5}}
+
+  ED COURSE: {{message}}
+
+  DISPOSITION: {{enum:Discharged home=50,Admitted to floor=25,Admitted to ICU=8,Transferred=5,Left AMA=5,Deceased=2,Observation=5}}
+  Attending: Dr. {{doc}} (NPI: {{npi}})
+  {{#elif type == "mental_health"}}
+  PSYCHIATRIC EVALUATION — CONFIDENTIAL
+  Date: {{date:2024..2025}}
+  Patient: {{name}} | MRN: {{mrn}} | DOB: {{dob}}
+  Phone: {{phone}} | Email: {{email}}
+
+  Provider: Dr. {{doc}}, {{enum:MD=50,PhD=30,PsyD=20}} (NPI: {{npi}})
+
+  PRESENTING PROBLEM: {{message}}
+  DIAGNOSIS: {{icd-10}}
+  PHQ-9 Score: {{integer:0..27}} | GAD-7 Score: {{integer:0..21}}
+  RISK ASSESSMENT: {{enum:Low risk=60,Moderate risk=25,High risk=10,Imminent risk=5}}
+  SAFETY PLAN: {{enum:In place=70,Updated today=20,Declined=10}}
+
+  CURRENT MEDICATIONS:
+  - {{enum:sertraline 50mg=15,fluoxetine 20mg=12,escitalopram 10mg=12,bupropion 150mg=10,venlafaxine 75mg=8,duloxetine 30mg=8,quetiapine 25mg=5,lamotrigine 100mg=5,lithium 300mg=4,aripiprazole 5mg=4,clonazepam 0.5mg=4,trazodone 50mg=5,buspirone 10mg=4,mirtazapine 15mg=4}}
+
+  PLAN: {{enum:Continue current medications=25,Adjust medication dosage=20,Start new medication=15,Refer to therapy=15,Weekly follow-up=10,Crisis resources provided=5,Inpatient evaluation recommended=5,Group therapy recommended=5}}
+  Next appointment: {{date:2024..2025}}
+
+  This record is protected under 42 CFR Part 2 and state mental health confidentiality laws.
+  {{#elif type == "nursing"}}
+  NURSING ASSESSMENT
+  Date/Time: {{date:2024..2025}} {{integer:0..23}}:{{integer:10..59}}
+  Patient: {{name}} | MRN: {{mrn}} | Room: {{integer:100..999}}{{enum:A=50,B=50}}
+  DOB: {{dob}} | Allergies: {{enum:NKDA=50,penicillin=15,sulfa=10,morphine=8,latex=7,iodine=5,codeine=5}}
+  Code Status: {{enum:Full Code=70,DNR=20,DNR/DNI=10}}
+
+  VITALS ({{integer:0..23}}:{{integer:10..59}}):
+  BP: {{integer:90..180}}/{{integer:60..110}} | HR: {{integer:55..120}} | RR: {{integer:12..28}} | Temp: {{float:96..103}}°F | SpO2: {{integer:88..100}}% | Pain: {{integer:0..10}}/10
+
+  ASSESSMENT:
+  - Neuro: {{enum:Alert and oriented x4=60,Alert and oriented x3=15,Confused=10,Lethargic=10,Unresponsive=5}}
+  - Cardiac: {{enum:Regular rate and rhythm=70,Irregular rhythm=15,Tachycardic=10,Bradycardic=5}}
+  - Respiratory: {{enum:Clear bilateral=60,Diminished bases=15,Wheezes=10,Crackles=10,Labored=5}}
+  - IV: {{enum:20g right forearm=30,22g left hand=25,18g right AC=15,PICC line=15,Central line=10,None=5}} — {{enum:NS at 125mL/hr=30,LR at 100mL/hr=20,D5W at 75mL/hr=10,Saline lock=30,TPN=10}}
+  - Intake: {{integer:200..3000}} mL | Output: {{integer:100..2500}} mL
+
+  Attending notified: Dr. {{doc}} ({{first-name}}@hospital.org)
+  Nurse: {{first-name}} {{last-name}}, {{enum:RN=70,LPN=20,CNA=10}} (ID: {{employee-id}})
+  {{else}}
+  PATHOLOGY REPORT
+  Patient: {{name}} | MRN: {{mrn}} | DOB: {{dob}}
+  SSN: {{ssn}}
+  Accession #: S{{date:2024..2025}}-{{digits:4}}
+  Collected: {{date:2024..2025}} | Received: {{date:2024..2025}}
+
+  SPECIMEN: {{enum:skin punch biopsy=15,colon biopsy=12,breast biopsy=10,lymph node biopsy=10,thyroid FNA=8,bone marrow biopsy=8,cervical biopsy=8,liver biopsy=7,prostate biopsy=7,lung biopsy=5,renal biopsy=5,gastric biopsy=5}}
+
+  GROSS DESCRIPTION: {{message}}
+
+  MICROSCOPIC: {{message}}
+
+  DIAGNOSIS: {{icd-10}} — {{enum:Benign=50,Malignant=15,Atypical=10,Inflammatory=10,Dysplastic=8,Inconclusive=7}}
+
+  Pathologist: Dr. {{doc}}, MD (NPI: {{npi}})
+  Phone: {{phone}}
+  {{/if}}
+
+options:
+  count: 500
+  locale: [en]
+  since: "2025-01-01"
+  until: "2025-03-29"
