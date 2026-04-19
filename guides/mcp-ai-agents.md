@@ -53,9 +53,11 @@ You're working in Claude Code or Cursor and need test data. Without MCP, the AI 
 
 | Tool | What |
 |------|------|
-| `field` | Generate 1–100 records with any combination of fields, seed, locale, ctx, corruption |
-| `run_preset` | Run a preset (nginx, payment, pii-leak, etc.) |
+| `generate` | Generate records with any combination of fields, seed, locale, ctx, corruption, format, template, annotated spans |
+| `run_preset` | Run a preset (nginx, payment, pii-leak, etc.) or config file; supports multi-table via `table` |
+| `validate` | Check field specs and options without generating data |
 | `list_fields` | List all fields with groups and modifiers |
+| `list_presets` | List built-in preset names |
 | `fingerprint` | Algorithm version hash |
 
 See [MCP reference](../docs/mcp.md) for full parameter details.
@@ -64,7 +66,7 @@ See [MCP reference](../docs/mcp.md) for full parameter details.
 
 You ask: "generate 5 test users with name, email, phone, locale en, seed test"
 
-The agent calls `field` → gets:
+The agent calls `generate` → gets:
 
 ```
 name             email                       phone

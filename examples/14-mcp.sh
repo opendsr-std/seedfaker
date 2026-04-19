@@ -23,14 +23,14 @@ echo ""
 echo "=== 3. Generate 3 correlated records ==="
 printf '%s\n' \
   '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}' \
-  '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"field","arguments":{"fields":["name","email","phone:e164"],"n":3,"seed":"demo","ctx":"strict","locale":"en"}}}' \
+  '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"generate","arguments":{"fields":["name","email","phone:e164"],"n":3,"seed":"demo","ctx":"strict","locale":"en"}}}' \
   | ${SF} mcp | tail -1 | extract_text
 
 echo ""
 echo "=== 4. Generate with corruption ==="
 printf '%s\n' \
   '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}' \
-  '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"field","arguments":{"fields":["name","email","ssn"],"n":3,"seed":"demo","corrupt":"high","locale":"en"}}}' \
+  '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"generate","arguments":{"fields":["name","email","ssn"],"n":3,"seed":"demo","corrupt":"high","locale":"en"}}}' \
   | ${SF} mcp | tail -1 | extract_text
 
 echo ""

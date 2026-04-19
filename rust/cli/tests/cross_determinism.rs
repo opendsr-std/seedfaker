@@ -35,14 +35,24 @@ fn mcp_call(requests: &[&str]) -> Vec<serde_json::Value> {
 }
 
 fn mcp_generate(args_json: &str) -> Vec<serde_json::Value> {
+    // Inject format:jsonl so we can compare per-record JSON against CLI TSV
+    // via the mcp_records_to_tsv helper below. MCP's default (TSV) would be
+    // directly compared in principle, but JSONL lets these tests key by field
+    // name instead of column order.
+    let mut args: serde_json::Value = serde_json::from_str(args_json).expect("args json");
+    args["format"] = serde_json::Value::String("jsonl".into());
+    let args_str = args.to_string();
     let init = r#"{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1"}}}"#;
     let call = format!(
-        r#"{{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{{"name":"field","arguments":{args_json}}}}}"#
+        r#"{{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{{"name":"generate","arguments":{args_str}}}}}"#
     );
     let responses = mcp_call(&[init, &call]);
     assert!(responses.len() >= 2, "expected at least 2 MCP responses");
     let text = responses[1]["result"]["content"][0]["text"].as_str().expect("text");
-    serde_json::from_str(text).expect("parse records")
+    text.lines()
+        .filter(|l| !l.is_empty())
+        .map(|l| serde_json::from_str(l).expect("jsonl record"))
+        .collect()
 }
 
 fn mcp_records_to_tsv(records: &[serde_json::Value], fields: &[&str]) -> Vec<String> {
