@@ -2,14 +2,14 @@
 
 ## Environment
 
-- **Date:** 2026-04-14 22:58 UTC
+- **Date:** 2026-05-03 16:34 UTC
 - **OS:** Darwin 23.5.0 arm64
 - **CPU:** Apple M1 Pro
 - **RAM:** 16 GB
-- **Rust:** rustc 1.94.1 (e408947bf 2026-03-25)
+- **Rust:** rustc 1.95.0 (59807616e 2026-04-14)
 - **Python:** Python 3.13.2
 - **Node:** v22.22.2
-- **seedfaker:** seedfaker 0.3.0-alpha.1 (sf0-158dc9f79ce46b43)
+- **seedfaker:** seedfaker 0.3.0-alpha.2 (sf0-158dc9f79ce46b43)
 - **faker:** 40.11.0
 - **mimesis:** 19.1.0
 - **polyfactory:** 3.3.0
@@ -26,8 +26,8 @@ Both tools generate to /dev/null. seedfaker produces format-realistic PII (Luhn 
 
 | Tool | 3 fields | 5 fields | 10 fields | 15 fields | 20 fields |
 |------|----------|----------|-----------|-----------|-----------|
-| seedfaker | 0.045s (2.2M/s) | 0.057s (1.8M/s) | 0.110s (909K/s) | 0.162s (617K/s) | 0.201s (498K/s) |
-| fakedata | 0.058s (1.7M/s) · *1.3x slower* | 0.070s (1.4M/s) · *1.2x slower* | 0.086s (1.2M/s) · *1.3x faster* | 0.111s (901K/s) · *1.5x faster* | 0.187s (535K/s) · *1.1x faster* |
+| seedfaker | 0.045s (2.2M/s) | 0.058s (1.7M/s) | 0.108s (926K/s) | 0.158s (633K/s) | 0.195s (513K/s) |
+| fakedata | 0.054s (1.9M/s) · *1.2x slower* | 0.068s (1.5M/s) · *1.2x slower* | 0.085s (1.2M/s) · *1.3x faster* | 0.106s (943K/s) · *1.5x faster* | 0.188s (532K/s) · *~same* |
 
 ## 2. Python library (10000 records, in-memory)
 
@@ -35,10 +35,10 @@ seedfaker: PyO3 native extension. polyfactory: random strings (not structured PI
 
 | Tool | 3 fields | 5 fields | 10 fields | 15 fields | 20 fields |
 |------|----------|----------|-----------|-----------|-----------|
-| seedfaker | 0.010s (1.0M/s) | 0.014s (714K/s) | 0.026s (385K/s) | 0.039s (256K/s) | 0.050s (200K/s) |
-| faker | 1.462s (7K/s) · *146.2x slower* | 1.810s (6K/s) · *129.3x slower* | 2.632s (4K/s) · *101.2x slower* | 4.639s (2K/s) · *118.9x slower* | 5.221s (2K/s) · *104.4x slower* |
-| mimesis | 0.066s (152K/s) · *6.6x slower* | 0.096s (104K/s) · *6.9x slower* | 0.219s (46K/s) · *8.4x slower* | 0.336s (30K/s) · *8.6x slower* | 0.448s (22K/s) · *9.0x slower* |
-| polyfactory | 0.794s (13K/s) · *79.4x slower* | 1.286s (8K/s) · *91.9x slower* | 2.506s (4K/s) · *96.4x slower* | 3.756s (3K/s) · *96.3x slower* | 4.960s (2K/s) · *99.2x slower* |
+| seedfaker | 0.010s (1.0M/s) | 0.014s (714K/s) | 0.026s (385K/s) | 0.040s (250K/s) | 0.051s (196K/s) |
+| faker | 1.375s (7K/s) · *137.5x slower* | 1.772s (6K/s) · *126.6x slower* | 2.554s (4K/s) · *98.2x slower* | 4.585s (2K/s) · *114.6x slower* | 5.082s (2K/s) · *99.6x slower* |
+| mimesis | 0.066s (152K/s) · *6.6x slower* | 0.098s (102K/s) · *7.0x slower* | 0.222s (45K/s) · *8.5x slower* | 0.341s (29K/s) · *8.5x slower* | 0.434s (23K/s) · *8.5x slower* |
+| polyfactory | 0.775s (13K/s) · *77.5x slower* | 1.256s (8K/s) · *89.7x slower* | 2.461s (4K/s) · *94.7x slower* | 3.733s (3K/s) · *93.3x slower* | 4.897s (2K/s) · *96.0x slower* |
 
 ## 3. Node.js library (10000 records, in-memory)
 
@@ -46,19 +46,19 @@ seedfaker: NAPI-RS native extension.
 
 | Tool | 3 fields | 5 fields | 10 fields | 15 fields | 20 fields |
 |------|----------|----------|-----------|-----------|-----------|
-| seedfaker | 0.017s (588K/s) | 0.027s (370K/s) | 0.068s (147K/s) | 0.129s (78K/s) | 0.202s (50K/s) |
-| fakerjs | 0.081s (123K/s) · *4.8x slower* | 0.119s (84K/s) · *4.4x slower* | 0.193s (52K/s) · *2.8x slower* | 0.281s (36K/s) · *2.2x slower* | 0.376s (27K/s) · *1.9x slower* |
-| chance | 0.046s (217K/s) · *2.7x slower* | 0.083s (120K/s) · *3.1x slower* | 0.125s (80K/s) · *1.8x slower* | 0.207s (48K/s) · *1.6x slower* | 0.324s (31K/s) · *1.6x slower* |
-| falso | 0.063s (159K/s) · *3.7x slower* | 0.080s (125K/s) · *3.0x slower* | 0.128s (78K/s) · *1.9x slower* | 0.176s (57K/s) · *1.4x slower* | 0.256s (39K/s) · *1.3x slower* |
-| jsf | 0.406s (25K/s) · *23.9x slower* | 0.456s (22K/s) · *16.9x slower* | 0.553s (18K/s) · *8.1x slower* | 0.719s (14K/s) · *5.6x slower* | 1.160s (9K/s) · *5.7x slower* |
+| seedfaker | 0.021s (476K/s) | 0.027s (370K/s) | 0.067s (149K/s) | 0.124s (81K/s) | 0.198s (51K/s) |
+| fakerjs | 0.079s (127K/s) · *3.8x slower* | 0.119s (84K/s) · *4.4x slower* | 0.187s (53K/s) · *2.8x slower* | 0.262s (38K/s) · *2.1x slower* | 0.354s (28K/s) · *1.8x slower* |
+| chance | 0.043s (233K/s) · *2.0x slower* | 0.076s (132K/s) · *2.8x slower* | 0.123s (81K/s) · *1.8x slower* | 0.191s (52K/s) · *1.5x slower* | 0.328s (30K/s) · *1.7x slower* |
+| falso | 0.058s (172K/s) · *2.8x slower* | 0.078s (128K/s) · *2.9x slower* | 0.122s (82K/s) · *1.8x slower* | 0.172s (58K/s) · *1.4x slower* | 0.252s (40K/s) · *1.3x slower* |
+| jsf | 0.374s (27K/s) · *17.8x slower* | 0.438s (23K/s) · *16.2x slower* | 0.526s (19K/s) · *7.9x slower* | 0.691s (14K/s) · *5.6x slower* | 1.090s (9K/s) · *5.5x slower* |
 
 ## 4. Startup overhead (1 record)
 
 | Tool | Time |
 |------|------|
 | seedfaker CLI | 0.003s |
-| faker.py (+ interpreter) | 0.102s |
-| mimesis (+ interpreter) | 0.079s |
+| faker.py (+ interpreter) | 0.100s |
+| mimesis (+ interpreter) | 0.077s |
 
 ## 5. Feature overhead (seedfaker CLI, 100000 records)
 
@@ -67,19 +67,19 @@ Baseline: 3 PII fields (name, email, phone), TSV to /dev/null.
 | Feature | Time | Overhead |
 |---------|------|----------|
 | baseline (TSV) | 0.045s | — |
-| --format csv | 0.062s | +38% |
-| --ctx strict | 0.083s | +84% |
-| --corrupt high | 0.100s | +122% |
+| --format csv | 0.060s | +33% |
+| --ctx strict | 0.080s | +78% |
+| --corrupt high | 0.096s | +113% |
 
 ### Template overhead (same fields: TSV vs inline template vs YAML config)
 
 | Fields | TSV | Inline `-t` | YAML config | TPL vs TSV |
 |--------|-----|-------------|-----------|------------|
-| 3 | 0.045s | 0.068s | 0.071s | +51% |
-| 5 | 0.059s | 0.103s | 0.093s | +75% |
-| 10 | 0.112s | 0.175s | 0.177s | +56% |
-| 15 | 0.166s | 0.260s | 0.265s | +57% |
-| 20 | 0.210s | 0.322s | 0.323s | +53% |
+| 3 | 0.043s | 0.065s | 0.066s | +51% |
+| 5 | 0.057s | 0.092s | 0.091s | +61% |
+| 10 | 0.106s | 0.169s | 0.169s | +59% |
+| 15 | 0.158s | 0.249s | 0.249s | +58% |
+| 20 | 0.192s | 0.309s | 0.311s | +61% |
 
 ## Methodology
 

@@ -284,16 +284,17 @@ Details: [docs/determinism](docs/determinism.md), [docs/context](docs/context.md
 
 ## Packages and bindings
 
-| Language / runtime | Package                                                               | Local docs                            |
-| ------------------ | --------------------------------------------------------------------- | ------------------------------------- |
-| Python             | `pip install seedfaker`                                               | [packages/pip](packages/pip/)         |
-| Node.js            | `npm install @opendsr/seedfaker`                                      | [packages/npm](packages/npm/)         |
-| Go                 | `go get github.com/opendsr-std/seedfaker-go`                          | [packages/go](packages/go/)           |
-| PHP                | `composer require opendsr/seedfaker`                                  | [packages/php](packages/php/)         |
-| Ruby               | `gem install seedfaker`                                               | [packages/ruby](packages/ruby/)       |
-| Browser (WASM)     | `npm install @opendsr/seedfaker-wasm`                                 | [packages/wasm](packages/wasm/)       |
-| CLI (npm)          | `npm install -g @opendsr/seedfaker-cli`                               | [packages/npm-cli](packages/npm-cli/) |
-| CLI (native)       | `brew install opendsr-std/tap/seedfaker` or `cargo install seedfaker` | [docs/cli](docs/cli.md)               |
+| Language / runtime | Install                                      | Registry                                                                                                 | Local docs                            |
+| ------------------ | -------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| Python             | `pip install seedfaker`                      | [pypi.org/project/seedfaker](https://pypi.org/project/seedfaker/)                                        | [packages/pip](packages/pip/)         |
+| Node.js            | `npm install @opendsr/seedfaker`             | [npmjs.com/package/@opendsr/seedfaker](https://www.npmjs.com/package/@opendsr/seedfaker)                 | [packages/npm](packages/npm/)         |
+| Go                 | `go get github.com/opendsr-std/seedfaker-go` | [pkg.go.dev/github.com/opendsr-std/seedfaker-go](https://pkg.go.dev/github.com/opendsr-std/seedfaker-go) | [packages/go](packages/go/)           |
+| PHP                | `composer require opendsr/seedfaker`         | [packagist.org/packages/opendsr/seedfaker](https://packagist.org/packages/opendsr/seedfaker)             | [packages/php](packages/php/)         |
+| Ruby               | `gem install seedfaker`                      | [rubygems.org/gems/seedfaker](https://rubygems.org/gems/seedfaker)                                       | [packages/ruby](packages/ruby/)       |
+| Browser (WASM)     | `npm install @opendsr/seedfaker-wasm`        | [npmjs.com/package/@opendsr/seedfaker-wasm](https://www.npmjs.com/package/@opendsr/seedfaker-wasm)       | [packages/wasm](packages/wasm/)       |
+| CLI (npm)          | `npm install -g @opendsr/seedfaker-cli`      | [npmjs.com/package/@opendsr/seedfaker-cli](https://www.npmjs.com/package/@opendsr/seedfaker-cli)         | [packages/npm-cli](packages/npm-cli/) |
+| CLI (Homebrew)     | `brew install opendsr-std/tap/seedfaker`     | [github.com/opendsr-std/homebrew-tap](https://github.com/opendsr-std/homebrew-tap)                       | [docs/cli](docs/cli.md)               |
+| CLI (Cargo)        | `cargo install seedfaker`                    | [crates.io/crates/seedfaker](https://crates.io/crates/seedfaker)                                         | [docs/cli](docs/cli.md)               |
 
 All packages wrap the same Rust core. API surface is intentionally identical across languages except for idiomatic naming.
 

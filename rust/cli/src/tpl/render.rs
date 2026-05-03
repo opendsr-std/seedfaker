@@ -28,11 +28,6 @@ pub enum Segment {
     Value { field_name: &'static str, value: String },
 }
 
-pub fn render(tpl: &CompiledTemplate, ctx: &mut RenderCtx<'_>, buf: &mut String) {
-    let segments = collect(tpl, ctx);
-    assemble_text(&segments, buf);
-}
-
 pub fn collect(tpl: &CompiledTemplate, ctx: &mut RenderCtx<'_>) -> Vec<Segment> {
     let mut out = Vec::new();
     collect_nodes(&tpl.nodes, ctx, &mut out);

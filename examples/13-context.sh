@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# --ctx strict locks every field in a record to one identity and one locale:
-# name, email, phone country code, and gov ID all match per row.
+# --ctx strict: one identity + one locale per row (name, email, phone CC, gov ID match).
 set -euo pipefail
 SF="${SEEDFAKER:-seedfaker}"
 

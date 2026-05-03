@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Unix composition: seedfaker writes to stdout, Unix tools take over.
+# stdout → standard Unix tools (grep, sort, uniq).
 set -euo pipefail
 SF="${SEEDFAKER:-seedfaker}"
 

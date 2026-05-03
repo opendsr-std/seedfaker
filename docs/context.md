@@ -79,9 +79,7 @@ options:
 
 ## Examples
 
-See [examples/context/](../examples/context/) for output across all 68 locales with `--ctx strict`.
-
-Regenerate: `make field-examples`.
+See [examples/13-context.sh](../examples/13-context.sh) for `--ctx strict` across locales.
 
 ## Related guides
 

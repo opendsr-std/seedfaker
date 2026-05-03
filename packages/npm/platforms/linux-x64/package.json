@@ -1,6 +1,6 @@
 {
   "name": "@opendsr/seedfaker-linux-x64",
-  "version": "0.3.0-alpha.2",
+  "version": "0.4.0-alpha.1",
   "description": "seedfaker platform binary (linux-x64)",
   "license": "MIT",
   "author": "Eduard Titov <editied@gmail.com>",

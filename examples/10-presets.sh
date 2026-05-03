@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Presets: ready-made configs embedded in the binary
+# Embedded presets.
 set -euo pipefail
 SF="${SEEDFAKER:-seedfaker}"
 

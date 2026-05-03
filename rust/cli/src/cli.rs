@@ -1,5 +1,5 @@
 use clap::{Args, Parser, Subcommand, ValueEnum};
-use std::io::{BufWriter, Write};
+use std::io::BufWriter;
 
 use crate::format;
 use seedfaker_core::{field, locale, script::Script};
@@ -190,19 +190,19 @@ enum Command {
 }
 
 #[derive(Clone, Copy, ValueEnum)]
-enum AbcMode {
+pub(crate) enum AbcMode {
     Native,
     Mixed,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, ValueEnum)]
-enum CtxMode {
+pub(crate) enum CtxMode {
     Loose,
     Strict,
 }
 
 #[derive(Clone, Copy, ValueEnum)]
-enum CorruptMode {
+pub(crate) enum CorruptMode {
     Low,
     Mid,
     High,
@@ -219,7 +219,7 @@ fn resolve_locales(
     Ok(locale::resolve(codes)?)
 }
 
-fn resolve_script(abc: Option<AbcMode>, cfg_abc: Option<&str>) -> Script {
+pub(crate) fn resolve_script(abc: Option<AbcMode>, cfg_abc: Option<&str>) -> Script {
     match abc.or_else(|| {
         cfg_abc.and_then(|s| match s {
             "native" => Some(AbcMode::Native),
@@ -233,7 +233,7 @@ fn resolve_script(abc: Option<AbcMode>, cfg_abc: Option<&str>) -> Script {
     }
 }
 
-fn resolve_ctx(
+pub(crate) fn resolve_ctx(
     ctx: Option<CtxMode>,
     cfg_ctx: Option<&str>,
 ) -> Result<seedfaker_core::script::Ctx, String> {
@@ -249,7 +249,7 @@ fn resolve_ctx(
     }
 }
 
-fn resolve_corrupt(
+pub(crate) fn resolve_corrupt(
     corrupt: Option<CorruptMode>,
     cfg_corrupt: Option<&str>,
 ) -> Result<seedfaker_core::script::Corrupt, String> {
@@ -273,7 +273,7 @@ fn resolve_corrupt(
     }
 }
 
-fn resolve_delim(
+pub(crate) fn resolve_delim(
     cli_delim: &Option<String>,
     cfg_delim: Option<&str>,
 ) -> Result<Option<String>, Box<dyn std::error::Error>> {
@@ -287,7 +287,7 @@ fn resolve_delim(
     Ok(Some(resolved))
 }
 
-fn resolve_time_opts(
+pub(crate) fn resolve_time_opts(
     tz: Option<&str>,
     since: Option<&str>,
     until: Option<&str>,
@@ -333,7 +333,19 @@ pub fn run(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
             );
         }
         Some(Command::Replace { columns, input_format, seed, until, since }) => {
-            return run_replace(&columns, &input_format, &seed, since.as_deref(), until.as_deref());
+            let stdin = std::io::stdin();
+            let stdout = std::io::stdout();
+            let mut reader = std::io::BufReader::new(stdin.lock());
+            let mut out = BufWriter::new(stdout.lock());
+            return run_replace_io(
+                &mut reader,
+                &mut out,
+                &columns,
+                input_format.as_deref(),
+                seed.as_deref(),
+                since.as_deref(),
+                until.as_deref(),
+            );
         }
         Some(Command::Mcp) => {
             crate::mcp::serve();
@@ -368,7 +380,7 @@ pub fn run(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
     run_fields(g)
 }
 
-fn parse_output_format(s: &str) -> Result<crate::engine::OutputMode, String> {
+pub(crate) fn parse_output_format(s: &str) -> Result<crate::engine::OutputMode, String> {
     match s {
         "csv" => Ok(crate::engine::OutputMode::Csv),
         "tsv" => Ok(crate::engine::OutputMode::Tsv),
@@ -405,29 +417,25 @@ fn aggr_auto_name(spec: &str) -> String {
     spec.replace(':', "_")
 }
 
-fn run_fields(g: &GenArgs) -> Result<(), Box<dyn std::error::Error>> {
-    let o = &g.opts;
+/// Build a `GenConfig` from a list of positional tokens.
+///
+/// Shared by CLI `run_fields` and the MCP `generate` / `validate` tools —
+/// single source of truth for token → columns → topo-sorted config.
+///
+/// Returns `(GenConfig, resolved fields, is_template)`.
+pub(crate) fn build_gen_config_from_tokens(
+    tokens: &[String],
+    template: Option<String>,
+) -> Result<(crate::config::GenConfig, Vec<field::ResolvedField>, bool), Box<dyn std::error::Error>>
+{
+    let is_template = template.is_some();
 
-    let (tz_offset, since, until) =
-        resolve_time_opts(o.tz.as_deref(), o.since.as_deref(), o.until.as_deref())?;
-
-    let locales = resolve_locales(&o.locale)?;
-    let delim = resolve_delim(&o.delim, None)?;
-
-    let fmt_count = o.format.as_ref().map_or(0, |_| 1) + g.template.as_ref().map_or(0, |_| 1);
-    if fmt_count > 1 {
-        return Err("use --format or --template, not both".into());
-    }
-
-    let is_template = g.template.is_some();
-
-    // Separate expressions, aggregators, and regular fields from CLI tokens.
+    // Separate expressions, aggregators, and regular fields.
     let mut regular_tokens = Vec::new();
     let mut aggr_args: Vec<(Option<String>, String)> = Vec::new();
-    let mut expr_args: Vec<(String, String)> = Vec::new(); // (alias, spec)
+    let mut expr_args: Vec<(String, String)> = Vec::new();
 
-    for token in &g.fields {
-        // Parse alias: name=spec (only if `=` comes before `:` and `(`)
+    for token in tokens {
         let (alias, spec) = if let Some(eq_pos) = token.find('=') {
             let colon_pos = token.find(':').unwrap_or(token.len());
             let paren_pos = token.find('(').unwrap_or(token.len());
@@ -441,12 +449,10 @@ fn run_fields(g: &GenArgs) -> Result<(), Box<dyn std::error::Error>> {
             (None, token.clone())
         };
 
-        // Check if spec contains an expression operator.
         let has_expr_op = spec.contains('+')
             || spec.contains('*')
             || (spec.contains('-') && {
                 // Distinguish expression minus from hyphenated field names.
-                // If the whole spec is a known field, it's not an expression.
                 let is_field = field::parse_field_spec(&spec)
                     .ok()
                     .and_then(|(name, ..)| field::lookup(name))
@@ -465,7 +471,7 @@ fn run_fields(g: &GenArgs) -> Result<(), Box<dyn std::error::Error>> {
         }
     }
 
-    let fields = if let Some(ref tpl) = g.template {
+    let fields = if let Some(ref tpl) = template {
         if regular_tokens.is_empty() {
             let tpl_fields = format::template_fields(tpl);
             if tpl_fields.is_empty() {
@@ -478,7 +484,7 @@ fn run_fields(g: &GenArgs) -> Result<(), Box<dyn std::error::Error>> {
         }
     } else {
         if regular_tokens.is_empty() && aggr_args.is_empty() && expr_args.is_empty() {
-            return Err("no fields specified; example: seedfaker name email phone -n 10".into());
+            return Err("no fields specified; example: name email phone".into());
         }
         if regular_tokens.is_empty() {
             Vec::new()
@@ -487,58 +493,7 @@ fn run_fields(g: &GenArgs) -> Result<(), Box<dyn std::error::Error>> {
         }
     };
 
-    if g.count > seedfaker_core::opts::MAX_COUNT {
-        return Err("--count must not exceed 10 billion".into());
-    }
-    if o.rate == Some(0) {
-        return Err("--rate must be greater than 0".into());
-    }
-
-    {
-        let field_infos: Vec<seedfaker_core::validate::FieldInfo<'_>> = fields
-            .iter()
-            .map(|f| {
-                let resolved =
-                    seedfaker_core::field::resolve_range(&f.range, f.field.name, since, until);
-                seedfaker_core::validate::FieldInfo {
-                    name: f.field.name,
-                    has_range: f.range.is_some(),
-                    resolved_range: resolved,
-                    ordering: f.ordering,
-                }
-            })
-            .collect();
-        let check = seedfaker_core::validate::CheckCtx {
-            fields: &field_infos,
-            ctx_strict: o.ctx == Some(crate::cli::CtxMode::Strict),
-            since,
-            until,
-            has_seed: o.seed.is_some(),
-            has_until: o.until.is_some(),
-            format: o.format.as_deref(),
-            corrupt: o.corrupt.map(|c| match c {
-                CorruptMode::Low => "low",
-                CorruptMode::Mid => "mid",
-                CorruptMode::High => "high",
-                CorruptMode::Extreme => "extreme",
-            }),
-            has_template: g.template.is_some(),
-        };
-        let result = seedfaker_core::validate::validate(&check);
-        if !result.errors.is_empty() {
-            for e in &result.errors {
-                eprintln!("error: {e}");
-            }
-            return Err("invalid field combination".into());
-        }
-        if !o.quiet {
-            for w in &result.warnings {
-                eprintln!("warning: {w}");
-            }
-        }
-    }
-
-    // For templates, var names must match the template placeholders (CLI notation: phone:e164).
+    // For templates, var names must match template placeholders (CLI notation: phone:e164).
     // For structured output, headers use display names (phone_e164).
     let use_display_names = !is_template;
     let mut columns: Vec<crate::tpl::column::Column> = fields
@@ -580,7 +535,6 @@ fn run_fields(g: &GenArgs) -> Result<(), Box<dyn std::error::Error>> {
         })
         .collect();
 
-    // Append aggregator columns
     for (alias, spec) in &aggr_args {
         let aggr = crate::tpl::parse_aggr_spec(spec).ok_or_else(|| {
             format!("invalid aggregator: '{spec}'; expected source:func or source:func=group")
@@ -589,7 +543,6 @@ fn run_fields(g: &GenArgs) -> Result<(), Box<dyn std::error::Error>> {
         columns.push(crate::tpl::Column { name, gen: aggr });
     }
 
-    // Append expression columns
     let all_col_names: Vec<String> = columns.iter().map(|c| c.name.clone()).collect();
     for (alias, spec) in &expr_args {
         let gen = crate::tpl::resolve_column(alias, spec, &all_col_names)?;
@@ -601,9 +554,119 @@ fn run_fields(g: &GenArgs) -> Result<(), Box<dyn std::error::Error>> {
     let gen_config = crate::config::GenConfig {
         columns,
         eval_order,
-        template: g.template.clone(),
+        template,
         options: crate::config::GenConfigOptions::default(),
     };
+
+    Ok((gen_config, fields, is_template))
+}
+
+pub(crate) struct CheckInput<'a> {
+    pub fields: &'a [field::ResolvedField],
+    pub since: i64,
+    pub until: i64,
+    pub ctx_strict: bool,
+    pub has_seed: bool,
+    pub has_until: bool,
+    pub format: Option<&'a str>,
+    pub corrupt: Option<&'a str>,
+    pub has_template: bool,
+}
+
+/// Validate a resolved field/option set using declarative `CheckCtx` rules.
+///
+/// Shared between CLI `run_fields` (prints to stderr, returns on error)
+/// and MCP `validate` tool (returns structured `ValidationResult`).
+pub(crate) fn run_check_ctx(input: &CheckInput<'_>) -> seedfaker_core::validate::ValidationResult {
+    let field_infos: Vec<seedfaker_core::validate::FieldInfo<'_>> = input
+        .fields
+        .iter()
+        .map(|f| {
+            let resolved = seedfaker_core::field::resolve_range(
+                &f.range,
+                f.field.name,
+                input.since,
+                input.until,
+            );
+            seedfaker_core::validate::FieldInfo {
+                name: f.field.name,
+                has_range: f.range.is_some(),
+                resolved_range: resolved,
+                ordering: f.ordering,
+            }
+        })
+        .collect();
+    let check = seedfaker_core::validate::CheckCtx {
+        fields: &field_infos,
+        ctx_strict: input.ctx_strict,
+        since: input.since,
+        until: input.until,
+        has_seed: input.has_seed,
+        has_until: input.has_until,
+        format: input.format,
+        corrupt: input.corrupt,
+        has_template: input.has_template,
+    };
+    seedfaker_core::validate::validate(&check)
+}
+
+pub(crate) fn corrupt_mode_str(c: CorruptMode) -> &'static str {
+    match c {
+        CorruptMode::Low => "low",
+        CorruptMode::Mid => "mid",
+        CorruptMode::High => "high",
+        CorruptMode::Extreme => "extreme",
+    }
+}
+
+fn run_fields(g: &GenArgs) -> Result<(), Box<dyn std::error::Error>> {
+    let o = &g.opts;
+
+    let (tz_offset, since, until) =
+        resolve_time_opts(o.tz.as_deref(), o.since.as_deref(), o.until.as_deref())?;
+
+    let locales = resolve_locales(&o.locale)?;
+    let delim = resolve_delim(&o.delim, None)?;
+
+    let fmt_count = o.format.as_ref().map_or(0, |_| 1) + g.template.as_ref().map_or(0, |_| 1);
+    if fmt_count > 1 {
+        return Err("use --format or --template, not both".into());
+    }
+
+    let (gen_config, fields, is_template) =
+        build_gen_config_from_tokens(&g.fields, g.template.clone())?;
+
+    if g.count > seedfaker_core::opts::MAX_COUNT {
+        return Err("--count must not exceed 10 billion".into());
+    }
+    if o.rate == Some(0) {
+        return Err("--rate must be greater than 0".into());
+    }
+
+    {
+        let result = run_check_ctx(&CheckInput {
+            fields: &fields,
+            since,
+            until,
+            ctx_strict: o.ctx == Some(CtxMode::Strict),
+            has_seed: o.seed.is_some(),
+            has_until: o.until.is_some(),
+            format: o.format.as_deref(),
+            corrupt: o.corrupt.map(corrupt_mode_str),
+            has_template: g.template.is_some(),
+        });
+        if !result.errors.is_empty() {
+            for e in &result.errors {
+                eprintln!("error: {e}");
+            }
+            return Err("invalid field combination".into());
+        }
+        if !o.quiet {
+            for w in &result.warnings {
+                eprintln!("warning: {w}");
+            }
+        }
+    }
 
     let output = if let Some(ref fmt) = o.format {
         parse_output_format(fmt)?
@@ -678,7 +741,7 @@ fn run_config(
     }
 }
 
-fn parse_shard_spec(spec: &str) -> Result<(u64, u64), String> {
+pub(crate) fn parse_shard_spec(spec: &str) -> Result<(u64, u64), String> {
     let (i, n) =
         spec.split_once('/').ok_or_else(|| format!("--shard expects I/N (got '{spec}')"))?;
     let i: u64 = i.parse().map_err(|_| format!("--shard: invalid I in '{spec}'"))?;
@@ -692,7 +755,7 @@ fn parse_shard_spec(spec: &str) -> Result<(u64, u64), String> {
     Ok((i, n))
 }
 
-fn resolve_shard(spec: Option<&str>, count: u64) -> Result<Option<(u64, u64)>, String> {
+pub(crate) fn resolve_shard(spec: Option<&str>, count: u64) -> Result<Option<(u64, u64)>, String> {
     let Some(s) = spec else { return Ok(None) };
     let (i, n) = parse_shard_spec(s)?;
     if n == 1 {
@@ -853,10 +916,12 @@ fn read_line_bounded(
     Ok(true)
 }
 
-fn run_replace(
+pub(crate) fn run_replace_io<R: std::io::BufRead, W: std::io::Write>(
+    reader: &mut R,
+    out: &mut W,
     columns: &[String],
-    input_format: &Option<String>,
-    seed: &Option<String>,
+    input_format: Option<&str>,
+    seed: Option<&str>,
     since: Option<&str>,
     until: Option<&str>,
 ) -> Result<(), Box<dyn std::error::Error>> {
@@ -878,30 +943,27 @@ fn run_replace(
         }
     }
 
-    if let Some(ref fmt) = input_format {
+    if let Some(fmt) = input_format {
         if fmt != "csv" && fmt != "jsonl" {
             return Err(format!("--input-format must be 'csv' or 'jsonl', got '{fmt}'").into());
         }
     }
 
-    let stdin = std::io::stdin();
-    let stdout = std::io::stdout();
-    let mut out = BufWriter::new(stdout.lock());
-    let mut reader = std::io::BufReader::new(stdin.lock());
+    let seed_owned = seed.map(str::to_string);
 
     let mut first_line = String::new();
-    if !read_line_bounded(&mut reader, &mut first_line)? {
+    if !read_line_bounded(reader, &mut first_line)? {
         return Ok(());
     }
 
-    let jsonl_mode = match input_format.as_deref() {
+    let jsonl_mode = match input_format {
         Some("jsonl") => true,
         Some("csv") => false,
         _ => first_line.trim_start().starts_with('{'),
     };
 
     if jsonl_mode {
-        let mut process_jsonl = |line: &str| -> Result<(), Box<dyn std::error::Error>> {
+        let process_jsonl = |line: &str, out: &mut W| -> Result<(), Box<dyn std::error::Error>> {
             if line.is_empty() {
                 return Ok(());
             }
@@ -914,20 +976,20 @@ fn run_replace(
                     }
                     let original = val.to_string();
                     let replacement =
-                        generate_replacement(&original, col, seed, since_epoch, until_epoch);
+                        generate_replacement(&original, col, &seed_owned, since_epoch, until_epoch);
                     obj.insert(col.clone(), serde_json::Value::String(replacement));
                 }
             }
 
-            serde_json::to_writer(&mut out, &obj)?;
+            serde_json::to_writer(&mut *out, &obj)?;
             out.write_all(b"\n")?;
             Ok(())
         };
 
-        process_jsonl(&first_line)?;
+        process_jsonl(&first_line, out)?;
         let mut line_buf = String::new();
-        while read_line_bounded(&mut reader, &mut line_buf)? {
-            process_jsonl(&line_buf)?;
+        while read_line_bounded(reader, &mut line_buf)? {
+            process_jsonl(&line_buf, out)?;
         }
     } else {
         let mut col_indices: Vec<usize> = Vec::new();
@@ -947,7 +1009,7 @@ fn run_replace(
         writeln!(out, "{first_line}")?;
 
         let mut line_buf = String::new();
-        while read_line_bounded(&mut reader, &mut line_buf)? {
+        while read_line_bounded(reader, &mut line_buf)? {
             let fields = parse_csv_line(&line_buf);
             let mut output_fields: Vec<String> = Vec::new();
 
@@ -960,8 +1022,13 @@ fn run_replace(
                         let col_pos = col_indices.iter().position(|&idx| idx == i);
                         let col_name =
                             col_pos.and_then(|p| columns.get(p)).map_or("", String::as_str);
-                        let replacement =
-                            generate_replacement(trimmed, col_name, seed, since_epoch, until_epoch);
+                        let replacement = generate_replacement(
+                            trimmed,
+                            col_name,
+                            &seed_owned,
+                            since_epoch,
+                            until_epoch,
+                        );
                         if field_val.starts_with('"') {
                             output_fields.push(format!("\"{}\"", replacement.replace('"', "\"\"")));
                         } else {
@@ -993,8 +1060,7 @@ fn generate_replacement(
     } else {
         let t = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
-            .map(|d| d.as_nanos() as u64)
-            .unwrap_or(0);
+            .map_or(0, |d| d.as_nanos() as u64);
         format!("{t}\x00{original}")
     };
     let seed_val = seedfaker_core::hash_seed(&hash_input);

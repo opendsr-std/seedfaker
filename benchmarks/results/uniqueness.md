@@ -4,17 +4,17 @@
 
 Median duplicate % across 5 seeds. The `:xuniq` modifier adds a 5-char deterministic tag for guaranteed uniqueness at any scale.
 
-| Field | Mode | 100.0K | 1.00M | 5.00M |
+| Field | Mode | 10.0K | 100.0K | 500.0K |
 |-------|------|------|------|------|
-| `email` | default | 0.00% dup | 0.04% dup | 0.20% dup |
+| `email` | default | 0% | 0.00% dup | 0.02% dup |
 | | `:xuniq` | 0% | 0% | 0% |
-| `username` | default | 0.12% dup | 1.04% dup | 4.05% dup |
+| `username` | default | 0.02% dup | 0.12% dup | 0.54% dup |
 | | `:xuniq` | 0% | 0% | 0% |
-| `login-name` | default | 0.13% dup | 1.15% dup | 4.38% dup |
+| `login-name` | default | 0.01% dup | 0.13% dup | 0.61% dup |
 | | `:xuniq` | 0% | 0% | 0% |
-| `nickname` | default | 1.76% dup | 10.48% dup | 19.73% dup |
+| `nickname` | default | 0.18% dup | 1.76% dup | 6.71% dup |
 | | `:xuniq` | 0% | 0% | 0% |
-| `social-handle` | default | 0.12% dup | 1.13% dup | 4.38% dup |
+| `social-handle` | default | 0.01% dup | 0.12% dup | 0.59% dup |
 | | `:xuniq` | 0% | 0% | 0% |
 
 \* zero collisions observed
@@ -49,67 +49,67 @@ Fields with large value spaces (`email`, `phone`, `ip`, `credit-card`, `jwt`, `p
 
 ## All fields
 
-Measured: 5 seeds × 1.00M records per seed, locale: all.
+Measured: 5 seeds × 100.0K records per seed, locale: all.
 Seed variance across all fields: <0.1% — results are seed-independent.
 
 ### Fields
 
 | Field | Unique | Dup% | Type |
 |-------|--------|------|------|
-| `name` | 800.4K | 20.0% | medium |
-| `first-name` | 7.4K | 99.3% | dictionary |
-| `last-name` | 8.9K | 99.1% | dictionary |
-| `email` | 999.6K | 0.04% | high-cardinality |
-| `username` | 989.6K | 1.0% | medium |
-| `nickname` | 895.1K | 10.5% | medium |
-| `login-name` | 988.5K | 1.1% | medium |
-| `phone` | 999.9K | <0.01% | high-cardinality |
-| `phone:e164` | 1000.0K | <0.01% | high-cardinality |
-| `address` | 984.1K | 1.6% | medium |
-| `city` | 1.6K | 99.8% | dictionary |
-| `postal-code` | 86.6K | 91.3% | medium |
-| `ssn` | 1000.0K | <0.01% | high-cardinality |
-| `passport` | 999.9K | 0.01% | high-cardinality |
-| `drivers-license` | 1000.0K | <0.01% | high-cardinality |
-| `credit-card` | 1.00M | 0% * | algorithmic |
-| `iban` | 1.00M | 0% * | algorithmic |
-| `ip` | 999.9K | 0.01% | high-cardinality |
-| `ipv6` | 1.00M | 0% * | algorithmic |
-| `uuid` | 1.00M | 0% * | algorithmic |
-| `jwt` | 1.00M | 0% * | algorithmic |
-| `api-key` | 1.00M | 0% * | algorithmic |
-| `btc-address` | 1.00M | 0% * | algorithmic |
-| `eth-address` | 1.00M | 0% * | algorithmic |
-| `company-name` | 2.2K | 99.8% | dictionary |
-| `ein` | 999.5K | 0.05% | high-cardinality |
-| `employee-id` | 1.00M | 0% * | algorithmic |
+| `name` | 97.5K | 2.5% | medium |
+| `first-name` | 7.4K | 92.6% | dictionary |
+| `last-name` | 8.9K | 91.1% | dictionary |
+| `email` | 100.0K | <0.01% | high-cardinality |
+| `username` | 99.9K | 0.12% | high-cardinality |
+| `nickname` | 98.3K | 1.7% | medium |
+| `login-name` | 99.9K | 0.13% | high-cardinality |
+| `phone` | 100.0K | <0.01% | algorithmic |
+| `phone:e164` | 100.0K | 0% * | algorithmic |
+| `address` | 99.8K | 0.18% | high-cardinality |
+| `city` | 1.6K | 98.4% | dictionary |
+| `postal-code` | 47.7K | 52.3% | medium |
+| `ssn` | 100.0K | 0% * | algorithmic |
+| `passport` | 100.0K | <0.01% | high-cardinality |
+| `drivers-license` | 100.0K | 0% * | algorithmic |
+| `credit-card` | 100.0K | 0% * | algorithmic |
+| `iban` | 100.0K | 0% * | algorithmic |
+| `ip` | 100.0K | <0.01% | high-cardinality |
+| `ipv6` | 100.0K | 0% * | algorithmic |
+| `uuid` | 100.0K | 0% * | algorithmic |
+| `jwt` | 100.0K | 0% * | algorithmic |
+| `api-key` | 100.0K | 0% * | algorithmic |
+| `btc-address` | 100.0K | 0% * | algorithmic |
+| `eth-address` | 100.0K | 0% * | algorithmic |
+| `company-name` | 2.2K | 97.8% | dictionary |
+| `ein` | 100.0K | <0.01% | high-cardinality |
+| `employee-id` | 100.0K | 0% * | algorithmic |
 
-\* no collisions observed at 5×1.00M
+\* no collisions observed at 5×100.0K
 
 ## Combinations
 
 | Fields | Unique | Dup% |
 |--------|--------|------|
-| `name,email` | 1.00M | 0% * |
-| `name,birthdate` | 1000.0K | <0.01% |
-| `name,email,phone` | 1.00M | 0% * |
-| `name,email,phone,birthdate` | 1.00M | 0% * |
-| `name,email,ssn` | 1.00M | 0% * |
-| `ip,username` | 1.00M | 0% * |
-| `credit-card,amount` | 1.00M | 0% * |
-| `ssn,name` | 1.00M | 0% * |
+| `name,email` | 100.0K | 0% * |
+| `name,birthdate` | 100.0K | 0% * |
+| `name,email,phone` | 100.0K | 0% * |
+| `name,email,phone,birthdate` | 100.0K | 0% * |
+| `name,email,ssn` | 100.0K | 0% * |
+| `ip,username` | 100.0K | 0% * |
+| `credit-card,amount` | 100.0K | 0% * |
+| `ssn,name` | 100.0K | 0% * |
 
-\* no collisions observed at 5×1.00M
+\* no collisions observed at 5×100.0K
 
 ## Scale planner
 
 Median unique % across 5 seeds.
 
-| Fields | 1.0K | 10.0K | 100.0K | 1.00M |
-|--------|--------|--------|--------|--------|
-| `name` | 100% | 99.8% | 97.5% | 80.0% |
-| `email` | 100% | 100% | 100% | 100.0% |
-| `username` | 100% | 100% | 99.9% | 99.0% |
-| `phone` | 100% | 100% | 100% | 100.0% |
-| `credit-card` | 100% | 100% | 100% | 100% |
-| `name,email,phone` | 100% | 100% | 100% | 100% |
+| Fields | 1.0K | 10.0K | 100.0K |
+|--------|--------|--------|--------|
+| `name` | 100% | 99.8% | 97.5% |
+| `email` | 100% | 100% | 100% |
+| `username` | 100% | 100% | 99.9% |
+| `phone` | 100% | 100% | 100% |
+| `credit-card` | 100% | 100% | 100% |
+| `name,email,phone` | 100% | 100% | 100% |

@@ -277,12 +277,12 @@ echo "  MCP..." >&2
 FIELDS_JSON=$(echo "$FIELDS" | $PYTHON -c "import sys,json; print(json.dumps(sys.stdin.read().split()))")
 MCP_REQUEST=$(cat <<MCPEOF
 {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"bench","version":"1.0.0"}}}
-{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"field","arguments":{"fields":$FIELDS_JSON,"n":$N,"seed":"$SEED","locale":"$LOCALE","until":"2025"}}}
+{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"generate","arguments":{"fields":$FIELDS_JSON,"n":$N,"seed":"$SEED","locale":"$LOCALE","until":"2025","format":"jsonl","no_header":true}}}
 MCPEOF
 )
 MCP_RAW=$(echo "$MCP_REQUEST" | "$SF" mcp 2>/dev/null || true)
 if echo "$MCP_RAW" | grep -q '"result"'; then
-    # Extract records from MCP response — content[0].text is a JSON array
+    # MCP now emits JSONL (one record per line) via format:jsonl.
     FIELDS_LIST="$FIELDS"
     echo "$MCP_RAW" | $PYTHON -c "
 import sys, json
@@ -295,8 +295,9 @@ for line in sys.stdin:
     except: continue
     if 'result' in msg and 'content' in msg.get('result', {}):
         text = msg['result']['content'][0]['text']
-        records = json.loads(text)
-        for rec in records:
+        for rec_line in text.splitlines():
+            if not rec_line.strip(): continue
+            rec = json.loads(rec_line)
             vals = []
             for f in fields:
                 # MCP normalizes keys: credit-card -> credit_card

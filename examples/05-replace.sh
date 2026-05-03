@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
-# replace: rewrite PII columns of an existing CSV or JSONL stream while
-# keeping every other column intact. Same input + same seed = same output,
-# so independently-masked files still join correctly on the replaced values.
+# replace: rewrite named columns of a CSV/JSONL stream, keep others intact.
 set -euo pipefail
 SF="${SEEDFAKER:-seedfaker}"
 OUT=$(mktemp -d) && trap 'rm -rf "$OUT"' EXIT
@@ -14,9 +12,10 @@ echo
 echo "--- replace email + ssn ---"
 ${SF} replace email ssn --seed anon < "$OUT/source.csv"
 
-# Determinism: the same (input, seed) pair produces the same masked output
-# byte-for-byte, so cross-file joins on email survive anonymisation.
+# Same (input, seed) → same masked output → cross-file joins on email survive.
 A=$(${SF} replace email ssn --seed anon < "$OUT/source.csv" | shasum -a 256 | awk '{print $1}')
 B=$(${SF} replace email ssn --seed anon < "$OUT/source.csv" | shasum -a 256 | awk '{print $1}')
 echo
-echo "two runs: $A / $B — $([ "$A" = "$B" ] && echo OK || echo DIFF)"
+echo "two runs: $A / $B"
+[ "$A" = "$B" ] || { echo "replace not deterministic"; exit 1; }
+echo "OK"

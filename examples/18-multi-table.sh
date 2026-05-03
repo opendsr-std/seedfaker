@@ -2,7 +2,7 @@
 # Multi-table: FK anchor, dereference, zipf, expressions, aggregators
 set -euo pipefail
 SF="${SEEDFAKER:-seedfaker}"
-TMPDIR=$(mktemp -d)
+TMPDIR=$(mktemp -d) && trap 'rm -rf "$TMPDIR"' EXIT
 
 cat > "$TMPDIR/shop.yaml" << 'CONFIG'
 options:
@@ -58,4 +58,7 @@ echo "=== --all --output-dir ==="
 ${SF} run "$TMPDIR/shop.yaml" --all --output-dir "$TMPDIR/out" --format csv
 wc -l "$TMPDIR/out"/*.csv
 
-rm -rf "$TMPDIR"
+# assert: row counts (header + N).
+[ "$(wc -l < "$TMPDIR/out/users.csv")"    -eq 6  ] || { echo "users count mismatch"; exit 1; }
+[ "$(wc -l < "$TMPDIR/out/products.csv")" -eq 5  ] || { echo "products count mismatch"; exit 1; }
+[ "$(wc -l < "$TMPDIR/out/orders.csv")"   -eq 16 ] || { echo "orders count mismatch"; exit 1; }

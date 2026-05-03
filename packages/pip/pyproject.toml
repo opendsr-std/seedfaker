@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "seedfaker"
-version = "0.3.0a2"
+version = "0.4.0a1"
 description = "Deterministic synthetic data generator for realistic, correlated, and noisy test records across 68 locales. Rust CLI + Python + Node.js + Go + PHP + Ruby + MCP."
 readme = "README.md"
 license = "MIT"

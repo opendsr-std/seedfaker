@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
-# Locale-aware fields: names, addresses, phones, and gov IDs all dispatch
-# by the --locale flag. --abc native outputs non-Latin scripts where the
-# locale has one (kanji, hanzi, Cyrillic, Arabic).
+# Locale-aware fields. --abc native = non-Latin script when locale has one.
 set -euo pipefail
 SF="${SEEDFAKER:-seedfaker}"
 
@@ -14,12 +12,11 @@ echo
 ${SF} name address phone --locale zh --abc native -n 3 --seed loc --until 2025
 
 echo
-# Weighted mix. Each row picks a locale from the weighted pool.
+# Weighted locale mix.
 ${SF} name phone country-code --locale en=7,de=2,fr=1 -n 5 --seed loc --until 2025
 
 echo
-# national-id dispatches by locale — SSN (en), CPF (pt-br), NINO (gb), etc.
-echo "national-id by locale:"
+# national-id dispatches by locale.
 for loc in en de fr pt-br hi zh gb; do
   printf "  %-6s %s\n" "$loc" "$(${SF} national-id --locale "$loc" -n 1 --seed gov --until 2025)"
 done

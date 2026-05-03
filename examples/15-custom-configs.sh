@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Custom YAML configs: structured data, templates, ground truth
+# YAML configs: columns, options, optional template.
 set -euo pipefail
 SF="${SEEDFAKER:-seedfaker}"
-TMPDIR=$(mktemp -d)
+TMPDIR=$(mktemp -d) && trap 'rm -rf "$TMPDIR"' EXIT
 
 echo "=== Structured output (JSONL) ==="
 cat > "$TMPDIR/users.yaml" << 'CONFIG'
@@ -44,5 +44,3 @@ options:
 template: "{{name}} <{{email}}> SSN:{{ssn}}"
 CONFIG
 ${SF} run "$TMPDIR/annotated.yaml" -n 3 --until 2025 --seed demo --annotated
-
-rm -rf "$TMPDIR"
