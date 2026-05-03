@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-# Credential and secret fields. Useful for testing secret scanners, log
-# redaction, and vault integrations without exposing real credentials.
-# Credit cards pass Luhn; SSH keys have valid OpenSSH framing; JWTs have
-# parseable headers.
+# Credential and secret fields. credit-card passes Luhn, jwt parses, ssh-key has OpenSSH framing.
 set -euo pipefail
 SF="${SEEDFAKER:-seedfaker}"
 
@@ -17,6 +14,5 @@ echo "--- Luhn-valid credit cards (5) ---"
 ${SF} credit-card -n 5 --seed cards --until 2025
 
 echo
-# `auth` field group bundles the common secret shapes into one record.
-echo "--- auth group (csv) ---"
+echo "--- auth field group (csv) ---"
 ${SF} auth --format csv -n 3 --seed scan --until 2025

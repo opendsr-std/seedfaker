@@ -1,5 +1,5 @@
 use clap::{Args, Parser, Subcommand, ValueEnum};
-use std::io::{BufWriter, Write};
+use std::io::BufWriter;
 
 use crate::format;
 use seedfaker_core::{field, locale, script::Script};
@@ -333,7 +333,19 @@ pub fn run(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
             );
         }
         Some(Command::Replace { columns, input_format, seed, until, since }) => {
-            return run_replace(&columns, &input_format, &seed, since.as_deref(), until.as_deref());
+            let stdin = std::io::stdin();
+            let stdout = std::io::stdout();
+            let mut reader = std::io::BufReader::new(stdin.lock());
+            let mut out = BufWriter::new(stdout.lock());
+            return run_replace_io(
+                &mut reader,
+                &mut out,
+                &columns,
+                input_format.as_deref(),
+                seed.as_deref(),
+                since.as_deref(),
+                until.as_deref(),
+            );
         }
         Some(Command::Mcp) => {
             crate::mcp::serve();
@@ -565,15 +577,17 @@ pub(crate) struct CheckInput<'a> {
 ///
 /// Shared between CLI `run_fields` (prints to stderr, returns on error)
 /// and MCP `validate` tool (returns structured `ValidationResult`).
-pub(crate) fn run_check_ctx(
-    input: &CheckInput<'_>,
-) -> seedfaker_core::validate::ValidationResult {
+pub(crate) fn run_check_ctx(input: &CheckInput<'_>) -> seedfaker_core::validate::ValidationResult {
     let field_infos: Vec<seedfaker_core::validate::FieldInfo<'_>> = input
         .fields
         .iter()
         .map(|f| {
-            let resolved =
-                seedfaker_core::field::resolve_range(&f.range, f.field.name, input.since, input.until);
+            let resolved = seedfaker_core::field::resolve_range(
+                &f.range,
+                f.field.name,
+                input.since,
+                input.until,
+            );
             seedfaker_core::validate::FieldInfo {
                 name: f.field.name,
                 has_range: f.range.is_some(),
@@ -727,7 +741,7 @@ fn run_config(
     }
 }
 
-fn parse_shard_spec(spec: &str) -> Result<(u64, u64), String> {
+pub(crate) fn parse_shard_spec(spec: &str) -> Result<(u64, u64), String> {
     let (i, n) =
         spec.split_once('/').ok_or_else(|| format!("--shard expects I/N (got '{spec}')"))?;
     let i: u64 = i.parse().map_err(|_| format!("--shard: invalid I in '{spec}'"))?;
@@ -741,7 +755,7 @@ fn parse_shard_spec(spec: &str) -> Result<(u64, u64), String> {
     Ok((i, n))
 }
 
-fn resolve_shard(spec: Option<&str>, count: u64) -> Result<Option<(u64, u64)>, String> {
+pub(crate) fn resolve_shard(spec: Option<&str>, count: u64) -> Result<Option<(u64, u64)>, String> {
     let Some(s) = spec else { return Ok(None) };
     let (i, n) = parse_shard_spec(s)?;
     if n == 1 {
@@ -902,10 +916,12 @@ fn read_line_bounded(
     Ok(true)
 }
 
-fn run_replace(
+pub(crate) fn run_replace_io<R: std::io::BufRead, W: std::io::Write>(
+    reader: &mut R,
+    out: &mut W,
     columns: &[String],
-    input_format: &Option<String>,
-    seed: &Option<String>,
+    input_format: Option<&str>,
+    seed: Option<&str>,
     since: Option<&str>,
     until: Option<&str>,
 ) -> Result<(), Box<dyn std::error::Error>> {
@@ -927,30 +943,27 @@ fn run_replace(
         }
     }
 
-    if let Some(ref fmt) = input_format {
+    if let Some(fmt) = input_format {
         if fmt != "csv" && fmt != "jsonl" {
             return Err(format!("--input-format must be 'csv' or 'jsonl', got '{fmt}'").into());
         }
     }
 
-    let stdin = std::io::stdin();
-    let stdout = std::io::stdout();
-    let mut out = BufWriter::new(stdout.lock());
-    let mut reader = std::io::BufReader::new(stdin.lock());
+    let seed_owned = seed.map(str::to_string);
 
     let mut first_line = String::new();
-    if !read_line_bounded(&mut reader, &mut first_line)? {
+    if !read_line_bounded(reader, &mut first_line)? {
         return Ok(());
     }
 
-    let jsonl_mode = match input_format.as_deref() {
+    let jsonl_mode = match input_format {
         Some("jsonl") => true,
         Some("csv") => false,
         _ => first_line.trim_start().starts_with('{'),
     };
 
     if jsonl_mode {
-        let mut process_jsonl = |line: &str| -> Result<(), Box<dyn std::error::Error>> {
+        let process_jsonl = |line: &str, out: &mut W| -> Result<(), Box<dyn std::error::Error>> {
             if line.is_empty() {
                 return Ok(());
             }
@@ -963,20 +976,20 @@ fn run_replace(
                     }
                     let original = val.to_string();
                     let replacement =
-                        generate_replacement(&original, col, seed, since_epoch, until_epoch);
+                        generate_replacement(&original, col, &seed_owned, since_epoch, until_epoch);
                     obj.insert(col.clone(), serde_json::Value::String(replacement));
                 }
             }
 
-            serde_json::to_writer(&mut out, &obj)?;
+            serde_json::to_writer(&mut *out, &obj)?;
             out.write_all(b"\n")?;
             Ok(())
         };
 
-        process_jsonl(&first_line)?;
+        process_jsonl(&first_line, out)?;
         let mut line_buf = String::new();
-        while read_line_bounded(&mut reader, &mut line_buf)? {
-            process_jsonl(&line_buf)?;
+        while read_line_bounded(reader, &mut line_buf)? {
+            process_jsonl(&line_buf, out)?;
         }
     } else {
         let mut col_indices: Vec<usize> = Vec::new();
@@ -996,7 +1009,7 @@ fn run_replace(
         writeln!(out, "{first_line}")?;
 
         let mut line_buf = String::new();
-        while read_line_bounded(&mut reader, &mut line_buf)? {
+        while read_line_bounded(reader, &mut line_buf)? {
             let fields = parse_csv_line(&line_buf);
             let mut output_fields: Vec<String> = Vec::new();
 
@@ -1009,8 +1022,13 @@ fn run_replace(
                         let col_pos = col_indices.iter().position(|&idx| idx == i);
                         let col_name =
                             col_pos.and_then(|p| columns.get(p)).map_or("", String::as_str);
-                        let replacement =
-                            generate_replacement(trimmed, col_name, seed, since_epoch, until_epoch);
+                        let replacement = generate_replacement(
+                            trimmed,
+                            col_name,
+                            &seed_owned,
+                            since_epoch,
+                            until_epoch,
+                        );
                         if field_val.starts_with('"') {
                             output_fields.push(format!("\"{}\"", replacement.replace('"', "\"\"")));
                         } else {
@@ -1042,8 +1060,7 @@ fn generate_replacement(
     } else {
         let t = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
-            .map(|d| d.as_nanos() as u64)
-            .unwrap_or(0);
+            .map_or(0, |d| d.as_nanos() as u64);
         format!("{t}\x00{original}")
     };
     let seed_val = seedfaker_core::hash_seed(&hash_input);

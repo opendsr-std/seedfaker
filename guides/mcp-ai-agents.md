@@ -19,6 +19,8 @@ You're working in Claude Code or Cursor and need test data. Without MCP, the AI 
 
 ## Setup
 
+> Use the **absolute path** to `seedfaker`. GUI MCP clients (Claude Desktop, Cursor) launch outside the shell environment and don't inherit `PATH`, so `"command": "seedfaker"` fails with "command not found". Find the path with `which seedfaker` (e.g. `/usr/local/bin/seedfaker`, `~/.cargo/bin/seedfaker`).
+
 ### Claude Desktop
 
 `~/Library/Application Support/Claude/claude_desktop_config.json`:
@@ -27,7 +29,7 @@ You're working in Claude Code or Cursor and need test data. Without MCP, the AI 
 {
   "mcpServers": {
     "seedfaker": {
-      "command": "seedfaker",
+      "command": "/usr/local/bin/seedfaker",
       "args": ["mcp"]
     }
   }
@@ -42,7 +44,7 @@ You're working in Claude Code or Cursor and need test data. Without MCP, the AI 
 {
   "mcpServers": {
     "seedfaker": {
-      "command": "seedfaker",
+      "command": "/usr/local/bin/seedfaker",
       "args": ["mcp"]
     }
   }
@@ -51,14 +53,17 @@ You're working in Claude Code or Cursor and need test data. Without MCP, the AI 
 
 ## Available tools
 
-| Tool | What |
-|------|------|
-| `generate` | Generate records with any combination of fields, seed, locale, ctx, corruption, format, template, annotated spans |
-| `run_preset` | Run a preset (nginx, payment, pii-leak, etc.) or config file; supports multi-table via `table` |
-| `validate` | Check field specs and options without generating data |
-| `list_fields` | List all fields with groups and modifiers |
-| `list_presets` | List built-in preset names |
-| `fingerprint` | Algorithm version hash |
+| Tool             | What                                                                                                                |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `generate`       | Generate records with any combination of fields, seed, locale, ctx, corruption, format, template, annotated spans, sharding, threads |
+| `run_preset`     | Run a preset (nginx, payment, pii-leak, etc.) or config file; multi-table via `table`                                |
+| `validate`       | Check field specs and options without generating data                                                                |
+| `replace`        | Replace columns in CSV/JSONL while preserving cross-file referential integrity                                       |
+| `list_fields`    | All fields with groups and modifiers                                                                                  |
+| `list_presets`   | Built-in preset names                                                                                                 |
+| `list_locales`   | Supported locale codes                                                                                                |
+| `list_modifiers` | Per-field modifiers and global transforms                                                                             |
+| `fingerprint`    | Algorithm version hash                                                                                                |
 
 See [MCP reference](../docs/mcp.md) for full parameter details.
 

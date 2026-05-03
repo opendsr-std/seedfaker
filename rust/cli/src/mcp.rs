@@ -1,6 +1,6 @@
 //! Model Context Protocol server (stdio JSON-RPC 2.0).
 //!
-//! Protocol: <https://spec.modelcontextprotocol.io/specification/2024-11-05>.
+//! Protocol: <https://spec.modelcontextprotocol.io/specification/2025-06-18>.
 //! All generation goes through `engine::run` — no duplicate column-gen logic.
 //! Invalid input → JSON-RPC error, never silent fallback.
 
@@ -137,7 +137,7 @@ fn handle_one(req: &Value) -> Option<Value> {
 fn dispatch(method: &str, params: &Value) -> Result<Value, RpcError> {
     match method {
         "initialize" => Ok(json!({
-            "protocolVersion": "2024-11-05",
+            "protocolVersion": "2025-06-18",
             "capabilities": {"tools": {"listChanged": false}},
             "serverInfo": {"name": "seedfaker", "version": env!("CARGO_PKG_VERSION")}
         })),
@@ -154,8 +154,11 @@ fn dispatch(method: &str, params: &Value) -> Result<Value, RpcError> {
                 "generate" => tool_generate(&args),
                 "run_preset" => tool_run_preset(&args),
                 "validate" => tool_validate(&args),
+                "replace" => tool_replace(&args),
                 "list_fields" => Ok(list_fields()),
                 "list_presets" => Ok(list_presets()),
+                "list_locales" => Ok(list_locales()),
+                "list_modifiers" => Ok(list_modifiers()),
                 "fingerprint" => Ok(text(seedfaker_core::fingerprint().as_str())),
                 other => Err(RpcError::invalid_params(format!("unknown tool: {other}"))),
             }
@@ -232,9 +235,9 @@ fn opt_temporal(v: &Value, key: &str) -> Result<Option<String>, RpcError> {
 fn require_seed(args: &Value) -> Result<&str, RpcError> {
     match opt_str(args, "seed")? {
         Some(s) if !s.is_empty() => Ok(s),
-        _ => Err(RpcError::invalid_params(
-            "'seed' required — MCP refuses non-deterministic output",
-        )),
+        _ => {
+            Err(RpcError::invalid_params("'seed' required — MCP refuses non-deterministic output"))
+        }
     }
 }
 
@@ -277,10 +280,7 @@ fn parse_delim(s: Option<&str>) -> Result<Option<String>, RpcError> {
 
 fn check_count(n: u64) -> Result<(), RpcError> {
     if n > opts::MAX_COUNT {
-        return Err(RpcError::invalid_params(format!(
-            "'n' must not exceed {}",
-            opts::MAX_COUNT
-        )));
+        return Err(RpcError::invalid_params(format!("'n' must not exceed {}", opts::MAX_COUNT)));
     }
     Ok(())
 }
@@ -300,7 +300,9 @@ fn shared_opts_schema() -> Value {
         "format":    {"type": "string",  "description": "Output format: csv, tsv, jsonl, sql=TABLE. Default: tsv"},
         "delim":     {"type": "string",  "description": "Field delimiter for default/tsv format (supports \\t, \\n escapes)"},
         "no_header": {"type": "boolean", "description": "Omit column header row"},
-        "annotated": {"type": "boolean", "description": "JSONL with text + byte-offset spans (NER/PII training)"}
+        "annotated": {"type": "boolean", "description": "JSONL with text + byte-offset spans (NER/PII training)"},
+        "shard":     {"type": "string",  "description": "Generate shard I of N (e.g. '0/4'). Splits 'n' into N disjoint contiguous ranges, byte-identical to a slice of the unsharded run. Requires n > 0"},
+        "threads":   {"type": "integer", "description": "In-process parallel workers (default 1). Output is byte-identical to single-threaded. Requires n > 0; ignored when aggregators are present"}
     })
 }
 
@@ -345,6 +347,19 @@ fn tools_list() -> Value {
         "description": "Optional template to validate alongside fields"
     });
 
+    let replace_props = json!({
+        "columns":      {"type": "array", "items": {"type": "string"},
+                         "description": "Column names to replace with synthetic values (no modifiers)"},
+        "input":        {"type": "string",
+                         "description": "Input data (CSV with header row, or JSONL — one object per line)"},
+        "input_format": {"type": "string", "enum": ["csv", "jsonl"],
+                         "description": "Force input format; auto-detected from first byte when omitted"},
+        "seed":         {"type": "string",
+                         "description": "Deterministic seed — same value + seed always yields the same replacement, so cross-file joins survive"},
+        "since":        {"description": "Temporal range start for date/timestamp replacements"},
+        "until":        {"description": "Temporal range end, exclusive, for date/timestamp replacements"}
+    });
+
     json!({"tools": [
         {
             "name": "generate",
@@ -374,6 +389,15 @@ fn tools_list() -> Value {
             }
         },
         {
+            "name": "replace",
+            "description": "Replace named columns in a CSV or JSONL stream with synthetic values. Same input value + seed yields the same replacement, so referential integrity across files is preserved.",
+            "inputSchema": {
+                "type": "object",
+                "properties": replace_props,
+                "required": ["columns", "input", "seed"]
+            }
+        },
+        {
             "name": "list_fields",
             "description": "List all fields, groups, modifiers, transforms, and locales.",
             "inputSchema": {"type": "object", "properties": {}}
@@ -381,6 +405,16 @@ fn tools_list() -> Value {
         {
             "name": "list_presets",
             "description": "List built-in preset names.",
+            "inputSchema": {"type": "object", "properties": {}}
+        },
+        {
+            "name": "list_locales",
+            "description": "List supported locale codes.",
+            "inputSchema": {"type": "object", "properties": {}}
+        },
+        {
+            "name": "list_modifiers",
+            "description": "List per-field modifiers and global transforms.",
             "inputSchema": {"type": "object", "properties": {}}
         },
         {
@@ -423,6 +457,8 @@ fn tool_generate(args: &Value) -> Result<Value, RpcError> {
     let delim = parse_delim(opt_str(args, "delim")?)?;
     let no_header = opt_bool(args, "no_header")?.unwrap_or(false);
     let annotated = opt_bool(args, "annotated")?.unwrap_or(false);
+    let shard = cli::resolve_shard(opt_str(args, "shard")?, n).map_err(RpcError::invalid_params)?;
+    let threads = parse_threads(opt_u64(args, "threads")?, n)?;
 
     let (gen_config, fields, is_template) =
         cli::build_gen_config_from_tokens(&tokens, template.clone())
@@ -452,8 +488,8 @@ fn tool_generate(args: &Value) -> Result<Value, RpcError> {
     let run_opts = RunOptions {
         master_seed: seedfaker_core::hash_seed(seed),
         count: n,
-        shard: None,
-        threads: 1,
+        shard,
+        threads,
         serial_range: None,
         locales,
         script,
@@ -471,18 +507,28 @@ fn tool_generate(args: &Value) -> Result<Value, RpcError> {
     };
 
     let mut buf: Vec<u8> = Vec::with_capacity(64 * 1024);
-    engine::run(&mut buf, &gen_config, &run_opts)
-        .map_err(|e| RpcError::internal(e.to_string()))?;
-    let s = String::from_utf8(buf)
-        .map_err(|e| RpcError::internal(format!("non-utf8 output: {e}")))?;
+    engine::run(&mut buf, &gen_config, &run_opts).map_err(|e| RpcError::internal(e.to_string()))?;
+    let s =
+        String::from_utf8(buf).map_err(|e| RpcError::internal(format!("non-utf8 output: {e}")))?;
     Ok(text(&s))
+}
+
+fn parse_threads(opt: Option<u64>, n: u64) -> Result<usize, RpcError> {
+    let t = opt.unwrap_or(1);
+    if t == 0 {
+        return Err(RpcError::invalid_params("'threads' must be >= 1"));
+    }
+    if t > 1 && n == 0 {
+        return Err(RpcError::invalid_params("'threads' > 1 requires 'n' > 0"));
+    }
+    usize::try_from(t).map_err(|_| RpcError::invalid_params("'threads' too large"))
 }
 
 // ── tool: run_preset ─────────────────────────────────────────────────
 
 fn tool_run_preset(args: &Value) -> Result<Value, RpcError> {
-    let preset_name = opt_str(args, "preset")?
-        .ok_or_else(|| RpcError::invalid_params("'preset' required"))?;
+    let preset_name =
+        opt_str(args, "preset")?.ok_or_else(|| RpcError::invalid_params("'preset' required"))?;
     let seed = require_seed(args)?;
     let n_override = opt_u64(args, "n")?;
     let table_arg = opt_str(args, "table")?;
@@ -506,7 +552,8 @@ fn tool_run_preset(args: &Value) -> Result<Value, RpcError> {
                     names.join(", ")
                 ))
             })?;
-            let (_, t) = multi.find_table(name).map_err(|e| RpcError::invalid_params(e.to_string()))?;
+            let (_, t) =
+                multi.find_table(name).map_err(|e| RpcError::invalid_params(e.to_string()))?;
             let mut cfg = t.clone();
             engine::finalize_fk_columns(&mut cfg, multi.global_seed, &multi.tables);
             let table_seed = seedfaker_core::rng::domain_hash(multi.global_seed, name);
@@ -561,14 +608,17 @@ fn tool_run_preset(args: &Value) -> Result<Value, RpcError> {
 
     let no_header = opt_bool(args, "no_header")?.unwrap_or(gen_config.options.no_header);
     let annotated = opt_bool(args, "annotated")?.unwrap_or(gen_config.options.annotated);
+    let shard = cli::resolve_shard(opt_str(args, "shard")?, effective_n)
+        .map_err(RpcError::invalid_params)?;
+    let threads = parse_threads(opt_u64(args, "threads")?, effective_n)?;
 
     let master_seed = master_seed_base.unwrap_or_else(|| seedfaker_core::hash_seed(seed));
 
     let run_opts = RunOptions {
         master_seed,
         count: effective_n,
-        shard: None,
-        threads: 1,
+        shard,
+        threads,
         serial_range: None,
         locales,
         script,
@@ -586,10 +636,9 @@ fn tool_run_preset(args: &Value) -> Result<Value, RpcError> {
     };
 
     let mut buf: Vec<u8> = Vec::with_capacity(64 * 1024);
-    engine::run(&mut buf, &gen_config, &run_opts)
-        .map_err(|e| RpcError::internal(e.to_string()))?;
-    let s = String::from_utf8(buf)
-        .map_err(|e| RpcError::internal(format!("non-utf8 output: {e}")))?;
+    engine::run(&mut buf, &gen_config, &run_opts).map_err(|e| RpcError::internal(e.to_string()))?;
+    let s =
+        String::from_utf8(buf).map_err(|e| RpcError::internal(format!("non-utf8 output: {e}")))?;
     Ok(text(&s))
 }
 
@@ -653,7 +702,39 @@ fn tool_validate(args: &Value) -> Result<Value, RpcError> {
     }))
 }
 
-// ── tool: list_fields / list_presets ─────────────────────────────────
+// ── tool: replace ────────────────────────────────────────────────────
+
+fn tool_replace(args: &Value) -> Result<Value, RpcError> {
+    let columns = as_str_array(args, "columns")?;
+    if columns.is_empty() {
+        return Err(RpcError::invalid_params("'columns' must not be empty"));
+    }
+    let input =
+        opt_str(args, "input")?.ok_or_else(|| RpcError::invalid_params("'input' required"))?;
+    let seed = require_seed(args)?;
+    let input_format = opt_str(args, "input_format")?;
+    let since = opt_temporal(args, "since")?;
+    let until = opt_temporal(args, "until")?;
+
+    let mut reader = std::io::BufReader::new(input.as_bytes());
+    let mut buf: Vec<u8> = Vec::with_capacity(input.len() + 64);
+    cli::run_replace_io(
+        &mut reader,
+        &mut buf,
+        &columns,
+        input_format,
+        Some(seed),
+        since.as_deref(),
+        until.as_deref(),
+    )
+    .map_err(|e| RpcError::invalid_params(e.to_string()))?;
+
+    let s =
+        String::from_utf8(buf).map_err(|e| RpcError::internal(format!("non-utf8 output: {e}")))?;
+    Ok(text(&s))
+}
+
+// ── tool: list_fields / list_presets / list_locales / list_modifiers ─
 
 fn list_fields() -> Value {
     let groups: Vec<Value> = seedfaker_core::field::GROUPS
@@ -691,4 +772,28 @@ fn list_fields() -> Value {
 fn list_presets() -> Value {
     let names = config::list_presets();
     text(&names.join("\n"))
+}
+
+fn list_locales() -> Value {
+    text(&locale::ALL_CODES.join("\n"))
+}
+
+fn list_modifiers() -> Value {
+    let mut groups: Vec<Value> = Vec::new();
+    for f in seedfaker_core::field::REGISTRY {
+        let m = seedfaker_core::field::field_modifiers(f.id);
+        if m.is_empty() {
+            continue;
+        }
+        let mods: Vec<&str> = m.split(", ").collect();
+        groups.push(json!({"field": f.name, "modifiers": mods}));
+    }
+    let info = json!({
+        "fields": groups,
+        "transforms": ["upper", "lower", "capitalize"],
+    });
+    match serde_json::to_string_pretty(&info) {
+        Ok(s) => text(&s),
+        Err(e) => text(&format!("serialization error: {e}")),
+    }
 }

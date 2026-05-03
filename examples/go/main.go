@@ -1,5 +1,3 @@
-// seedfaker — deterministic synthetic data generator
-//
 // Install:  go get github.com/opendsr-std/seedfaker-go
 // Requires: libseedfaker_ffi shared library, CGO enabled
 // Docs:     https://github.com/opendsr-std/seedfaker
@@ -19,14 +17,12 @@ import (
 )
 
 func main() {
-	// Deterministic: same seed = same output, always
 	opts := `{"seed":"demo","locale":"en"}`
 	cOpts := C.CString(opts)
 	defer C.free(unsafe.Pointer(cOpts))
 	handle := C.sf_create(cOpts)
 	defer C.sf_destroy(handle)
 
-	// Single fields
 	for _, field := range []string{"name", "email", "phone"} {
 		cf := C.CString(field)
 		ptr := C.sf_field(handle, cf)
@@ -35,7 +31,7 @@ func main() {
 		C.sf_free(ptr)
 	}
 
-	// Correlated records: email derived from name, phone matches locale
+	// ctx=strict → name, email, phone correlated per row
 	bulk := `{"fields":["name","email","phone"],"n":5,"ctx":"strict"}`
 	cBulk := C.CString(bulk)
 	ptr := C.sf_records(handle, cBulk)
@@ -49,12 +45,10 @@ func main() {
 		fmt.Printf("  %s\t%s\t%s\n", r["name"], r["email"], r["phone"])
 	}
 
-	// Fingerprint
 	fpPtr := C.sf_fingerprint()
 	fmt.Println("\nfingerprint:", C.GoString(fpPtr))
 	C.sf_free(fpPtr)
 
-	// Verify determinism
 	seedA := C.CString(`{"seed":"ci"}`)
 	seedB := C.CString(`{"seed":"ci"}`)
 	hA := C.sf_create(seedA)

@@ -2,6 +2,26 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.4.0-alpha.1]
+
+### Added
+
+- MCP: `replace` tool — replace named columns in a CSV/JSONL stream while preserving cross-file referential integrity (same input value + same seed → same replacement). See [docs/mcp § replace](docs/mcp.md#replace).
+- MCP: `list_locales` and `list_modifiers` tools.
+- MCP: `shard` and `threads` parameters on `generate` and `run_preset` — same semantics as the CLI flags, byte-identical to the unsharded / single-threaded run.
+- MCP: `notifications/cancelled` accepted.
+
+### Changed
+
+- MCP protocol bumped to `2025-06-18`.
+- MCP setup requires the absolute path to `seedfaker` — GUI clients (Claude Desktop, Cursor) launch outside the shell and don't inherit `PATH`.
+- Root [README.md](README.md) Packages table split into Install / Registry / Local-docs columns; CLI install row split into separate Homebrew and Cargo rows with registry links.
+- Examples 01–20 trimmed: terser headers, `mktemp -d` + `trap` instead of `/tmp/` paths, sha256 / row-count asserts where the example claims a property (determinism, row count, uniqueness).
+
+### Removed
+
+- `examples/context/` directory and its generator step in `make field-examples`. [docs/context.md](docs/context.md) links to [examples/13-context.sh](examples/13-context.sh) instead.
+
 ## [0.3.0-alpha.2]
 
 ### Removed

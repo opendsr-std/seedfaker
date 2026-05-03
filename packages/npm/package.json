@@ -1,6 +1,6 @@
 {
   "name": "@opendsr/seedfaker",
-  "version": "0.3.0-alpha.2",
+  "version": "0.4.0-alpha.1",
   "description": "Deterministic synthetic data generator — 200+ fields, 68 locales, native Rust binding",
   "license": "MIT",
   "author": "Eduard Titov <editied@gmail.com>",
@@ -41,11 +41,11 @@
     "README.md"
   ],
   "optionalDependencies": {
-    "@opendsr/seedfaker-darwin-arm64": "0.3.0-alpha.2",
-    "@opendsr/seedfaker-darwin-x64": "0.3.0-alpha.2",
-    "@opendsr/seedfaker-linux-x64": "0.3.0-alpha.2",
-    "@opendsr/seedfaker-linux-arm64": "0.3.0-alpha.2",
-    "@opendsr/seedfaker-win32-x64": "0.3.0-alpha.2"
+    "@opendsr/seedfaker-darwin-arm64": "0.4.0-alpha.1",
+    "@opendsr/seedfaker-darwin-x64": "0.4.0-alpha.1",
+    "@opendsr/seedfaker-linux-x64": "0.4.0-alpha.1",
+    "@opendsr/seedfaker-linux-arm64": "0.4.0-alpha.1",
+    "@opendsr/seedfaker-win32-x64": "0.4.0-alpha.1"
   },
   "engines": {
     "node": ">=22"

@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# Write generated records to CSV, JSONL, and SQL-INSERT files.
-# Determinism guarantee: same seed + same --until = same bytes on every run.
+# Write to CSV, JSONL, SQL-INSERT files.
 set -euo pipefail
 SF="${SEEDFAKER:-seedfaker}"
 OUT=$(mktemp -d) && trap 'rm -rf "$OUT"' EXIT
@@ -11,8 +10,13 @@ ${SF} name email phone      --format sql=users -n 100 --seed files --until 2025 
 
 wc -l "$OUT"/users.csv "$OUT"/users.jsonl "$OUT"/seed.sql
 echo
-echo "--- users.csv (head) ---"
+echo "--- users.csv ---"
 head -3 "$OUT/users.csv"
 echo
-echo "--- seed.sql (head) ---"
+echo "--- seed.sql ---"
 head -2 "$OUT/seed.sql"
+
+# assert: row counts match -n
+[ "$(wc -l < "$OUT/users.csv")"    -eq 1001 ] || { echo "csv: row count mismatch"; exit 1; }
+[ "$(wc -l < "$OUT/users.jsonl")"  -eq 500  ] || { echo "jsonl: row count mismatch"; exit 1; }
+[ "$(wc -l < "$OUT/seed.sql")"     -eq 100  ] || { echo "sql: row count mismatch"; exit 1; }

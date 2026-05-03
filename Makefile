@@ -242,7 +242,6 @@ stamp-fingerprint:
 
 field-examples:
 	@test -f $(SF) || { echo "Run 'make build' first."; exit 1; }
-	@SEEDFAKER="$(CURDIR)/$(SF)" bash examples/context/generate.sh
 	@for spec in app-json auth chaos email llm-prompt medical nginx payment pii-leak postgres stacktrace syslog user-table; do \
 	  $(SF) run "$$spec" -n 5 --seed spec-example --until 2025 > "examples/presets/$$spec.txt"; \
 	done

@@ -641,7 +641,7 @@ dependencies = [
 
 [[package]]
 name = "seedfaker"
-version = "0.3.0-alpha.2"
+version = "0.4.0-alpha.1"
 dependencies = [
  "clap",
  "itoa",
@@ -653,7 +653,7 @@ dependencies = [
 
 [[package]]
 name = "seedfaker-core"
-version = "0.3.0-alpha.2"
+version = "0.4.0-alpha.1"
 dependencies = [
  "getrandom",
  "itoa",
@@ -661,7 +661,7 @@ dependencies = [
 
 [[package]]
 name = "seedfaker-ffi"
-version = "0.3.0-alpha.2"
+version = "0.4.0-alpha.1"
 dependencies = [
  "seedfaker-core",
  "serde_json",
@@ -669,7 +669,7 @@ dependencies = [
 
 [[package]]
 name = "seedfaker-napi"
-version = "0.3.0-alpha.2"
+version = "0.4.0-alpha.1"
 dependencies = [
  "napi",
  "napi-build",
@@ -679,7 +679,7 @@ dependencies = [
 
 [[package]]
 name = "seedfaker-python"
-version = "0.3.0-alpha.2"
+version = "0.4.0-alpha.1"
 dependencies = [
  "pyo3",
  "seedfaker-core",
@@ -687,7 +687,7 @@ dependencies = [
 
 [[package]]
 name = "seedfaker-wasm"
-version = "0.3.0-alpha.2"
+version = "0.4.0-alpha.1"
 dependencies = [
  "getrandom",
  "js-sys",

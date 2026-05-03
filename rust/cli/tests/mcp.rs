@@ -93,7 +93,7 @@ fn err_code(r: &Value) -> i64 {
 #[test]
 fn initialize() {
     let r = one(json!({"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}));
-    assert_eq!(r["result"]["protocolVersion"], "2024-11-05");
+    assert_eq!(r["result"]["protocolVersion"], "2025-06-18");
     assert_eq!(r["result"]["serverInfo"]["name"], "seedfaker");
 }
 
@@ -108,7 +108,17 @@ fn tool_list() {
     let r = one(json!({"jsonrpc":"2.0","id":1,"method":"tools/list"}));
     let tools = r["result"]["tools"].as_array().expect("tools");
     let names: Vec<&str> = tools.iter().filter_map(|t| t["name"].as_str()).collect();
-    for expected in ["generate", "run_preset", "validate", "list_fields", "list_presets", "fingerprint"] {
+    for expected in [
+        "generate",
+        "run_preset",
+        "validate",
+        "replace",
+        "list_fields",
+        "list_presets",
+        "list_locales",
+        "list_modifiers",
+        "fingerprint",
+    ] {
         assert!(names.contains(&expected), "missing tool: {expected}; got {names:?}");
     }
 }
@@ -341,8 +351,7 @@ fn ctx_strict() {
 #[test]
 fn corrupt() {
     let clean = txt(&gen(json!({"fields":["name","email"],"n":20,"seed":"cor"})));
-    let dirty =
-        txt(&gen(json!({"fields":["name","email"],"n":20,"seed":"cor","corrupt":"high"})));
+    let dirty = txt(&gen(json!({"fields":["name","email"],"n":20,"seed":"cor","corrupt":"high"})));
     assert_ne!(clean, dirty);
 }
 
@@ -360,9 +369,7 @@ fn year_range() {
 
 #[test]
 fn year_range_as_string() {
-    let v = recs(
-        &gen(json!({"fields":["date"],"n":10,"seed":"ys","since":"2020","until":"2022"})),
-    );
+    let v = recs(&gen(json!({"fields":["date"],"n":10,"seed":"ys","since":"2020","until":"2022"})));
     for r in &v {
         let d = r["date"].as_str().expect("date");
         let year: i64 = d[..4].parse().expect("year");
@@ -507,10 +514,7 @@ fn validate_rejects_unknown_field() {
 
 #[test]
 fn validate_reports_year_range_inversion() {
-    let r = call_tool(
-        "validate",
-        json!({"fields":["date"],"since":"2025","until":"2020"}),
-    );
+    let r = call_tool("validate", json!({"fields":["date"],"since":"2025","until":"2020"}));
     let t = txt(&r);
     assert!(t.contains("error:"));
     assert_eq!(r["result"]["isError"], true);
@@ -559,20 +563,15 @@ fn list_presets_includes_nginx() {
 // ── cross-determinism: MCP == CLI byte-identical ─────────────────────
 
 fn run_cli(args: &[&str]) -> String {
-    let out = Command::new(env!("CARGO_BIN_EXE_seedfaker"))
-        .args(args)
-        .output()
-        .expect("run cli");
+    let out = Command::new(env!("CARGO_BIN_EXE_seedfaker")).args(args).output().expect("run cli");
     assert!(out.status.success(), "cli failed: {}", String::from_utf8_lossy(&out.stderr));
     String::from_utf8(out.stdout).expect("utf8")
 }
 
 #[test]
 fn cross_det_cli_vs_mcp_default_tsv() {
-    let cli_out = run_cli(&[
-        "name", "email", "phone:e164",
-        "--seed", "xcross", "--until", "2025", "-n", "8",
-    ]);
+    let cli_out =
+        run_cli(&["name", "email", "phone:e164", "--seed", "xcross", "--until", "2025", "-n", "8"]);
     let mcp_out = txt(&gen_raw(json!({
         "fields":["name","email","phone:e164"],"n":8,"seed":"xcross","until":"2025"
     })));
@@ -582,9 +581,8 @@ fn cross_det_cli_vs_mcp_default_tsv() {
 #[test]
 fn cross_det_cli_vs_mcp_ctx_strict_jsonl() {
     let cli_out = run_cli(&[
-        "name", "email",
-        "--seed", "xctx", "--until", "2025", "--locale", "en",
-        "--ctx", "strict", "--format", "jsonl", "-n", "6",
+        "name", "email", "--seed", "xctx", "--until", "2025", "--locale", "en", "--ctx", "strict",
+        "--format", "jsonl", "-n", "6",
     ]);
     let mcp_out = txt(&gen_raw(json!({
         "fields":["name","email"],"n":6,"seed":"xctx","until":"2025",
@@ -596,9 +594,7 @@ fn cross_det_cli_vs_mcp_ctx_strict_jsonl() {
 #[test]
 fn cross_det_cli_vs_mcp_preset() {
     let cli_out = run_cli(&["run", "nginx", "--seed", "xp", "-n", "5", "--until", "2025"]);
-    let mcp_out = txt(&call_tool(
-        "run_preset",
-        json!({"preset":"nginx","seed":"xp","n":5,"until":"2025"}),
-    ));
+    let mcp_out =
+        txt(&call_tool("run_preset", json!({"preset":"nginx","seed":"xp","n":5,"until":"2025"})));
     assert_eq!(cli_out, mcp_out, "MCP preset output must equal CLI run output");
 }

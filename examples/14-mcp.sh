@@ -1,13 +1,9 @@
 #!/usr/bin/env bash
-# MCP server demo — shows the JSON-RPC protocol exchange
-#
-# seedfaker mcp reads JSON-RPC requests from stdin, writes responses to stdout.
-# This is the protocol AI tools (Claude Code, Cursor, etc.) use to call seedfaker.
+# MCP server: JSON-RPC over stdin/stdout.
 set -euo pipefail
 SF="${SEEDFAKER:-seedfaker}"
 
 pj() { python3 -m json.tool --no-ensure-ascii; }
-# Extract the text payload from a tools/call response
 extract_text() { python3 -c "import sys,json; print(json.loads(sys.stdin.read())['result']['content'][0]['text'])"; }
 
 echo "=== 1. Initialize (handshake) ==="

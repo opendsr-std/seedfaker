@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# Output formats: tsv (default), csv, jsonl, sql=TABLE, inline template (-t).
-# Same 3 records in each format so you can compare shapes.
+# Formats: tsv, csv, jsonl, sql=TABLE, -t inline template. Same 3 records.
 set -euo pipefail
 SF="${SEEDFAKER:-seedfaker}"
 COMMON="name email phone -n 3 --seed demo --until 2025"
