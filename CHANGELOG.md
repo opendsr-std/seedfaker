@@ -8,6 +8,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - The fingerprint uses the `sf1-` format in `seedfaker --fingerprint`, `--version`, the MCP `fingerprint` tool, and `fingerprint()` in each binding. It hashes record output for every field and modifier in every locale, in Latin and native scripts, under each `ctx` mode, and `en` output with each transform, omit, a tz offset, and each corruption level. The `sf0-` format hashed only single `en` field values, so it missed output changes in other locales and pipelines.
 - A config that pins an `sf0-` fingerprint fails with a message about the format change. Run `seedfaker --fingerprint` and update the pin.
+- Python: wheels are tagged `cp39-abi3`, matching `requires-python >=3.9`. Python 3.8 was already excluded by `requires-python`.
 
 ### Fixed
 
