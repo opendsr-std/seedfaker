@@ -80,6 +80,9 @@ _pre-release: _pre-commit regen field-examples size
 system-install:
 	@bash tools/system-install.sh
 
+setup-local:
+	@bash tools/setup-local.sh
+
 # ═══════════════════════════════════════════════════════════════════
 # Docker
 # ═══════════════════════════════════════════════════════════════════
@@ -324,6 +327,7 @@ help:
 	@echo ""
 	@echo "Install:"
 	@echo "  system-install    Install pre-built artifacts to host"
+	@echo "  setup-local       Check toolchains + create .venv for LOCAL=1"
 	@echo ""
 	@echo "Post-release:"
 	@echo "  test-release P=\"npm-cli pip\"     Verify published packages (brew cargo npm-lib npm-cli wasm pip php ruby go)"
@@ -357,7 +361,7 @@ help:
 
 .PHONY: dev test pre-commit pre-release \
         _dev _test _pre-commit _pre-release \
-        system-install build-wasm docker-build docker-clean docker-shell docker-image \
+        system-install setup-local build-wasm docker-build docker-clean docker-shell docker-image \
         build-cli build-napi build-pyo3 build-ffi build \
         test-rust test-npm test-pip test-mcp test-examples test-cross test-release fmt lint verify \
         field-gen fields bindings regen update-snapshots stamp-fingerprint field-examples \

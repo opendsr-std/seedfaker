@@ -65,6 +65,15 @@ make system-install   # install CLI + pip + npm on the host
 LOCAL=1 make dev      # run without Docker
 ```
 
+### Local setup (without Docker)
+
+```bash
+make setup-local            # check toolchains, create .venv from requirements-dev.txt
+source .venv/bin/activate   # Python tools (ruff, pyyaml) from the venv
+nvm use                     # Node version from .nvmrc
+LOCAL=1 make test
+```
+
 `make pre-commit` catches:
 
 - formatting and lint violations

@@ -1,0 +1,4 @@
+# Python dev tooling for LOCAL=1 make targets (installed by tools/setup-local.sh).
+# Pinned: an unpinned ruff upgrade (0.16) adds rules that fail `make lint`.
+pyyaml==6.0.3
+ruff==0.15.6

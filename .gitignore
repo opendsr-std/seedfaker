@@ -60,3 +60,5 @@ benchmarks/.payments_5gb_out/
 benchmarks/RESULTS.md.tmp
 
 .DS_Store
+# Local dev environment (tools/setup-local.sh)
+.venv/
