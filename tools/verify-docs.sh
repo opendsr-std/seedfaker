@@ -51,18 +51,6 @@ else
   ok "bindings field parity ($NPM_FIELDS fields)"
 fi
 
-# --- Locale codes in docs/cli.md vs actual ---
-CLI_LOCALES=$("$SF" --list-json 2>/dev/null | python3 -c "
-import sys, json
-data = json.load(sys.stdin)
-# locales from --list-json are in the locale field
-# fall back to ALL_CODES from the binary
-" 2>/dev/null || true)
-# Simpler: just check that the documented count matches
-if grep -q "68 locales" "$ROOT/docs/cli.md" 2>/dev/null; then
-  ok "cli.md locale count claim"
-fi
-
 # --- Corrupt levels in docs match --help ---
 for level in low mid high extreme; do
   if ! grep -q "$level" "$ROOT/docs/corruption.md" 2>/dev/null; then

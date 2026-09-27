@@ -8,7 +8,7 @@ use seedfaker_core::{field, locale, script::Script};
 #[command(
     name = "seedfaker",
     version,
-    about = "Deterministic synthetic generator for realistic, correlated, and noisy test records across 68 locales"
+    about = "Deterministic synthetic generator for realistic, correlated, and noisy test records across 60+ locales"
 )]
 #[command(args_conflicts_with_subcommands = true)]
 pub struct Cli {

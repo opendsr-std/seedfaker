@@ -2,7 +2,7 @@
 
 Deterministic synthetic data generator. Same seed, same output — across CLI, Python, Node.js, Go, PHP, Ruby, WASM.
 
-200+ fields, 68 locales, multi-table FK, expressions, templates, streaming, `replace` for anonymising existing data.
+200+ fields, 60+ locales, multi-table FK, expressions, templates, streaming, `replace` for anonymising existing data.
 
 ## Highlights
 
@@ -14,7 +14,7 @@ Deterministic synthetic data generator. Same seed, same output — across CLI, P
 - **Throughput** — ~90 MB/s per core (TPC-H dbgen parity), 403 MB/s on 8 threads. Reproducible in [`benchmarks/`](benchmarks/).
 - **In-place anonymisation** — `seedfaker replace email ssn < dump.csv`. Same value + seed = same replacement; cross-file joins survive. [→](docs/replace.md)
 - **ML/LLM datasets** — `--annotated` (byte-offset spans), `--corrupt` (15 noise types), templates (prompt/completion), multi-table FK (conversations, RAG). [→](guides/training-data.md)
-- **Locale-aware PII** — Luhn credit cards, IBAN check digits, 48 gov-ID formats, 68 locales, native scripts. [→](docs/fields.md)
+- **Locale-aware PII** — Luhn credit cards, IBAN check digits, 48 gov-ID formats, 60+ locales, native scripts. [→](docs/fields.md)
 
 ## Contents
 

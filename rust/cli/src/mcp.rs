@@ -363,7 +363,7 @@ fn tools_list() -> Value {
     json!({"tools": [
         {
             "name": "generate",
-            "description": "Generate synthetic records. Full CLI surface: 200+ fields, 68 locales, groups, enums, modifiers, transforms, aggregators, expressions, ranges, templates, corruption, annotated output.",
+            "description": "Generate synthetic records. Full CLI surface: 200+ fields, 60+ locales, groups, enums, modifiers, transforms, aggregators, expressions, ranges, templates, corruption, annotated output.",
             "inputSchema": {
                 "type": "object",
                 "properties": gen_props,
