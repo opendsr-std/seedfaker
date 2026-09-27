@@ -6,7 +6,8 @@ SF="${SEEDFAKER:-seedfaker}"
 # One of each, full value.
 for type in jwt aws-access-key stripe-key github-pat openai-key slack-bot-token \
             sentry-dsn connection-string; do
-  printf "%-22s %s\n" "$type" "$(${SF} ${type} -n 1 --seed cred --until 2025)"
+  value=$(${SF} ${type} -n 1 --seed cred --until 2025)
+  printf "%-22s %s\n" "$type" "$value"
 done
 
 echo
