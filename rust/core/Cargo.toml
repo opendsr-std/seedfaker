@@ -17,6 +17,7 @@ keywords = [
   "data-generation",
 ]
 categories = ["development-tools::testing"]
+exclude = ["AGENTS.md", "CLAUDE.md"]
 
 [dependencies]
 getrandom = "0.4"
