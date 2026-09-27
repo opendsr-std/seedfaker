@@ -71,8 +71,14 @@ seedfaker run ft.yaml > extraction.jsonl
 
 Pin both seed and algorithm fingerprint — algorithm drift fails loudly at load time, so eval numbers never shift silently across upgrades.
 
+```yaml
+# eval.yaml: ft.yaml columns with a fingerprint pin
+options:
+  fingerprint: sf1-4d15dd4648440708
+```
+
 ```bash
-seedfaker run eval.yaml -n 5_000 --seed eval-v1 --fingerprint sf0-158dc9f79ce46b43 > eval.jsonl
+seedfaker run eval.yaml -n 5_000 --seed eval-v1 > eval.jsonl
 ```
 
 Score model output against `spans`:
