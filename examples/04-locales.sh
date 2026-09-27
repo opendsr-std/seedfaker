@@ -17,6 +17,7 @@ ${SF} name phone country-code --locale en=7,de=2,fr=1 -n 5 --seed loc --until 20
 
 echo
 # national-id dispatches by locale.
-for loc in en de fr pt-br hi zh gb; do
-  printf "  %-6s %s\n" "$loc" "$(${SF} national-id --locale "$loc" -n 1 --seed gov --until 2025)"
+for loc in en de fr pt-br hi zh; do
+  id=$(${SF} national-id --locale "$loc" -n 1 --seed gov --until 2025)
+  printf "  %-6s %s\n" "$loc" "$id"
 done
