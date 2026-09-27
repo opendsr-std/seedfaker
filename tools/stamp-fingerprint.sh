@@ -46,7 +46,6 @@ stamp "$ROOT/README.md"
 stamp "$ROOT/docs/library.md"
 stamp "$ROOT/packages/pip/README.md"
 stamp "$ROOT/packages/npm/README.md"
-stamp "$ROOT/benchmarks/results/comparisons.md"
 
 echo ""
 echo "Done."
