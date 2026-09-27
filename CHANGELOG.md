@@ -2,6 +2,12 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Fixed
+
+- Go: programs using the module on macOS failed at startup with a `dyld` error. The bundled `libseedfaker_ffi.dylib` now has an `@rpath` install name.
+
 ## [0.4.0-alpha.1]
 
 ### Added

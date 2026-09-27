@@ -20,4 +20,4 @@ echo "--- ruby ---"
 RUBYLIB="$ROOT/packages/ruby/lib" ruby "$ROOT/examples/ruby/basic.rb" > /dev/null && echo "  ok: examples/ruby/basic.rb"
 
 echo "--- go ---"
-cd "$ROOT/examples/go" && CGO_LDFLAGS="-L../../rust/target/release -lseedfaker_ffi" LD_LIBRARY_PATH="../../rust/target/release" go run main.go > /dev/null && echo "  ok: examples/go/main.go"
+cd "$ROOT/examples/go" && CGO_LDFLAGS="-L$ROOT/rust/target/release -Wl,-rpath,$ROOT/rust/target/release -lseedfaker_ffi" go run main.go > /dev/null && echo "  ok: examples/go/main.go"
