@@ -1,6 +1,6 @@
 # seedfaker
 
-Deterministic synthetic data generator — 200+ fields, 68 locales, multi-table FK, same seed = same output.
+Deterministic synthetic data generator — 200+ fields, 60+ locales, multi-table FK, same seed = same output.
 
 **CLI** · [Node.js](https://www.npmjs.com/package/@opendsr/seedfaker) · [Python](https://pypi.org/project/seedfaker/) · [Browser/WASM](https://www.npmjs.com/package/@opendsr/seedfaker-wasm) · [Go](https://github.com/opendsr-std/seedfaker-go) · [PHP](https://packagist.org/packages/opendsr/seedfaker) · [Ruby](https://rubygems.org/gems/seedfaker) · [MCP](https://github.com/opendsr-std/seedfaker/blob/main/docs/mcp.md)
 
@@ -30,7 +30,7 @@ seedfaker name email --annotated --seed train --until 2025 -n 1000
 - **Multi-table FK** — `users.id:zipf`, `customer_id->name`, computed totals
 - **Annotated output** — byte-offset spans for NER/PII training
 - **Replace** — anonymize CSV/JSONL with deterministic masking
-- **13 presets** — nginx, auth, postgres, payment, pii-leak, syslog, medical
+- **Presets** — nginx, auth, postgres, payment, pii-leak, syslog, medical (`seedfaker run --list`)
 - **Formats** — CSV, TSV, JSONL, SQL, templates with conditionals and loops
 - **Streaming** — unlimited output with `-n 0`, rate limiting with `--rate`
 - **MCP server** — Model Context Protocol for AI agents
