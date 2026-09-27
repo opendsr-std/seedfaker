@@ -51,6 +51,8 @@ benchmarks/.payments_5gb_out/
 # Do not commit instructions from contributors
 .claude
 .codex
+AGENTS.local.md
+CLAUDE.local.md
 
 # Support scripts
 .support
