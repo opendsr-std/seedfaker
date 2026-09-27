@@ -9,7 +9,7 @@ Docker (default) or local toolchain (`LOCAL=1`): Rust 1.88+, Node 22+, Python 3.
 ```bash
 make dev              # build all (Docker by default)
 make test             # full suite: rust + npm + pip + MCP + examples + cross-determinism
-make pre-commit       # the gate: dev + fmt + lint + test + audit + codegen + verify
+make pre-commit       # the gate: dev + codegen + fmt + lint + test + audit + verify
 LOCAL=1 make dev      # without Docker
 ```
 

@@ -26,7 +26,7 @@ All execution inside Docker by default. `LOCAL=1` bypasses Docker.
 ```bash
 make dev              # build CLI + NAPI + PyO3 + FFI
 make test             # rust + npm + pip + MCP + all examples + cross-determinism
-make pre-commit       # dev + fmt + lint + test + audit + codegen + verify
+make pre-commit       # dev + codegen + fmt + lint + test + audit + verify
 make pre-release      # pre-commit + regen + field examples + sizes
 make system-install   # install CLI + pip + npm on the host
 LOCAL=1 make dev      # run without Docker

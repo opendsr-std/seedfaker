@@ -69,7 +69,7 @@ _dev: build
 
 _test: build test-rust test-npm test-pip test-mcp test-examples test-cross
 
-_pre-commit: _dev fmt lint _test audit fields bindings types verify
+_pre-commit: _dev fields bindings types fmt lint _test audit verify
 
 _pre-release: _pre-commit regen field-examples size
 
