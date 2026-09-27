@@ -6,7 +6,7 @@ Go binding for [seedfaker](https://github.com/opendsr-std/seedfaker) — determi
 
 ## Requirements
 
-- Go >= 1.22
+- Go >= 1.21
 - `libseedfaker_ffi` shared library
 - CGO enabled
 
@@ -46,7 +46,7 @@ func main() {
     // Single values
     name, _ := f.Field("name")
     phone, _ := f.Field("phone")
-    fmt.Println(name, phone)
+    fmt.Println(name[0], phone[0])
 
     // Single correlated record
     rec, _ := f.Record([]string{"name", "email", "phone"}, "strict", "")
