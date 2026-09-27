@@ -22,7 +22,6 @@ Runnable end-to-end Postgres bulk-load benchmark: [`payments_5gb.sh`](payments_5
 | `make bench` | CLI tiers + per-field | `results/fast.md` + `results/fields.md` |
 | `make bench-fast` | CLI throughput (3/5/10/20 fields) | `results/fast.md` |
 | `make bench-fields` | Per-field throughput (all 200+ fields) | `results/fields.md` |
-| `make bench-tpl` | Template engine (criterion) | stdout |
 | `make bench-full` | All + competitor comparison | `results/comparisons.md` |
 | `make uniqueness` | Collision rates at scale | `results/uniqueness.md` |
 | `make determinism` | Cross-interface SHA-256 proof | `results/determinism.md` |

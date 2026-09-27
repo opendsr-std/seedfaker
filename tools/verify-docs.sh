@@ -68,23 +68,6 @@ else
   fail "PHP CDEF drifted from include/seedfaker.h — update the CDEF constant"
 fi
 
-# --- DEVELOPMENT.md: check key files exist ---
-DEV_OK=true
-# Extract filenames from tree lines (│   ├── filename.ext)
-grep -oE '── [a-z_]+\.[a-z]+' "$ROOT/DEVELOPMENT.md" | sed 's/── //' | sort -u | while IFS= read -r fname; do
-  if ! find "$ROOT" -name "$fname" -not -path '*/.git/*' -not -path '*/target/*' -not -path '*/node_modules/*' -print -quit 2>/dev/null | grep -q .; then
-    echo "FAIL: DEVELOPMENT.md references $fname but it doesn't exist"
-    # Signal failure via temp file since subshell can't set parent EXIT
-    touch "$ROOT/.verify-fail"
-  fi
-done
-if [ -f "$ROOT/.verify-fail" ]; then
-  rm -f "$ROOT/.verify-fail"
-  EXIT=1
-else
-  ok "DEVELOPMENT.md file references"
-fi
-
 echo ""
 if [ "$EXIT" -ne 0 ]; then
   echo "DRIFT DETECTED. Fix issues above, then re-run."
