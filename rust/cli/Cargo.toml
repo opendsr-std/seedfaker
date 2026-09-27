@@ -17,6 +17,7 @@ keywords = [
   "mock-data",
 ]
 categories = ["command-line-utilities", "development-tools::testing"]
+exclude = ["AGENTS.md", "CLAUDE.md"]
 
 [[bin]]
 name = "seedfaker"

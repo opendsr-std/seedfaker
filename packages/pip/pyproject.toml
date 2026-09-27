@@ -43,6 +43,7 @@ Documentation = "https://github.com/opendsr-std/seedfaker/blob/main/docs/field-r
 manifest-path = "../../rust/pyo3/Cargo.toml"
 python-source = "."
 module-name = "seedfaker._seedfaker"
+exclude = ["**/AGENTS.md", "**/CLAUDE.md"]
 
 [tool.ruff]
 line-length = 100
