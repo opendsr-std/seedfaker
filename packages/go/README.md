@@ -25,7 +25,8 @@ For development from source:
 ```bash
 make build-ffi
 cd examples/go
-CGO_LDFLAGS="-L../../rust/target/release -lseedfaker_ffi" go run main.go
+LIB="$PWD/../../rust/target/release"
+CGO_LDFLAGS="-L$LIB -Wl,-rpath,$LIB -lseedfaker_ffi" go run main.go
 ```
 
 ## Usage
