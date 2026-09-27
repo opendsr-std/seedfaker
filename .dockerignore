@@ -6,6 +6,7 @@ rust/data/
 .support/
 .idea/
 benchmarks/.venv/
+.venv/
 examples/dataset/clean/
 examples/dataset/corrupted/
 packages/pip/build/
