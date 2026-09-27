@@ -5,10 +5,9 @@ use seedfaker_core::ctx::{GenContext, Identity};
 use seedfaker_core::field::{Ordering, RangeSpec, Transform};
 use seedfaker_core::locale::Locale;
 use seedfaker_core::rng::Rng;
-use seedfaker_core::script::{Corrupt, Ctx, Script};
+use seedfaker_core::script::{apply_script, Corrupt, Ctx, Script};
 
 use crate::config::GenConfig;
-use crate::format;
 use crate::writers;
 
 #[derive(Clone)]
@@ -496,8 +495,7 @@ pub fn run<W: Write>(
     let domain_hashes = compute_domain_hashes(&gen_config.columns, opts.master_seed);
 
     let mut script_rng = Rng::derive(opts.master_seed, 0, seedfaker_core::DOMAIN_SCRIPT);
-    let effective_locales =
-        format::apply_script(&opts.locales.clone(), opts.script, &mut script_rng);
+    let effective_locales = apply_script(&opts.locales.clone(), opts.script, &mut script_rng);
     let effective_refs: Vec<&Locale> = effective_locales.iter().collect();
     let locales: &[&Locale] =
         if opts.script == Script::Native { &effective_refs } else { &opts.locales };
@@ -602,7 +600,7 @@ pub fn run<W: Write>(
         let both_refs: Vec<&Locale>;
         let use_locales: &[&Locale] = if opts.script == Script::Both {
             let mut sr = Rng::derive(opts.master_seed, serial, seedfaker_core::DOMAIN_SCRIPT);
-            both_locales = format::apply_script(&opts.locales, opts.script, &mut sr);
+            both_locales = apply_script(&opts.locales, opts.script, &mut sr);
             both_refs = both_locales.iter().collect();
             &both_refs
         } else {
