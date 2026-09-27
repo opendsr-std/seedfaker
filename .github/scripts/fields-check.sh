@@ -21,7 +21,7 @@ fi
 EXIT=0
 
 # Extract field names from --list output
-LIST_FIELDS=$($SF --list 2>&1 | grep -E '^\s{4}[a-z]' | awk '{print $1}' | sort)
+LIST_FIELDS=$($SF --list 2>&1 | grep -E '^\s{4}[a-z]' | awk '$1 !~ /:/ {print $1}' | sort)
 LIST_COUNT=$(echo "$LIST_FIELDS" | wc -l | tr -d ' ')
 
 # Extract field names from docs/field-reference.md (backtick-wrapped in table rows)
