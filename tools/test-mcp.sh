@@ -18,7 +18,7 @@ echo "$GEN" | grep -q '"text"' || { echo "FAIL: generate"; exit 1; }
 echo "  ok: generate (3 records)"
 
 FP=$(printf '{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"fingerprint","arguments":{}}}\n' | "$SF" mcp 2>/dev/null)
-echo "$FP" | grep -q 'sf0-' || { echo "FAIL: fingerprint"; exit 1; }
+echo "$FP" | grep -q 'sf1-' || { echo "FAIL: fingerprint"; exit 1; }
 echo "  ok: fingerprint"
 
 PRESET=$(printf '{"jsonrpc":"2.0","id":5,"method":"tools/call","params":{"name":"run_preset","arguments":{"preset":"nginx","n":2,"seed":"mcp-test"}}}\n' | "$SF" mcp 2>/dev/null)

@@ -23,8 +23,8 @@ sedi() {
   fi
 }
 
-# Match sf0-<hex> pattern
-OLD_PAT='sf0-[0-9a-f]\{16\}'
+# Match sf<N>-<hex> pattern
+OLD_PAT='sf[0-9]-[0-9a-f]\{16\}'
 
 stamp() {
   local file="$1"

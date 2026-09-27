@@ -24,7 +24,7 @@ f.records(["name", "email"], { n: 5 });                  // [{ ... }, ...]
 f.validate(["name", "email:e164"]);                      // throws if invalid
 
 SeedFaker.fields();                                      // all field names
-SeedFaker.fingerprint();                                 // "sf0-..."
+SeedFaker.fingerprint();                                 // "sf1-..."
 ```
 
 ## Plain browser (no bundler)

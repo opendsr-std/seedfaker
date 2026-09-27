@@ -27,7 +27,7 @@ $f->validate(["name", "email:e164"]);                     // check without gener
 
 $f->records(["name", "email"], n: 100, corrupt: "high");  // corrupted data
 
-SeedFaker::fingerprint();                                 // "sf0-..."
+SeedFaker::fingerprint();                                 // "sf1-..."
 SeedFaker::fields();                                      // all field names
 ```
 

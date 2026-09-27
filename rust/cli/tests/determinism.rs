@@ -382,7 +382,7 @@ fn fingerprint_matches() {
     let out = run_ok(&["--fingerprint"]);
     assert_eq!(
         out.trim(),
-        "sf0-158dc9f79ce46b43",
+        "sf1-4d15dd4648440708",
         "fingerprint changed — run 'make stamp-fingerprint' to update"
     );
 }

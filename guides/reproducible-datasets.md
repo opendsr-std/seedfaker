@@ -127,7 +127,7 @@ options:
   until: 2026
   count: 50
   format: csv
-  fingerprint: sf0-a1b2c3d4
+  fingerprint: sf1-4d15dd4648440708
 ```
 
 Mismatch = immediate failure, not silent drift.
@@ -139,7 +139,7 @@ seedfaker --fingerprint
 ```
 
 ```
-sf0-158dc9f79ce46b43
+sf1-4d15dd4648440708
 ```
 
 ## Validation in CI

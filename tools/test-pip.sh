@@ -6,7 +6,7 @@ from seedfaker import SeedFaker
 f=SeedFaker(seed='test-pkg',until=2025)
 v=f.field('name'); assert v
 n=len(SeedFaker.fields()); assert n>=200, n
-fp=SeedFaker.fingerprint(); assert fp.startswith('sf0-'), fp
+fp=SeedFaker.fingerprint(); assert fp.startswith('sf1-'), fp
 r=f.records(['name','email'],n=3,ctx='strict'); assert len(r)==3, len(r)
 rec=f.record(['name','email'],ctx='strict'); assert 'name' in rec and 'email' in rec, rec
 SeedFaker.validate(['name','email','phone:e164'])
