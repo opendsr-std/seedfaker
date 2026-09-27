@@ -35,7 +35,7 @@ f.records(["name", "email"], n=5, ctx="strict")          # [{"name": ..., "email
 f.validate(["name", "email:e164"])                       # ok or raises ValueError
 
 SeedFaker.fields()       # all field names
-SeedFaker.fingerprint()  # "sf0-158dc9f79ce46b43"
+SeedFaker.fingerprint()  # "sf1-4d15dd4648440708"
 ```
 
 Native PyO3 extension.
@@ -59,7 +59,7 @@ f.records(["name", "email"], { n: 5, ctx: "strict" }); // [{name: ..., email: ..
 f.validate(["name", "email:e164"]); // ok or throws
 
 SeedFaker.fields(); // all field names
-SeedFaker.fingerprint(); // "sf0-158dc9f79ce46b43"
+SeedFaker.fingerprint(); // "sf1-4d15dd4648440708"
 ```
 
 Native NAPI-RS extension.

@@ -131,10 +131,18 @@ pub fn parse(source: &str) -> Result<GenConfig, String> {
     if let Some(ref expected) = raw.options.fingerprint {
         let current = seedfaker_core::fingerprint();
         if *expected != current {
-            return Err(format!(
-                "config fingerprint {expected} does not match current {current}; \
-                 output would differ — update or remove fingerprint from config"
-            ));
+            let same_format = expected.split('-').next() == current.split('-').next();
+            return Err(if same_format {
+                format!(
+                    "config fingerprint {expected} does not match current {current}; \
+                     output would differ — update or remove fingerprint from config"
+                )
+            } else {
+                format!(
+                    "config fingerprint {expected} uses a different fingerprint format than \
+                     current {current} — update or remove fingerprint from config"
+                )
+            });
         }
     }
 

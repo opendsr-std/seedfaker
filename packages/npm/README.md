@@ -43,7 +43,7 @@ const b = new SeedFaker({ seed: "test" });
 assert.strictEqual(a.field("name"), b.field("name"));
 
 // Fingerprint — detect algorithm changes after upgrade
-SeedFaker.fingerprint(); // "sf0-..."
+SeedFaker.fingerprint(); // "sf1-..."
 
 // All field names
 SeedFaker.fields();

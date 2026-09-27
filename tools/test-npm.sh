@@ -9,7 +9,7 @@ node -e "
   const n=SeedFaker.fields().length;
   if(n<200)throw new Error('fields: '+n);
   const fp=SeedFaker.fingerprint();
-  if(!fp.startsWith('sf0-'))throw new Error('fingerprint: '+fp);
+  if(!fp.startsWith('sf1-'))throw new Error('fingerprint: '+fp);
   const r=f.records(['name','email'],{n:3,ctx:'strict'});
   if(r.length!==3)throw new Error('records: '+r.length);
   const rec=f.record(['name','email'],{ctx:'strict'});

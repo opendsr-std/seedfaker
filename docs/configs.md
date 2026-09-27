@@ -64,7 +64,7 @@ options:
   locale: [en=7, de=2]
   ctx: strict
   format: csv
-  fingerprint: sf0-6d405deafbc76730
+  fingerprint: sf1-4d15dd4648440708
 ```
 
 | Option        | Type                               | Default   | Description                                                  |
@@ -91,7 +91,7 @@ options:
 `fingerprint` pins a config to a specific version of the generation algorithm. If present, seedfaker compares it against the current fingerprint at load time and rejects the run on mismatch:
 
 ```
-error: config fingerprint sf0-aaa does not match current sf0-bbb;
+error: config fingerprint sf1-aaa does not match current sf1-bbb;
 output would differ — update or remove fingerprint from config
 ```
 

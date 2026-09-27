@@ -166,7 +166,7 @@ jobs:
           bash tools/verify-docs.sh
 
           EXPECTED=$(cat FINGERPRINT)
-          ACTUAL=$(rust/target/release/seedfaker --version | grep -oE 'sf0-[a-f0-9]+')
+          ACTUAL=$(rust/target/release/seedfaker --version | grep -oE 'sf[0-9]+-[a-f0-9]+')
           [ "$ACTUAL" = "$EXPECTED" ] || { echo "::error::fingerprint $ACTUAL != $EXPECTED"; exit 1; }
 
           CORE=$(grep '^version' rust/core/Cargo.toml | head -1 | sed 's/.*"\(.*\)"/\1/')

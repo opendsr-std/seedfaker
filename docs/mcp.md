@@ -140,7 +140,7 @@ List per-field modifiers and global transforms as a JSON object.
 
 ### `fingerprint`
 
-Return the algorithm fingerprint (`sf0-<hex>`). Changes when seeded output would change.
+Return the algorithm fingerprint (`sf1-<hex>`). Changes when seeded output would change.
 
 ## Related guides
 

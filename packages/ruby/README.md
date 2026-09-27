@@ -27,7 +27,7 @@ f.validate(["name", "email:e164"])                       # check without generat
 
 f.records(["name", "email"], n: 100, corrupt: "high")    # corrupted data
 
-Seedfaker::SeedFaker.fingerprint                         # "sf0-..."
+Seedfaker::SeedFaker.fingerprint                         # "sf1-..."
 Seedfaker::SeedFaker.fields                              # all field names
 ```
 

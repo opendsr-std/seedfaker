@@ -49,7 +49,7 @@ char* sf_records(SfFaker* faker, const char* opts_json);
 /* List all fields as JSON array. Caller must sf_free. */
 char* sf_fields_json(void);
 
-/* Algorithm fingerprint ("sf0-..."). Caller must sf_free. */
+/* Algorithm fingerprint ("sf1-..."). Caller must sf_free. */
 char* sf_fingerprint(void);
 
 /* Build info JSON: {"version":"...","fingerprint":"..."}. Caller must sf_free. */

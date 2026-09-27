@@ -28,8 +28,13 @@ pub fn hash_seed(s: &str) -> u64 {
     fnv1a(s.as_bytes())
 }
 
+const FNV_OFFSET: u64 = 0xcbf2_9ce4_8422_2325;
+
 fn fnv1a(bytes: &[u8]) -> u64 {
-    let mut h: u64 = 0xcbf2_9ce4_8422_2325;
+    fnv1a_update(FNV_OFFSET, bytes)
+}
+
+fn fnv1a_update(mut h: u64, bytes: &[u8]) -> u64 {
     for &b in bytes {
         h ^= u64::from(b);
         h = h.wrapping_mul(0x0100_0000_01b3);
@@ -43,57 +48,106 @@ pub fn build_info() -> String {
     format!(r#"{{"version":"{VERSION}","fingerprint":"{fp}"}}"#)
 }
 
-/// Generator fingerprint: identifies the current deterministic algorithm version.
+/// Generator fingerprint: changes when seeded output changes.
 ///
-/// If this value changes between releases, seeded output has changed —
-/// users must regenerate fixtures. Hashes default output + every modifier
-/// variant for each registered field.
-/// Format: `sf0-<16 hex digits>`.
+/// Hashes `pipeline::generate_records` output for every field and modifier in
+/// every locale, in Latin and native scripts, under each ctx mode. The `en`
+/// locale is also hashed with each transform, omit, a non-zero tz offset, and
+/// each corruption level.
+/// Format: `sf1-<16 hex digits>`.
 pub fn fingerprint() -> String {
-    use field::REGISTRY;
+    use field::{field_modifiers, Transform, REGISTRY};
+    use pipeline::{field_domain_hash, generate_records, FieldSpec, RecordOpts};
+    use script::{apply_script, Ctx, Script};
 
     const CANONICAL_SEED: &str = "__determinism__";
-    let master = hash_seed(CANONICAL_SEED);
-    let locales: Vec<&locale::Locale> = locale::get("en").into_iter().collect();
+    const RECORDS: u64 = 2;
 
-    let since = temporal::DEFAULT_SINCE;
-    let until = temporal::date_to_epoch(2038, 1, 1, 0, 0, 0);
-
-    let mut buf = String::new();
-    let mut val_buf = String::new();
-
-    let mut hash_field = |f: &field::Field, modifier: &str| {
-        let domain =
-            if modifier.is_empty() { f.id.to_string() } else { format!("{}_{modifier}", f.id) };
-        let mut ctx = ctx::GenContext {
-            rng: rng::Rng::derive(master, 0, &domain),
-            locales: &locales,
-            modifier,
-            identity: None,
+    fn record_opts<'a>(
+        master_seed: u64,
+        locales: &'a [&'a locale::Locale],
+        since: i64,
+        until: i64,
+    ) -> RecordOpts<'a> {
+        RecordOpts {
+            master_seed,
+            locales,
+            ctx: Ctx::None,
+            corrupt_rate: None,
             tz_offset_minutes: DEFAULT_TZ_OFFSET,
             since,
             until,
-            range: None,
-            ordering: field::Ordering::None,
-            zipf: None,
-            numeric: None,
-        };
-        val_buf.clear();
-        f.generate(&mut ctx, &mut val_buf);
-        buf.push_str(&val_buf);
-        buf.push('\0');
+        }
+    }
+
+    let master = hash_seed(CANONICAL_SEED);
+    let since = temporal::DEFAULT_SINCE;
+    let until = temporal::date_to_epoch(2038, 1, 1, 0, 0, 0);
+
+    let specs_with = |transform: Transform, omit_pct: Option<u8>| {
+        let mut specs = Vec::new();
+        for f in REGISTRY {
+            let mods = field_modifiers(f.id).split(", ").filter(|m| !m.is_empty());
+            for modifier in std::iter::once("").chain(mods) {
+                specs.push(FieldSpec {
+                    field: f,
+                    modifier,
+                    domain_hash: field_domain_hash(master, f, modifier),
+                    range: None,
+                    transform,
+                    omit_pct,
+                });
+            }
+        }
+        specs
+    };
+    let specs = specs_with(Transform::None, None);
+
+    let mut h = FNV_OFFSET;
+    let mut hash = |record_opts: &RecordOpts<'_>, specs: &[FieldSpec<'_>]| {
+        for record in generate_records(record_opts, specs, RECORDS, 0) {
+            for value in record {
+                h = fnv1a_update(h, value.as_bytes());
+                h = fnv1a_update(h, b"\0");
+            }
+        }
     };
 
-    for f in REGISTRY {
-        hash_field(f, "");
-        let mods = field::field_modifiers(f.id);
-        if !mods.is_empty() {
-            for m in mods.split(", ") {
-                hash_field(f, m);
+    let mut script_rng = rng::Rng::derive(master, 0, DOMAIN_SCRIPT);
+    for code in locale::ALL_CODES {
+        let Some(loc) = locale::get(code) else { continue };
+        let mut variants = vec![*loc];
+        variants.extend(apply_script(&[loc], Script::Native, &mut script_rng));
+        for variant in &variants {
+            let locales = [variant];
+            for ctx in [Ctx::None, Ctx::Loose, Ctx::Strict] {
+                hash(&RecordOpts { ctx, ..record_opts(master, &locales, since, until) }, &specs);
             }
         }
     }
 
-    let h = fnv1a(buf.as_bytes());
-    format!("sf0-{h:016x}")
+    if let Some(en) = locale::get("en") {
+        let locales = [en];
+        for transform in [Transform::Upper, Transform::Lower, Transform::Capitalize] {
+            hash(&record_opts(master, &locales, since, until), &specs_with(transform, None));
+        }
+        hash(&record_opts(master, &locales, since, until), &specs_with(Transform::None, Some(50)));
+        hash(
+            &RecordOpts { tz_offset_minutes: 330, ..record_opts(master, &locales, since, until) },
+            &specs,
+        );
+        for level in ["low", "mid", "high", "extreme"] {
+            if let Ok(Some(rate)) = opts::resolve_corrupt_rate(Some(level)) {
+                hash(
+                    &RecordOpts {
+                        corrupt_rate: Some(rate),
+                        ..record_opts(master, &locales, since, until)
+                    },
+                    &specs,
+                );
+            }
+        }
+    }
+
+    format!("sf1-{h:016x}")
 }

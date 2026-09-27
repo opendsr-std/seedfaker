@@ -277,7 +277,7 @@ Pin the fingerprint in CI to detect algorithm changes:
 
 ```bash
 seedfaker --fingerprint
-# sf0-158dc9f79ce46b43
+# sf1-4d15dd4648440708
 ```
 
 Details: [docs/determinism](docs/determinism.md), [docs/context](docs/context.md) (identity correlation).

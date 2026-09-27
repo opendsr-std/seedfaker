@@ -560,11 +560,32 @@ fn fingerprint_mismatch_fails() {
     let path = dir.join("fp.yaml");
     std::fs::write(
         &path,
-        "columns:\n  name: name\noptions:\n  seed: fp\n  fingerprint: sf0-0000000000000000\n",
+        "columns:\n  name: name\noptions:\n  seed: fp\n  fingerprint: sf1-0000000000000000\n",
     )
     .expect("write");
 
     run_fail(&["run", path.to_str().expect("p"), "-n", "2", "--until", "2025"]);
+    let _ = std::fs::remove_dir_all(&dir);
+}
+
+#[test]
+fn fingerprint_old_format_names_format_change() {
+    let dir = common::tempfile("fp-old");
+    std::fs::create_dir_all(&dir).expect("mkdir");
+    let path = dir.join("fp.yaml");
+    std::fs::write(
+        &path,
+        "columns:\n  name: name\noptions:\n  seed: fp\n  fingerprint: sf0-158dc9f79ce46b43\n",
+    )
+    .expect("write");
+
+    let out = common::seedfaker()
+        .args(["run", path.to_str().expect("p"), "-n", "2", "--until", "2025"])
+        .output()
+        .expect("run");
+    assert!(!out.status.success());
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(stderr.contains("different fingerprint format"), "{stderr}");
     let _ = std::fs::remove_dir_all(&dir);
 }
 
