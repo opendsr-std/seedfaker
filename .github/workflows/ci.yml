@@ -80,7 +80,7 @@ jobs:
       - name: Lint (non-Rust)
         run: |
           pnpm exec eslint packages/npm/index.js
-          ruff check packages/pip/seedfaker/ tools/*.py examples/python/*.py
+          ruff check packages/pip/seedfaker/ tools/*.py benchmarks/python/*.py examples/python/*.py
           pnpm exec prettier --check \
             packages/npm/index.js packages/npm/index.d.ts \
             packages/npm-cli/bin/seedfaker.js \
