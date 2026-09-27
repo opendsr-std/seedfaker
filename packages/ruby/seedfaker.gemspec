@@ -2,7 +2,7 @@ Gem::Specification.new do |s|
   s.name        = "seedfaker"
   s.version     = "0.4.0.pre.alpha.1"
   s.summary     = "Deterministic synthetic data generator"
-  s.description = "214 fields, 68 locales. Same seed = same output. Native FFI + CLI fallback."
+  s.description = "200+ fields, 60+ locales. Same seed = same output. Native FFI + CLI fallback."
   s.authors     = ["Eduard Titov"]
   s.email       = "editied@gmail.com"
   s.homepage    = "https://github.com/opendsr-std/seedfaker"

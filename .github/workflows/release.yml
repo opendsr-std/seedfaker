@@ -800,7 +800,7 @@ jobs:
             s.name        = "seedfaker"
             s.version     = "${RUBY_VERSION_NORM}"
             s.summary     = "Deterministic synthetic data generator"
-            s.description = "200+ fields, 68 locales. Same seed = same output across CLI, Python, Node.js, Go, PHP, Ruby."
+            s.description = "200+ fields, 60+ locales. Same seed = same output across CLI, Python, Node.js, Go, PHP, Ruby."
             s.authors     = ["Eduard Titov"]
             s.email       = "editied@gmail.com"
             s.homepage    = "https://github.com/opendsr-std/seedfaker"

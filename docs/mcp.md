@@ -45,7 +45,7 @@ Use the **absolute path** to the binary in MCP-client configs. GUI clients (Clau
 
 ### `generate`
 
-Generate synthetic records. Full CLI surface: 200+ fields, 68 locales, groups, enums, modifiers, transforms, aggregators, expressions, ranges, templates, corruption, annotated output.
+Generate synthetic records. Full CLI surface: 200+ fields, 60+ locales, groups, enums, modifiers, transforms, aggregators, expressions, ranges, templates, corruption, annotated output.
 
 **Required:** `fields`, `seed`.
 

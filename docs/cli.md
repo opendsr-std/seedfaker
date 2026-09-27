@@ -8,7 +8,7 @@
 - [Options](#options)
 - [Field syntax](#field-syntax) — modifiers, ranges, ordering, transforms
 - [Column naming](#column-naming) — custom headers
-- [Locales](#locales) — 68 locales, weights, native scripts
+- [Locales](#locales) — 60+ locales, weights, native scripts
 - [Run](#run) — configs and presets
 - [Sharding and threads](#sharding-and-threads) — parallel generation
 
@@ -115,7 +115,7 @@ See [expressions](expressions.md) for arithmetic between columns and running tot
 
 ## Locales
 
-68 locales across 10 regions. Weights control distribution:
+60+ locales across 10 regions. Weights control distribution:
 
 ```bash
 seedfaker name -l en -n 5                        # US English only

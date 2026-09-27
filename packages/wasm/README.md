@@ -1,6 +1,6 @@
 # @opendsr/seedfaker-wasm
 
-Browser WASM build of [seedfaker](https://github.com/opendsr-std/seedfaker) — deterministic synthetic data with 200+ fields, 68 locales. Runs entirely in the browser, no server.
+Browser WASM build of [seedfaker](https://github.com/opendsr-std/seedfaker) — deterministic synthetic data with 200+ fields, 60+ locales. Runs entirely in the browser, no server.
 
 [CLI](https://github.com/opendsr-std/seedfaker) · [Node.js](https://www.npmjs.com/package/@opendsr/seedfaker) · [Python](https://pypi.org/project/seedfaker/) · **Browser/WASM** · [Go](https://pkg.go.dev/github.com/opendsr-std/seedfaker-go) · [PHP](https://packagist.org/packages/opendsr/seedfaker) · [Ruby](https://rubygems.org/gems/seedfaker) · [MCP](https://github.com/opendsr-std/seedfaker/blob/main/docs/mcp.md)
 

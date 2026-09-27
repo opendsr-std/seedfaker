@@ -1,7 +1,7 @@
 {
   "name": "@opendsr/seedfaker",
   "version": "0.4.0-alpha.1",
-  "description": "Deterministic synthetic data generator — 200+ fields, 68 locales, native Rust binding",
+  "description": "Deterministic synthetic data generator — 200+ fields, 60+ locales, native Rust binding",
   "license": "MIT",
   "author": "Eduard Titov <editied@gmail.com>",
   "homepage": "https://github.com/opendsr-std/seedfaker",

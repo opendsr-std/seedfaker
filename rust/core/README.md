@@ -10,7 +10,7 @@ For the CLI, install [`seedfaker`](https://crates.io/crates/seedfaker). For lang
 
 ## Highlights
 
-- 200+ fields, 17 groups, 68 locales with native scripts
+- 200+ fields, 17 groups, 60+ locales with native scripts
 - Context mode, corruption simulation (15 types, 4 levels)
 - Multi-table FK support (Fk/FkDeref column types)
 - Dependencies: `getrandom`, `itoa`

@@ -101,7 +101,7 @@ SeedFaker(seed="demo", locale="ja")         # Japanese names
 SeedFaker(seed="demo", locale="en=7,de=3")  # 70% English, 30% German
 ```
 
-68 locales. See [field reference](../docs/field-reference.md) for locale-specific fields.
+60+ locales. See [field reference](../docs/field-reference.md) for locale-specific fields.
 
 ## Corruption
 
