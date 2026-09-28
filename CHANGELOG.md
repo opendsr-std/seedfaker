@@ -2,7 +2,11 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased]
+## [0.4.0-alpha.2]
+
+### Added
+
+- `seedfaker-core`: `script::apply_script`, which applies a `Script` mode (`Latin`, `Native`, `Both`) to a list of locales. It moved from the CLI.
 
 ### Changed
 
